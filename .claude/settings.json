@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(php --version)",
+      "Bash(composer show *)",
+      "Bash(composer require *)",
+      "Bash(php artisan *)"
+    ]
+  }
+}

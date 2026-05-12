@@ -1,0 +1,211 @@
+<?php
+
+/**
+ * @author Ohene Adjei
+ */
+
+namespace App\Filament\Resources\Cars\Schemas;
+
+use App\Enums\CarStatus;
+use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TagsInput;
+use Filament\Forms\Components\TextInput;
+use Filament\Schemas\Components\Section;
+use Filament\Schemas\Schema;
+
+class CarForm
+{
+    public static function configure(Schema $schema): Schema
+    {
+        return $schema
+            ->components([
+                Section::make('Vehicle Details')
+                    ->columns(2)
+                    ->schema([
+                        Select::make('make_id')
+                            ->label('Make')
+                            ->relationship('make', 'name')
+                            ->searchable()
+                            ->preload()
+                            ->required()
+                            ->live()
+                            ->afterStateUpdated(fn ($set) => $set('car_model_id', null))
+                            ->placeholder('Select or create a make')
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->unique('makes', 'name')
+                                    ->placeholder('e.g. Toyota')
+                                    ->maxLength(100),
+                                FileUpload::make('icon_path')
+                                    ->label('Brand Icon')
+                                    ->image()
+                                    ->imagePreviewHeight('80')
+                                    ->acceptedFileTypes(['image/png', 'image/svg+xml', 'image/webp'])
+                                    ->maxSize(512)
+                                    ->disk('public')
+                                    ->directory('make-icons'),
+                            ])
+                            ->createOptionAction(fn ($action) => $action->modalWidth('sm')),
+
+                        Select::make('car_model_id')
+                            ->label('Model')
+                            ->required()
+                            ->searchable()
+                            ->live()
+                            ->afterStateUpdated(fn ($set) => $set('car_trim_id', null))
+                            ->placeholder(fn ($get) => $get('make_id') ? 'Select or add a model' : 'Select a make first')
+                            ->disabled(fn ($get) => ! $get('make_id'))
+                            ->options(fn ($get) => $get('make_id')
+                                ? \App\Models\CarModel::where('make_id', $get('make_id'))
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                : []
+                            )
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->placeholder('e.g. Corolla')
+                                    ->maxLength(100),
+                            ])
+                            ->createOptionUsing(function (array $data, $get) {
+                                return \App\Models\CarModel::firstOrCreate([
+                                    'make_id' => $get('make_id'),
+                                    'name'    => $data['name'],
+                                ])->id;
+                            })
+                            ->createOptionAction(fn ($action) => $action->modalWidth('sm')),
+
+                        Select::make('car_trim_id')
+                            ->label('Trim')
+                            ->searchable()
+                            ->live()
+                            ->placeholder(fn ($get) => $get('car_model_id') ? 'Select or add a trim' : 'Select a model first')
+                            ->disabled(fn ($get) => ! $get('car_model_id'))
+                            ->options(fn ($get) => $get('car_model_id')
+                                ? \App\Models\CarTrim::where('car_model_id', $get('car_model_id'))
+                                    ->orderBy('name')
+                                    ->pluck('name', 'id')
+                                : []
+                            )
+                            ->createOptionForm([
+                                TextInput::make('name')
+                                    ->required()
+                                    ->placeholder('e.g. Sport, LE, XLE, SE')
+                                    ->maxLength(100),
+                            ])
+                            ->createOptionUsing(function (array $data, $get) {
+                                return \App\Models\CarTrim::firstOrCreate([
+                                    'car_model_id' => $get('car_model_id'),
+                                    'name'         => $data['name'],
+                                ])->id;
+                            })
+                            ->createOptionAction(fn ($action) => $action->modalWidth('sm')),
+                        Select::make('year')
+                            ->required()
+                            ->placeholder('Select year')
+                            ->options(
+                                array_combine(
+                                    $years = range((int) date('Y'), 2000),
+                                    $years
+                                )
+                            ),
+                        TextInput::make('engine_capacity')
+                            ->required()
+                            ->placeholder('e.g. 1800cc')
+                            ->maxLength(50),
+                        Select::make('transmission')
+                            ->required()
+                            ->placeholder('Select transmission')
+                            ->options([
+                                'Automatic' => 'Automatic',
+                                'Manual'    => 'Manual',
+                            ]),
+                        Select::make('fuel_type')
+                            ->required()
+                            ->placeholder('Select fuel type')
+                            ->options([
+                                'Petrol' => 'Petrol',
+                                'Diesel' => 'Diesel',
+                                'Hybrid' => 'Hybrid',
+                            ]),
+                        TextInput::make('mileage')
+                            ->required()
+                            ->numeric()
+                            ->placeholder('e.g. 45000')
+                            ->suffix('km'),
+                        TextInput::make('colour')
+                            ->required()
+                            ->placeholder('e.g. Pearl White')
+                            ->maxLength(50),
+                        Select::make('country_of_origin')
+                            ->required()
+                            ->placeholder('Select country')
+                            ->options([
+                                'Japan'  => 'Japan',
+                                'Korea'  => 'Korea',
+                                'Europe' => 'Europe',
+                                'USA'    => 'USA',
+                                'Other'  => 'Other',
+                            ]),
+                        Select::make('status')
+                            ->required()
+                            ->options(CarStatus::class)
+                            ->default(CarStatus::Available),
+                    ]),
+
+                Section::make('Images')
+                    ->description('Upload photos of the car. The first image will be used as the cover.')
+                    ->schema([
+                        // I save paths to car_images via the relationship after upload.
+                        // sort_order is set by the order the files appear in the uploader.
+                        FileUpload::make('image_paths')
+                            ->label(false)
+                            ->multiple()
+                            ->image()
+                            ->imagePreviewHeight('160')
+                            ->reorderable()
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->maxSize(5120) // 5 MB per image
+                            ->maxFiles(20)
+                            ->disk('public')
+                            ->directory('cars')
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Pricing')
+                    ->columns(2)
+                    ->schema([
+                        // I take USD input and convert to cents on save — Filament works in display dollars,
+                        // the database always stores integer cents.
+                        TextInput::make('price_usd_cents')
+                            ->label('Price (USD)')
+                            ->required()
+                            ->numeric()
+                            ->prefix('$')
+                            ->placeholder('0.00')
+                            ->step(0.01)
+                            ->afterStateHydrated(fn ($state, $set) => $set('price_usd_cents', $state / 100))
+                            ->dehydrateStateUsing(fn ($state) => (int) round($state * 100)),
+                        TextInput::make('shipping_cost_usd_cents')
+                            ->label('Shipping Cost (USD)')
+                            ->required()
+                            ->numeric()
+                            ->prefix('$')
+                            ->placeholder('0.00')
+                            ->step(0.01)
+                            ->afterStateHydrated(fn ($state, $set) => $set('shipping_cost_usd_cents', $state / 100))
+                            ->dehydrateStateUsing(fn ($state) => (int) round($state * 100)),
+                    ]),
+
+                Section::make('Features')
+                    ->schema([
+                        TagsInput::make('special_features')
+                            ->label('Special Features')
+                            ->placeholder('Type a feature and press Enter')
+                            ->columnSpanFull(),
+                    ]),
+            ]);
+    }
+}

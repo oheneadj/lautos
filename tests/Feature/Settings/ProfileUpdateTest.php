@@ -57,7 +57,11 @@ test('user can delete their account', function () {
         ->assertHasNoErrors()
         ->assertRedirect('/');
 
-    expect($user->fresh())->toBeNull();
+    // I check trashed() rather than expecting fresh() to be null — User uses SoftDeletes,
+    // so the row still exists with deleted_at set, and fresh() bypasses global scopes by
+    // design (it always re-fetches the row regardless of the SoftDeletingScope).
+    expect($user->fresh()->trashed())->toBeTrue();
+    expect(User::find($user->id))->toBeNull();
     expect(auth()->check())->toBeFalse();
 });
 

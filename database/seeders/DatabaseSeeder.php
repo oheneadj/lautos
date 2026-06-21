@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
             MakesSeeder::class,
             CarModelsSeeder::class,
             CarSeeder::class,
+            BlogPostSeeder::class,
         ]);
     }
 }

@@ -90,5 +90,20 @@
         <div class="lg:ml-64">
             {{ $slot }}
         </div>
+
+        {{-- I listen for the 'toast' Livewire event here so any component on this layout can
+             show a brief confirmation message without needing its own toast markup. --}}
+        <div
+            x-data="{ show: false, message: '' }"
+            x-on:toast.window="message = $event.detail.message; show = true; setTimeout(() => show = false, 4000)"
+            x-show="show"
+            x-transition
+            x-cloak
+            class="fixed bottom-4 right-4 z-[60] w-full max-w-sm"
+        >
+            <x-ui.alert type="success">
+                <span x-text="message"></span>
+            </x-ui.alert>
+        </div>
     </body>
 </html>

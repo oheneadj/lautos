@@ -205,6 +205,14 @@ class Car extends Model
         });
     }
 
+    /**
+     * Marks this car Sold — sold_at is set automatically by the updating hook above.
+     */
+    public function markSold(): void
+    {
+        $this->update(['status' => CarStatus::Sold]);
+    }
+
     // ── Relations ────────────────────────────────────────────────────────────
 
     public function make(): BelongsTo

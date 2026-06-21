@@ -30,9 +30,9 @@ class OrderForm
                             ->preload()
                             ->required(),
                         Select::make('car_id')
-                            ->relationship('car', 'make')
+                            ->relationship('car', 'year')
                             ->getOptionLabelFromRecordUsing(
-                                fn (Car $record) => "{$record->year} {$record->make} {$record->model}"
+                                fn (Car $record) => "{$record->year} {$record->make->name} {$record->carModel->name}"
                             )
                             ->searchable()
                             ->preload()

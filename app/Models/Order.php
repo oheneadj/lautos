@@ -56,6 +56,20 @@ class Order extends Model
         return $this->price_usd_cents + $this->shipping_cost_usd_cents;
     }
 
+    /**
+     * There's no separate payment_status column — payment is just the first
+     * three stages of the same pipeline. I derive a label here so the admin
+     * table/filters can show it as its own concept without duplicating state.
+     */
+    public function getPaymentStatusAttribute(): string
+    {
+        return match ($this->status) {
+            OrderStatus::PendingPayment => 'Pending',
+            OrderStatus::PaymentUploaded => 'Uploaded',
+            default => 'Confirmed',
+        };
+    }
+
     // ── Relations ────────────────────────────────────────────────────────────
 
     public function user(): BelongsTo

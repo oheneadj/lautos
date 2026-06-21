@@ -400,20 +400,20 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 3
 
 **Acceptance Criteria:**
-- [ ] Table shows: order ID, customer name, car (make + model), order status, payment status, date placed, date updated
-- [ ] Table is filterable by: order status, payment status, date range
-- [ ] Table is searchable by: customer name, car name, order ID
-- [ ] Table is sortable by: date placed, status
-- [ ] Colour-coded status badges
-- [ ] Orders requiring action (e.g. `Payment Uploaded`) are visually highlighted
-- [ ] Count of "action required" orders shown in admin navigation badge
+- [x] Table shows: order ID, customer name, car (make + model), order status, payment status, date placed, date updated
+- [x] Table is filterable by: order status, payment status, date range
+- [x] Table is searchable by: customer name, car name, order ID
+- [x] Table is sortable by: date placed, status
+- [x] Colour-coded status badges
+- [x] Orders requiring action (e.g. `Payment Uploaded`) are visually highlighted
+- [x] Count of "action required" orders shown in admin navigation badge
 
 **Tasks:**
-- [ ] `T-10-1` Create `Order` model with all relationships
-- [ ] `T-10-2` Build `OrderResource` table in Filament
-- [ ] `T-10-3` Add status filters and search
-- [ ] `T-10-4` Add navigation badge for pending action orders
-- [ ] `T-10-5` Highlight `Payment Uploaded` rows with a visual indicator
+- [x] `T-10-1` Create `Order` model with all relationships
+- [x] `T-10-2` Build `OrderResource` table in Filament
+- [x] `T-10-3` Add status filters and search
+- [x] `T-10-4` Add navigation badge for pending action orders
+- [x] `T-10-5` Highlight `Payment Uploaded` rows with a visual indicator
 
 ---
 
@@ -425,18 +425,18 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 3
 
 **Acceptance Criteria:**
-- [ ] Order detail page shows: customer info, KYC summary, car details, order status, full status history timeline, all uploaded payment proofs
-- [ ] Payment proofs are displayed inline (images shown, PDFs with a preview/download link)
-- [ ] A visual shipment stage timeline shows all 9 stages with timestamps for completed stages
-- [ ] Internal admin notes are visible on this page
-- [ ] All available actions for the current status are shown as buttons
+- [x] Order detail page shows: customer info, KYC summary, car details, order status, full status history timeline, all uploaded payment proofs
+- [x] Payment proofs are displayed inline (images shown, PDFs with a preview/download link)
+- [x] A visual shipment stage timeline shows all 9 stages with timestamps for completed stages
+- [x] Internal admin notes are visible on this page
+- [x] All available actions for the current status are shown as buttons
 
 **Tasks:**
-- [ ] `T-11-1` Build custom Filament `ViewOrder` page (or use `Infolist`)
-- [ ] `T-11-2` Build visual shipment timeline as a custom Filament `Infolist` component
-- [ ] `T-11-3` Build payment proof viewer (inline image + PDF download)
-- [ ] `T-11-4` Build order status history section (all past statuses with timestamps)
-- [ ] `T-11-5` Add internal admin notes section (textarea + save)
+- [x] `T-11-1` Build custom Filament `ViewOrder` page (or use `Infolist`)
+- [x] `T-11-2` Build visual shipment timeline as a custom Filament `Infolist` component
+- [x] `T-11-3` Build payment proof viewer (inline image + PDF download)
+- [x] `T-11-4` Build order status history section (all past statuses with timestamps)
+- [x] `T-11-5` Add internal admin notes section (textarea + save)
 
 ---
 
@@ -448,20 +448,20 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 3
 
 **Acceptance Criteria:**
-- [ ] `Confirm Payment` button is visible when order status is `Payment Uploaded`
-- [ ] `Reject Payment` button is visible when order status is `Payment Uploaded`
+- [x] `Confirm Payment` button is visible when order status is `Payment Uploaded`
+- [x] `Reject Payment` button is visible when order status is `Payment Uploaded`
 - [ ] Confirming payment: status moves to `Payment Confirmed`, car status moves to `Reserved`, customer receives email + SMS
 - [ ] Rejecting payment: admin must enter a reason; status moves back to `Pending Payment`, customer receives email + SMS with reason
-- [ ] Action requires confirmation modal before executing
-- [ ] Both actions are logged in `order_status_histories`
+- [x] Action requires confirmation modal before executing
+- [x] Both actions are logged in `order_status_histories`
 
 **Tasks:**
-- [ ] `T-12-1` Create `ConfirmPayment` Filament action
-- [ ] `T-12-2` Create `RejectPayment` Filament action with reason input
-- [ ] `T-12-3` Wire both actions to update `orders.status` and `cars.status`
-- [ ] `T-12-4` Dispatch `PaymentConfirmed` / `PaymentRejected` events
+- [x] `T-12-1` Create `ConfirmPayment` Filament action
+- [x] `T-12-2` Create `RejectPayment` Filament action with reason input
+- [x] `T-12-3` Wire both actions to update `orders.status` and `cars.status`
+- [x] `T-12-4` Dispatch `PaymentConfirmed` / `PaymentRejected` events
 - [ ] `T-12-5` Write listeners to send email + SMS notifications
-- [ ] `T-12-6` Log status change to `order_status_histories`
+- [x] `T-12-6` Log status change to `order_status_histories`
 
 ---
 
@@ -473,12 +473,12 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 3
 
 **Acceptance Criteria:**
-- [ ] Admin can advance the order to the next stage using an `Update Stage` action
-- [ ] Stages must advance in order — cannot skip stages
-- [ ] Each stage update records a timestamp in `order_status_histories`
+- [x] Admin can advance the order to the next stage using an `Update Stage` action
+- [x] Stages must advance in order — cannot skip stages
+- [x] Each stage update records a timestamp in `order_status_histories`
 - [ ] Customer receives email + SMS on each stage change
-- [ ] For the `Shipped` stage, admin must enter an estimated arrival date
-- [ ] For the `Delivered` stage, a confirmation modal is shown; this triggers the 7-day sold countdown
+- [x] For the `Shipped` stage, admin must enter an estimated arrival date
+- [x] For the `Delivered` stage, a confirmation modal is shown; this triggers the 7-day sold countdown
 
 **Order Stage Sequence:**
 ```
@@ -494,12 +494,12 @@ Pending Payment
 ```
 
 **Tasks:**
-- [ ] `T-13-1` Create `UpdateShipmentStage` Filament action
-- [ ] `T-13-2` Enforce sequential stage progression in `OrderService`
-- [ ] `T-13-3` Add `estimated_arrival_date` field on `Shipped` action modal
-- [ ] `T-13-4` Trigger `Car::markSold()` method on `Delivered` stage
-- [ ] `T-13-5` Dispatch stage-change events and wire notification listeners
-- [ ] `T-13-6` Write unit tests for stage progression rules
+- [x] `T-13-1` Create `UpdateShipmentStage` Filament action
+- [x] `T-13-2` Enforce sequential stage progression in `OrderService`
+- [x] `T-13-3` Add `estimated_arrival_date` field on `Shipped` action modal
+- [x] `T-13-4` Trigger `Car::markSold()` method on `Delivered` stage
+- [x] `T-13-5` Dispatch stage-change events and wire notification listeners
+- [x] `T-13-6` Write unit tests for stage progression rules
 
 ---
 
@@ -511,15 +511,15 @@ Pending Payment
 **Priority:** Should Have | **Points:** 2 | **Sprint:** 3
 
 **Acceptance Criteria:**
-- [ ] Notes input is visible on the order detail page
-- [ ] Multiple notes can be added over time (append, not overwrite)
-- [ ] Each note shows the author (admin name) and timestamp
-- [ ] Notes are never visible to customers
+- [x] Notes input is visible on the order detail page
+- [x] Multiple notes can be added over time (append, not overwrite)
+- [x] Each note shows the author (admin name) and timestamp
+- [x] Notes are never visible to customers
 
 **Tasks:**
-- [ ] `T-14-1` Create `order_notes` table (order_id, admin_id, body, created_at)
-- [ ] `T-14-2` Build notes section as a Filament `Repeater` or custom component
-- [ ] `T-14-3` Ensure notes are excluded from all customer-facing queries
+- [x] `T-14-1` Create `order_notes` table (order_id, admin_id, body, created_at)
+- [x] `T-14-2` Build notes section as a Filament `Repeater` or custom component
+- [x] `T-14-3` Ensure notes are excluded from all customer-facing queries
 
 ---
 

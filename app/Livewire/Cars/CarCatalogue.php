@@ -1,8 +1,13 @@
 <?php
 
+/**
+ * Powers the public car catalogue — search, filtering, sorting, and pagination.
+ *
+ * @author Ohene Adjei
+ */
+
 namespace App\Livewire\Cars;
 
-use App\Enums\CarStatus;
 use App\Models\Car;
 use App\Models\Make;
 use Livewire\Component;
@@ -16,9 +21,10 @@ class CarCatalogue extends Component
     public string $makeFilter = '';
     public string $transmissionFilter = '';
     public string $fuelFilter = '';
+    public string $countryFilter = '';
     public string $minYear = '';
     public string $maxYear = '';
-    public string $maxPrice = '';
+    public string $maxPriceGhs = '';
     public string $sort = 'latest';
 
     protected $queryString = [
@@ -26,9 +32,10 @@ class CarCatalogue extends Component
         'makeFilter'          => ['except' => '', 'as' => 'make'],
         'transmissionFilter'  => ['except' => '', 'as' => 'transmission'],
         'fuelFilter'          => ['except' => '', 'as' => 'fuel'],
+        'countryFilter'       => ['except' => '', 'as' => 'country'],
         'minYear'             => ['except' => '', 'as' => 'min_year'],
         'maxYear'             => ['except' => '', 'as' => 'max_year'],
-        'maxPrice'            => ['except' => '', 'as' => 'max_price'],
+        'maxPriceGhs'         => ['except' => '', 'as' => 'max_price'],
         'sort'                => ['except' => 'latest'],
     ];
 
@@ -36,20 +43,21 @@ class CarCatalogue extends Component
     public function updatedMakeFilter(): void { $this->resetPage(); }
     public function updatedTransmissionFilter(): void { $this->resetPage(); }
     public function updatedFuelFilter(): void { $this->resetPage(); }
+    public function updatedCountryFilter(): void { $this->resetPage(); }
     public function updatedMinYear(): void { $this->resetPage(); }
     public function updatedMaxYear(): void { $this->resetPage(); }
-    public function updatedMaxPrice(): void { $this->resetPage(); }
+    public function updatedMaxPriceGhs(): void { $this->resetPage(); }
 
     public function clearFilters(): void
     {
-        $this->reset(['search', 'makeFilter', 'transmissionFilter', 'fuelFilter', 'minYear', 'maxYear', 'maxPrice']);
+        $this->reset(['search', 'makeFilter', 'transmissionFilter', 'fuelFilter', 'countryFilter', 'minYear', 'maxYear', 'maxPriceGhs']);
         $this->resetPage();
     }
 
     public function render()
     {
         $query = Car::with(['make', 'carModel', 'carTrim', 'images' => fn ($q) => $q->orderBy('sort_order')->limit(1)])
-            ->where('status', CarStatus::Available);
+            ->visibleOnCatalogue();
 
         if ($this->search) {
             $query->where(function ($q) {
@@ -61,7 +69,8 @@ class CarCatalogue extends Component
         }
 
         if ($this->makeFilter) {
-            $query->where('make_id', $this->makeFilter);
+            // I filter by slug, not id, so the URL and the filter dropdown both use a readable value.
+            $query->whereHas('make', fn ($m) => $m->where('slug', $this->makeFilter));
         }
 
         if ($this->transmissionFilter) {
@@ -72,6 +81,10 @@ class CarCatalogue extends Component
             $query->where('fuel_type', $this->fuelFilter);
         }
 
+        if ($this->countryFilter) {
+            $query->where('country_of_origin', $this->countryFilter);
+        }
+
         if ($this->minYear) {
             $query->where('year', '>=', $this->minYear);
         }
@@ -80,8 +93,10 @@ class CarCatalogue extends Component
             $query->where('year', '<=', $this->maxYear);
         }
 
-        if ($this->maxPrice) {
-            $query->where('price_usd_cents', '<=', $this->maxPrice * 100);
+        if ($this->maxPriceGhs) {
+            // I filter on the GHS amount the visitor entered, converted back to the USD cents we actually store.
+            $maxPriceUsdCents = ((float) $this->maxPriceGhs / Car::currentExchangeRate()) * 100;
+            $query->where('price_usd_cents', '<=', $maxPriceUsdCents);
         }
 
         $query->when($this->sort === 'price_asc', fn ($q) => $q->orderBy('price_usd_cents'))

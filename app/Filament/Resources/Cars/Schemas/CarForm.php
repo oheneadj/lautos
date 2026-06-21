@@ -7,6 +7,7 @@
 namespace App\Filament\Resources\Cars\Schemas;
 
 use App\Enums\CarStatus;
+use App\Models\Car;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
@@ -42,7 +43,7 @@ class CarForm
                                     ->label('Brand Icon')
                                     ->image()
                                     ->imagePreviewHeight('80')
-                                    ->acceptedFileTypes(['image/png', 'image/svg+xml', 'image/webp'])
+                                    ->acceptedFileTypes(['image/png', 'image/svg+xml', 'image/webp', 'image/avif'])
                                     ->maxSize(512)
                                     ->disk('public')
                                     ->directory('make-icons'),
@@ -118,18 +119,11 @@ class CarForm
                         Select::make('transmission')
                             ->required()
                             ->placeholder('Select transmission')
-                            ->options([
-                                'Automatic' => 'Automatic',
-                                'Manual'    => 'Manual',
-                            ]),
+                            ->options(array_combine(Car::TRANSMISSIONS, Car::TRANSMISSIONS)),
                         Select::make('fuel_type')
                             ->required()
                             ->placeholder('Select fuel type')
-                            ->options([
-                                'Petrol' => 'Petrol',
-                                'Diesel' => 'Diesel',
-                                'Hybrid' => 'Hybrid',
-                            ]),
+                            ->options(array_combine(Car::FUEL_TYPES, Car::FUEL_TYPES)),
                         TextInput::make('mileage')
                             ->required()
                             ->numeric()
@@ -142,13 +136,7 @@ class CarForm
                         Select::make('country_of_origin')
                             ->required()
                             ->placeholder('Select country')
-                            ->options([
-                                'Japan'  => 'Japan',
-                                'Korea'  => 'Korea',
-                                'Europe' => 'Europe',
-                                'USA'    => 'USA',
-                                'Other'  => 'Other',
-                            ]),
+                            ->options(array_combine(Car::COUNTRIES_OF_ORIGIN, Car::COUNTRIES_OF_ORIGIN)),
                         Select::make('status')
                             ->required()
                             ->options(CarStatus::class)
@@ -156,21 +144,25 @@ class CarForm
                     ]),
 
                 Section::make('Images')
-                    ->description('Upload photos of the car. The first image will be used as the cover.')
+                    ->description('Upload at least 3 photos. Drag to reorder — the first image is used as the cover.')
                     ->schema([
-                        // I save paths to car_images via the relationship after upload.
-                        // sort_order is set by the order the files appear in the uploader.
+                        // I bind this to a transient 'image_paths' field rather than the images relationship
+                        // directly, since FileUpload's multiple() stores one array of paths per field —
+                        // CreateCar/EditCar then sync that array into individual CarImage rows via CarService.
                         FileUpload::make('image_paths')
-                            ->label(false)
-                            ->multiple()
+                            ->label('Photos')
                             ->image()
-                            ->imagePreviewHeight('160')
+                            ->multiple()
                             ->reorderable()
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
+                            ->appendFiles()
+                            ->panelLayout('grid')
+                            ->imagePreviewHeight('160')
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/avif'])
                             ->maxSize(5120) // 5 MB per image
-                            ->maxFiles(20)
                             ->disk('public')
                             ->directory('cars')
+                            ->minFiles(3)
+                            ->required()
                             ->columnSpanFull(),
                     ]),
 

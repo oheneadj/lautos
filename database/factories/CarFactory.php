@@ -21,25 +21,28 @@ class CarFactory extends Factory
      */
     public function definition(): array
     {
+        $status = $this->faker->randomElement(CarStatus::cases());
+
         return [
             'uuid' => (string) Str::uuid(),
             'make_id' => Make::inRandomOrder()->first()?->id,
             'car_model_id' => CarModel::inRandomOrder()->first()?->id,
             'year' => $this->faker->year(),
             'engine_capacity' => $this->faker->randomElement(['1.5L', '2.0L', '2.5L', '3.0L', '4.0L']),
-            'transmission' => $this->faker->randomElement(['Automatic', 'Manual']),
-            'fuel_type' => $this->faker->randomElement(['Petrol', 'Diesel', 'Hybrid', 'Electric']),
+            'transmission' => $this->faker->randomElement(Car::TRANSMISSIONS),
+            'fuel_type' => $this->faker->randomElement(Car::FUEL_TYPES),
             'mileage' => $this->faker->numberBetween(0, 150000),
             'colour' => $this->faker->safeColorName(),
-            'country_of_origin' => $this->faker->country(),
+            'country_of_origin' => $this->faker->randomElement(Car::COUNTRIES_OF_ORIGIN),
             'price_usd_cents' => $this->faker->numberBetween(500000, 5000000), // $5,000 to $50,000
             'shipping_cost_usd_cents' => $this->faker->numberBetween(100000, 500000), // $1,000 to $5,000
             'special_features' => $this->faker->randomElements([
-                'Sunroof', 'Leather Seats', 'Navigation System', 'Bluetooth', 'Reverse Camera', 
+                'Sunroof', 'Leather Seats', 'Navigation System', 'Bluetooth', 'Reverse Camera',
                 'Parking Sensors', 'Heated Seats', 'Alloy Wheels', 'Cruise Control'
             ], 3),
-            'status' => $this->faker->randomElement(CarStatus::cases()),
-            'sold_at' => null,
+            'status' => $status,
+            // I set sold_at whenever the random status lands on Sold, so the 7-day visibility window has something real to check.
+            'sold_at' => $status === CarStatus::Sold ? now() : null,
         ];
     }
 

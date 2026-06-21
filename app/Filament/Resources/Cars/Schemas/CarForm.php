@@ -9,6 +9,7 @@ namespace App\Filament\Resources\Cars\Schemas;
 use App\Enums\CarStatus;
 use App\Models\Car;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
@@ -178,6 +179,7 @@ class CarForm
                             ->prefix('$')
                             ->placeholder('0.00')
                             ->step(0.01)
+                            ->live(onBlur: true)
                             ->afterStateHydrated(fn ($state, $set) => $set('price_usd_cents', $state / 100))
                             ->dehydrateStateUsing(fn ($state) => (int) round($state * 100)),
                         TextInput::make('shipping_cost_usd_cents')
@@ -189,6 +191,15 @@ class CarForm
                             ->step(0.01)
                             ->afterStateHydrated(fn ($state, $set) => $set('shipping_cost_usd_cents', $state / 100))
                             ->dehydrateStateUsing(fn ($state) => (int) round($state * 100)),
+                        // I show a read-only GHS preview so the admin can see what the customer
+                        // will actually pay, without storing it — the canonical price is USD cents.
+                        Placeholder::make('price_ghs_preview')
+                            ->label('Price (GHS equivalent)')
+                            ->content(fn ($get) => 'GH₵' . number_format(
+                                ((float) ($get('price_usd_cents') ?? 0)) * Car::currentExchangeRate(),
+                                2
+                            ))
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('Features')

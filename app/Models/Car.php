@@ -14,10 +14,27 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class Car extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
+
+    /**
+     * I log only the fields an admin actually cares about seeing change —
+     * not every internal/derived column.
+     */
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logOnly([
+                'status', 'price_usd_cents', 'shipping_cost_usd_cents',
+                'mileage', 'colour', 'transmission', 'fuel_type', 'country_of_origin',
+            ])
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
     // I keep these option lists here as the single source of truth — the admin form and the
     // public catalogue filters both read from these instead of duplicating the literal arrays.
@@ -73,6 +90,26 @@ class Car extends Model
 
             if (empty($car->slug)) {
                 $car->slug = static::uniqueSlug(Str::slug("{$car->year}-{$car->make->name}-{$car->carModel->name}"));
+            }
+
+            // I record sold_at here too in case a car is created already marked Sold.
+            if ($car->status === CarStatus::Sold && empty($car->sold_at)) {
+                $car->sold_at = now();
+            }
+        });
+
+        // I keep sold_at in sync with status — set when a car becomes Sold, cleared otherwise —
+        // so the 7-day auto-archive window (ArchiveSoldCars) is always measuring from the
+        // most recent sale, not a stale timestamp left over from a previous status change.
+        static::updating(function (self $car) {
+            if (! $car->isDirty('status')) {
+                return;
+            }
+
+            if ($car->status === CarStatus::Sold) {
+                $car->sold_at = $car->sold_at ?? now();
+            } else {
+                $car->sold_at = null;
             }
         });
     }

@@ -2,12 +2,14 @@
 
 namespace Tests\Unit\Models;
 
+use App\Enums\CarStatus;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Setting;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
+use Spatie\Activitylog\Models\Activity;
 use Tests\TestCase;
 
 /**
@@ -90,5 +92,45 @@ class CarTest extends TestCase
 
         $this->assertSame('2020-toyota-corolla', $first->slug);
         $this->assertSame('2020-toyota-corolla-2', $second->slug);
+    }
+
+    #[Test]
+    public function sold_at_is_set_automatically_when_status_changes_to_sold(): void
+    {
+        $car = $this->makeCar();
+        $car->update(['status' => CarStatus::Available]);
+        $this->assertNull($car->refresh()->sold_at);
+
+        $car->update(['status' => CarStatus::Sold]);
+
+        $this->assertNotNull($car->refresh()->sold_at);
+    }
+
+    #[Test]
+    public function sold_at_is_cleared_when_status_changes_away_from_sold(): void
+    {
+        $car = $this->makeCar();
+        $car->update(['status' => CarStatus::Sold]);
+        $this->assertNotNull($car->refresh()->sold_at);
+
+        $car->update(['status' => CarStatus::Available]);
+
+        $this->assertNull($car->refresh()->sold_at);
+    }
+
+    #[Test]
+    public function updating_a_car_writes_an_activity_log_entry(): void
+    {
+        $car = $this->makeCar();
+        $car->update(['status' => CarStatus::Available]);
+
+        $car->update(['status' => CarStatus::Reserved]);
+
+        $this->assertTrue(
+            Activity::where('subject_id', $car->id)
+                ->where('subject_type', Car::class)
+                ->where('event', 'updated')
+                ->exists()
+        );
     }
 }

@@ -13,7 +13,7 @@ checked.** No moving to the next epic with boxes left unchecked.
 |---|---|---|---|
 | 1 | Project Setup & Base Configuration | 118 | DONE |
 | 2 | Authentication & Roles/Permissions | 188 | DONE |
-| 3 | Car Management | 261 | PARTIAL — US-08 auto-archive missing |
+| 3 | Car Management | 261 | PARTIAL — T-05-8 (S3 storage) deliberately deferred, no AWS credentials in this environment |
 | 4 | Order Management | 389 | PARTIAL — US-11/12/14 custom UI missing |
 | 5 | User & KYC Management | 526 | NOT STARTED |
 | 6 | Blog Management | 575 | DONE |

@@ -272,25 +272,25 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 2
 
 **Acceptance Criteria:**
-- [ ] Admin can fill in all required car fields (see SRS Section 5.1.1)
-- [ ] At least 3 photos must be uploaded before a listing can be published
-- [ ] Photos can be reordered via drag-and-drop
-- [ ] Price is entered in USD; GHS equivalent is shown in a read-only preview using the current exchange rate
-- [ ] Availability status defaults to `Available` on creation
-- [ ] Listing appears on the public catalogue immediately upon save
-- [ ] Validation errors are shown inline per field
-- [ ] Admin receives a success notification on save
+- [x] Admin can fill in all required car fields (see SRS Section 5.1.1)
+- [x] At least 3 photos must be uploaded before a listing can be published
+- [x] Photos can be reordered via drag-and-drop
+- [x] Price is entered in USD; GHS equivalent is shown in a read-only preview using the current exchange rate
+- [x] Availability status defaults to `Available` on creation
+- [x] Listing appears on the public catalogue immediately upon save
+- [x] Validation errors are shown inline per field
+- [x] Admin receives a success notification on save
 
 **Tasks:**
-- [ ] `T-05-1` Create `Car` model with all fillable fields and `SoftDeletes`
-- [ ] `T-05-2` Create `CarImage` model and relationship (`Car` hasMany `CarImage`)
-- [ ] `T-05-3` Build Filament `CarResource` with full form schema
-- [ ] `T-05-4` Add `SpatieMediaLibraryFileUpload` or custom multi-image uploader
-- [ ] `T-05-5` Add drag-and-drop image reordering (Filament `SortableList` or custom)
-- [ ] `T-05-6` Add GHS preview field (computed from price × exchange rate)
-- [ ] `T-05-7` Add all form validations (required fields, min photos)
+- [x] `T-05-1` Create `Car` model with all fillable fields and `SoftDeletes`
+- [x] `T-05-2` Create `CarImage` model and relationship (`Car` hasMany `CarImage`)
+- [x] `T-05-3` Build Filament `CarResource` with full form schema
+- [x] `T-05-4` Add `SpatieMediaLibraryFileUpload` or custom multi-image uploader
+- [x] `T-05-5` Add drag-and-drop image reordering (Filament `SortableList` or custom)
+- [x] `T-05-6` Add GHS preview field (computed from price × exchange rate)
+- [x] `T-05-7` Add all form validations (required fields, min photos)
 - [ ] `T-05-8` Configure image storage to S3 public bucket (car photos are public)
-- [ ] `T-05-9` Write `CarFactory` and seeders for demo data
+- [x] `T-05-9` Write `CarFactory` and seeders for demo data
 
 ---
 
@@ -302,17 +302,17 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 2
 
 **Acceptance Criteria:**
-- [ ] All fields from the create form are editable
-- [ ] Photos can be added, removed, or reordered
-- [ ] Changes reflect immediately on the public catalogue
-- [ ] An edit log entry is written to `activity_log` (Spatie Activity Log)
-- [ ] GHS price preview updates live when USD price is changed
+- [x] All fields from the create form are editable
+- [x] Photos can be added, removed, or reordered
+- [x] Changes reflect immediately on the public catalogue
+- [x] An edit log entry is written to `activity_log` (Spatie Activity Log)
+- [x] GHS price preview updates live when USD price is changed
 
 **Tasks:**
-- [ ] `T-06-1` Reuse `CarResource` form for edit (Filament handles this by default)
-- [ ] `T-06-2` Install and configure `spatie/laravel-activitylog`
-- [ ] `T-06-3` Add `LogsActivity` trait to `Car` model
-- [ ] `T-06-4` Verify live GHS preview on price change (AlpineJS reactivity)
+- [x] `T-06-1` Reuse `CarResource` form for edit (Filament handles this by default)
+- [x] `T-06-2` Install and configure `spatie/laravel-activitylog`
+- [x] `T-06-3` Add `LogsActivity` trait to `Car` model
+- [x] `T-06-4` Verify live GHS preview on price change (AlpineJS reactivity)
 
 ---
 
@@ -324,18 +324,18 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 2
 
 **Acceptance Criteria:**
-- [ ] Admin can toggle status from the car list table (inline action)
-- [ ] Admin can toggle status from the car detail/edit page
-- [ ] Status changes are reflected immediately on the public catalogue
-- [ ] When marked `Sold`, a `sold_at` timestamp is recorded
-- [ ] When marked `Available`, `sold_at` is cleared
-- [ ] Status badge is colour-coded in the admin table: green (Available), amber (Reserved), red (Sold)
+- [x] Admin can toggle status from the car list table (inline action)
+- [x] Admin can toggle status from the car detail/edit page
+- [x] Status changes are reflected immediately on the public catalogue
+- [x] When marked `Sold`, a `sold_at` timestamp is recorded
+- [x] When marked `Available`, `sold_at` is cleared
+- [x] Status badge is colour-coded in the admin table: green (Available), amber (Reserved), red (Sold)
 
 **Tasks:**
-- [ ] `T-07-1` Add `status` and `sold_at` columns to `cars` table
-- [ ] `T-07-2` Create `CarStatus` enum: `Available`, `Reserved`, `Sold`
-- [ ] `T-07-3` Add `ToggleStatus` table action in `CarResource`
-- [ ] `T-07-4` Add colour-coded `BadgeColumn` for status in table
+- [x] `T-07-1` Add `status` and `sold_at` columns to `cars` table
+- [x] `T-07-2` Create `CarStatus` enum: `Available`, `Reserved`, `Sold`
+- [x] `T-07-3` Add `ToggleStatus` table action in `CarResource`
+- [x] `T-07-4` Add colour-coded `BadgeColumn` for status in table
 
 ---
 
@@ -347,18 +347,18 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 2
 
 **Acceptance Criteria:**
-- [ ] Cars with status `Sold` and `sold_at` older than 7 days are automatically archived (soft deleted)
-- [ ] Archived cars do NOT appear on the public catalogue
-- [ ] Archived cars ARE visible in the admin panel under an `Archived` filter tab
-- [ ] Admin can manually restore an archived car
-- [ ] The scheduler runs daily at midnight Ghana time (GMT+0)
+- [x] Cars with status `Sold` and `sold_at` older than 7 days are automatically archived (soft deleted)
+- [x] Archived cars do NOT appear on the public catalogue
+- [x] Archived cars ARE visible in the admin panel under an `Archived` filter tab
+- [x] Admin can manually restore an archived car
+- [x] The scheduler runs daily at midnight Ghana time (GMT+0)
 
 **Tasks:**
-- [ ] `T-08-1` Create `ArchiveSoldCars` artisan command
-- [ ] `T-08-2` Register command in `Console/Kernel.php` to run daily
-- [ ] `T-08-3` Add `Archived` filter tab to `CarResource` table (query scope on `trashed()`)
-- [ ] `T-08-4` Add `Restore` action on archived cars in admin
-- [ ] `T-08-5` Write unit test for archive command logic
+- [x] `T-08-1` Create `ArchiveSoldCars` artisan command
+- [x] `T-08-2` Register command in `Console/Kernel.php` to run daily
+- [x] `T-08-3` Add `Archived` filter tab to `CarResource` table (query scope on `trashed()`)
+- [x] `T-08-4` Add `Restore` action on archived cars in admin
+- [x] `T-08-5` Write unit test for archive command logic
 
 ---
 
@@ -370,19 +370,19 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 2
 
 **Acceptance Criteria:**
-- [ ] Table shows: thumbnail, make, model, year, price (USD), status, date added
-- [ ] Table is searchable by make, model, colour
-- [ ] Table is filterable by: status, make, fuel type, transmission, country of origin
-- [ ] Table is sortable by: price, year, date added
-- [ ] Bulk actions available: Delete, Change Status
-- [ ] Pagination: 15 rows per page default
+- [x] Table shows: thumbnail, make, model, year, price (USD), status, date added
+- [x] Table is searchable by make, model, colour
+- [x] Table is filterable by: status, make, fuel type, transmission, country of origin
+- [x] Table is sortable by: price, year, date added
+- [x] Bulk actions available: Delete, Change Status
+- [x] Pagination: 15 rows per page default
 
 **Tasks:**
-- [ ] `T-09-1` Define all table columns in `CarResource::table()`
-- [ ] `T-09-2` Add `SelectFilter` for status, make, fuel type, etc.
-- [ ] `T-09-3` Add `TextInputFilter` for keyword search
-- [ ] `T-09-4` Add bulk actions
-- [ ] `T-09-5` Add image thumbnail using `ImageColumn`
+- [x] `T-09-1` Define all table columns in `CarResource::table()`
+- [x] `T-09-2` Add `SelectFilter` for status, make, fuel type, etc.
+- [x] `T-09-3` Add `TextInputFilter` for keyword search
+- [x] `T-09-4` Add bulk actions
+- [x] `T-09-5` Add image thumbnail using `ImageColumn`
 
 ---
 

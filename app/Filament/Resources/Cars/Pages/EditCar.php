@@ -7,6 +7,7 @@
 namespace App\Filament\Resources\Cars\Pages;
 
 use App\Filament\Resources\Cars\CarResource;
+use App\Services\CarService;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
@@ -15,6 +16,9 @@ use Filament\Resources\Pages\EditRecord;
 class EditCar extends EditRecord
 {
     protected static string $resource = CarResource::class;
+
+    /** Holds the uploaded photo paths between mutateFormDataBeforeSave() and afterSave(). */
+    protected array $imagePaths = [];
 
     protected function getHeaderActions(): array
     {
@@ -25,34 +29,32 @@ class EditCar extends EditRecord
         ];
     }
 
-    // I pre-populate the uploader with the car's existing image paths on load.
+    /**
+     * Loads the car's existing photo paths into the multi-upload field, in their saved order.
+     */
     protected function mutateFormDataBeforeFill(array $data): array
     {
-        $data['image_paths'] = $this->record->images()
-            ->orderBy('sort_order')
-            ->pluck('path')
-            ->toArray();
+        $data['image_paths'] = $this->record->images->pluck('path')->all();
 
         return $data;
     }
 
-    protected function afterSave(): void
+    /**
+     * Pulls the transient image_paths field off the form data so it's never passed to Car::update().
+     */
+    protected function mutateFormDataBeforeSave(array $data): array
     {
-        $this->syncImages();
+        $this->imagePaths = $data['image_paths'] ?? [];
+        unset($data['image_paths']);
+
+        return $data;
     }
 
-    private function syncImages(): void
+    /**
+     * Re-syncs the car's CarImage rows from whatever photo paths are left after editing.
+     */
+    protected function afterSave(): void
     {
-        $paths = $this->data['image_paths'] ?? [];
-
-        // I delete and re-insert so reordering and removals are handled in one pass.
-        $this->record->images()->delete();
-
-        foreach (array_values($paths) as $order => $path) {
-            $this->record->images()->create([
-                'path'       => $path,
-                'sort_order' => $order,
-            ]);
-        }
+        app(CarService::class)->syncImages($this->record, $this->imagePaths);
     }
 }

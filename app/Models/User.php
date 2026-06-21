@@ -8,6 +8,7 @@ namespace App\Models;
 
 use App\Enums\KycStatus;
 use Database\Factories\UserFactory;
+use Filament\Models\Contracts\FilamentUser;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -16,7 +17,10 @@ use Illuminate\Support\Str;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+// I implement FilamentUser so canAccessPanel() is actually consulted — without it,
+// Filament's Authenticate middleware ignores the method entirely and falls back to
+// allowing access only when app.env is 'local', which silently 403s everywhere else.
+class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
     use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, SoftDeletes;
@@ -76,9 +80,10 @@ class User extends Authenticatable
             ->implode('');
     }
 
-    // I implement this so Filament Shield can check admin access.
+    // I check for an assigned Spatie role rather than just is_admin, since that's what
+    // Shield's policies and the super_admin gate actually key off of.
     public function canAccessPanel(\Filament\Panel $panel): bool
     {
-        return $this->is_admin;
+        return $this->is_admin && $this->roles()->exists();
     }
 }

@@ -1,127 +1,223 @@
-<div class="max-w-7xl mx-auto px-4 lg:px-8 py-10">
+<div class="max-w-7xl mx-auto px-4 lg:px-8 py-6">
 
     {{-- Breadcrumb --}}
-    <nav class="text-sm text-base-content/50 mb-6 flex items-center gap-2">
-        <a href="{{ route('home') }}" class="hover:text-primary">Home</a>
-        <span>/</span>
-        <a href="{{ route('cars.index') }}" class="hover:text-primary">Cars</a>
-        <span>/</span>
-        <span class="text-base-content">{{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}</span>
+    <nav class="flex items-center gap-2 text-[12px] font-medium text-gray-500 mb-4">
+        <a href="{{ route('home') }}" class="hover:text-gray-900 transition-colors underline decoration-1 underline-offset-2">Home</a>
+        <span class="text-gray-300">/</span>
+        <a href="{{ route('cars.index') }}" class="hover:text-gray-900 transition-colors underline decoration-1 underline-offset-2">Cars for Sale</a>
+        <span class="text-gray-300">/</span>
+        <span class="text-gray-500">{{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}</span>
     </nav>
 
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-10">
-
-        {{-- Images --}}
-        <div>
-            {{-- Main Image --}}
-            <div class="rounded-2xl overflow-hidden bg-base-200 h-80 lg:h-96 mb-3">
-                @if ($car->images->count())
-                    <img
-                        src="{{ Storage::url($car->images[$activeImageIndex]->path) }}"
-                        alt="{{ $car->make->name }} {{ $car->carModel->name }}"
-                        class="w-full h-full object-cover"
-                    >
+    {{-- Image Gallery: Hero + 2x2 Grid --}}
+    <div x-data="{ lightbox: false }" @keydown.escape.window="lightbox = false">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-8 h-[300px] md:h-[400px]">
+            {{-- Main Hero Image --}}
+            <div
+                class="md:col-span-2 relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() ? 'cursor-zoom-in' : '' }}"
+                @if ($car->images->count()) @click="lightbox = true" @endif
+            >
+                @if ($car->images->count() > 0)
+                    <img src="{{ Storage::url($car->images[$activeImageIndex]->path) }}" class="w-full h-full object-cover" alt="{{ $car->make->name }} {{ $car->carModel->name }}">
                 @else
-                    <div class="w-full h-full flex items-center justify-center text-base-content/20">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.85 7h10.29l1.08 3.11H5.77L6.85 7zM19 17H5v-5h14v5z"/>
-                            <circle cx="7.5" cy="14.5" r="1.5"/>
-                            <circle cx="16.5" cy="14.5" r="1.5"/>
-                        </svg>
-                    </div>
+                    <div class="w-full h-full bg-gray-200 flex items-center justify-center text-gray-400 text-sm">No Image</div>
                 @endif
+
+                <div class="absolute top-3 left-3">
+                    <x-ui.badge :type="$car->status->colour()" dot>{{ $car->status->label() }}</x-ui.badge>
+                </div>
             </div>
 
-            {{-- Thumbnails --}}
-            @if ($car->images->count() > 1)
-                <div class="flex gap-2 overflow-x-auto pb-1">
-                    @foreach ($car->images as $i => $image)
-                        <button
-                            wire:click="setActiveImage({{ $i }})"
-                            class="flex-shrink-0 w-20 h-16 rounded-lg overflow-hidden border-2 transition-all {{ $activeImageIndex === $i ? 'border-primary' : 'border-base-200 opacity-60 hover:opacity-100' }}"
-                        >
-                            <img src="{{ Storage::url($image->path) }}" alt="Photo {{ $i + 1 }}" class="w-full h-full object-cover">
-                        </button>
-                    @endforeach
-                </div>
-            @endif
+            {{-- 4 Grid Thumbnails --}}
+            <div class="hidden md:grid grid-cols-2 grid-rows-2 gap-2 h-full">
+                @for ($i = 1; $i <= 4; $i++)
+                    <button
+                        @if ($car->images->count() > $i) wire:click="setActiveImage({{ $i }})" @click="lightbox = true" @endif
+                        class="relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() > $i ? 'cursor-zoom-in group' : 'cursor-default' }} {{ $i == 4 ? 'col-start-2 row-start-2' : '' }}"
+                    >
+                        @if ($car->images->count() > $i)
+                            <img src="{{ Storage::url($car->images[$i]->path) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $car->make->name }} thumbnail {{ $i }}">
+                        @endif
+
+                        @if ($i == 4 && $car->images->count() > 5)
+                            <div class="absolute bottom-2 right-2 bg-white/90 backdrop-blur text-gray-900 text-[12px] font-bold px-3 py-1.5 rounded-full shadow-sm">
+                                +{{ $car->images->count() - 5 }} more
+                            </div>
+                        @endif
+                    </button>
+                @endfor
+            </div>
         </div>
 
-        {{-- Details --}}
-        <div>
-            <div class="flex items-start gap-3 mb-2">
-                @if ($car->make->icon_path)
-                    <img src="{{ Storage::url($car->make->icon_path) }}" alt="{{ $car->make->name }}" class="h-8 w-8 object-contain mt-1">
+        {{-- Lightbox: click to enlarge, swipe on mobile, arrow keys / buttons on desktop --}}
+        @if ($car->images->count())
+            <div
+                x-show="lightbox"
+                x-cloak
+                x-transition.opacity
+                x-data="{ touchX: 0 }"
+                @click.self="lightbox = false"
+                @keydown.arrow-left.window="lightbox && $wire.setActiveImage(({{ $activeImageIndex }} - 1 + {{ $car->images->count() }}) % {{ $car->images->count() }})"
+                @keydown.arrow-right.window="lightbox && $wire.setActiveImage(({{ $activeImageIndex }} + 1) % {{ $car->images->count() }})"
+                @touchstart="touchX = $event.changedTouches[0].clientX"
+                @touchend="
+                    let dx = $event.changedTouches[0].clientX - touchX;
+                    if (dx > 50) $wire.setActiveImage(({{ $activeImageIndex }} - 1 + {{ $car->images->count() }}) % {{ $car->images->count() }});
+                    if (dx < -50) $wire.setActiveImage(({{ $activeImageIndex }} + 1) % {{ $car->images->count() }});
+                "
+                class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4"
+            >
+                <button @click="lightbox = false" class="absolute top-4 right-4 text-white/80 hover:text-white" aria-label="Close gallery">
+                    <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                </button>
+
+                @if ($car->images->count() > 1)
+                    <button
+                        @click.stop="$wire.setActiveImage(({{ $activeImageIndex }} - 1 + {{ $car->images->count() }}) % {{ $car->images->count() }})"
+                        class="absolute left-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                        aria-label="Previous photo"
+                    >
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 19l-7-7 7-7"/></svg>
+                    </button>
+                    <button
+                        @click.stop="$wire.setActiveImage(({{ $activeImageIndex }} + 1) % {{ $car->images->count() }})"
+                        class="absolute right-4 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+                        aria-label="Next photo"
+                    >
+                        <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7"/></svg>
+                    </button>
                 @endif
-                <div>
-                    <h1 class="text-2xl lg:text-3xl font-bold leading-tight">
-                        {{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}
-                        @if ($car->carTrim)
-                            <span class="text-base-content/50 font-normal">{{ $car->carTrim->name }}</span>
-                        @endif
-                    </h1>
-                    <p class="text-base-content/50 text-sm mt-0.5">{{ $car->colour }} &bull; {{ $car->country_of_origin }}</p>
+
+                <img
+                    src="{{ Storage::url($car->images[$activeImageIndex]->path) }}"
+                    class="max-h-[90vh] max-w-[90vw] object-contain rounded-lg select-none"
+                    alt="{{ $car->make->name }} {{ $car->carModel->name }}"
+                >
+
+                @if ($car->images->count() > 1)
+                    <div class="absolute bottom-4 text-white/70 text-[13px]">{{ $activeImageIndex + 1 }} / {{ $car->images->count() }}</div>
+                @endif
+            </div>
+        @endif
+    </div>
+
+    {{-- Main Car Title --}}
+    <h1 class="text-3xl font-bold text-gray-900 mb-8">
+        {{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}
+        @if ($car->carTrim)
+            <span class="text-gray-400 font-normal">{{ $car->carTrim->name }}</span>
+        @endif
+    </h1>
+
+    {{-- Two Column Layout --}}
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
+
+        {{-- Left Column (Main Details) --}}
+        <div class="lg:col-span-2 space-y-10">
+
+            {{-- PRICING & COST SUMMARY --}}
+            <div>
+                <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
+                    <div class="text-3xl font-bold text-gray-900 mb-1">${{ number_format($car->price_usd, 0) }}</div>
+                    <div class="text-[13px] text-gray-500 mb-5">≈ GH₵{{ number_format($car->price_ghs, 0) }} car price</div>
+
+                    <div class="space-y-2">
+                        <div class="flex justify-between text-[13px] text-gray-600">
+                            <span>Car price</span>
+                            <span class="text-gray-900 font-medium">${{ number_format($car->price_usd, 0) }} <span class="text-gray-400">/ GH₵{{ number_format($car->price_ghs, 0) }}</span></span>
+                        </div>
+                        <div class="flex justify-between text-[13px] text-gray-600">
+                            <span>Shipping to Ghana</span>
+                            <span class="text-gray-900 font-medium">${{ number_format($car->shipping_cost_usd, 0) }} <span class="text-gray-400">/ GH₵{{ number_format($car->shipping_cost_ghs, 0) }}</span></span>
+                        </div>
+                        <div class="h-px bg-gray-200 my-2"></div>
+                        <div class="flex justify-between text-[14px] font-bold text-gray-900">
+                            <span>Total before clearing</span>
+                            <span>${{ number_format($car->total_usd_cents / 100, 0) }} <span class="text-gray-500">/ GH₵{{ number_format($car->total_ghs, 0) }}</span></span>
+                        </div>
+                    </div>
                 </div>
+                <p class="text-[11px] text-gray-500 mt-3">
+                    GHS amounts are estimates based on the current exchange rate and do not include clearing fees, which are paid separately at the port.
+                </p>
             </div>
 
-            {{-- Pricing --}}
-            <div class="bg-primary/5 border border-primary/20 rounded-xl p-5 my-5">
-                <div class="flex items-baseline gap-2 mb-1">
-                    <span class="text-3xl font-bold text-primary">${{ number_format($car->price_usd_cents / 100, 0) }}</span>
-                    <span class="text-base-content/50 text-sm">car price</span>
-                </div>
-                <div class="text-sm text-base-content/60 mb-3">
-                    + ${{ number_format($car->shipping_cost_usd_cents / 100, 0) }} shipping &nbsp;=&nbsp;
-                    <strong class="text-base-content">${{ number_format(($car->price_usd_cents + $car->shipping_cost_usd_cents) / 100, 0) }} total</strong>
-                </div>
-                @auth
-                    <a href="#" class="btn btn-primary w-full">Place Order</a>
-                @else
-                    <a href="{{ route('register') }}" class="btn btn-primary w-full">Create Account to Order</a>
-                    <p class="text-xs text-center text-base-content/50 mt-2">Already have an account? <a href="{{ route('login') }}" class="text-primary">Login</a></p>
-                @endauth
-            </div>
+            {{-- Demurrage warning --}}
+            <x-demurrage-warning />
 
-            {{-- Specs --}}
-            <div class="grid grid-cols-2 gap-3">
+            {{-- FEATURES & SPECS --}}
+            <div>
+                <h2 class="text-2xl font-bold text-gray-900 mb-6">Features & specs</h2>
+
                 @php
                     $specs = [
-                        ['label' => 'Year',         'value' => $car->year],
-                        ['label' => 'Engine',       'value' => $car->engine_capacity],
-                        ['label' => 'Transmission', 'value' => $car->transmission],
-                        ['label' => 'Fuel Type',    'value' => $car->fuel_type],
-                        ['label' => 'Mileage',      'value' => number_format($car->mileage) . ' km'],
-                        ['label' => 'Colour',       'value' => $car->colour],
-                        ['label' => 'Origin',       'value' => $car->country_of_origin],
+                        ['label' => $car->colour . ' exterior colour',        'icon' => 'M12 21a9 9 0 110-18c4.97 0 9 3.582 9 8 0 1.06-.895 1.917-2 1.917h-2.5a2.5 2.5 0 00-1.768.732l-.464.464a2.5 2.5 0 01-1.768.732H12a2 2 0 01-2-2 2 2 0 00-2-2H6a2 2 0 01-2-2'],
+                        ['label' => number_format($car->mileage) . ' km',     'icon' => 'M12 8v4l3 3M3 12a9 9 0 1118 0'],
+                        ['label' => $car->transmission . ' transmission',    'icon' => 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z'],
+                        ['label' => $car->fuel_type . ' fuel type',          'icon' => 'M3 21h12M5 21V5a1 1 0 011-1h6a1 1 0 011 1v16M9 9h0m9 12v-7a2 2 0 00-2-2h-1m3 2v5a1 1 0 01-2 0'],
+                        ['label' => $car->engine_capacity . ' engine',       'icon' => 'M13 10V3L4 14h7v7l9-11h-7z'],
+                        ['label' => 'Sourced from ' . $car->country_of_origin, 'icon' => 'M12 21a9 9 0 100-18 9 9 0 000 18zM3.6 9h16.8M3.6 15h16.8M12 3a14.6 14.6 0 010 18 14.6 14.6 0 010-18z'],
                     ];
                 @endphp
-                @foreach ($specs as $spec)
-                    <div class="bg-base-200 rounded-lg px-4 py-3">
-                        <div class="text-xs text-base-content/50 mb-0.5">{{ $spec['label'] }}</div>
-                        <div class="font-medium text-sm">{{ $spec['value'] }}</div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-4 gap-x-8">
+                    @foreach ($specs as $spec)
+                        <div class="flex gap-3 text-[14px] text-gray-700">
+                            <svg class="w-5 h-5 text-gray-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $spec['icon'] }}"/></svg>
+                            {{ $spec['label'] }}
+                        </div>
+                    @endforeach
+                </div>
+
+                @if ($car->special_features)
+                    <div class="mt-6">
+                        <p class="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-2">Special Features</p>
+                        <div class="flex flex-wrap gap-2">
+                            @foreach ($car->special_features as $feature)
+                                <x-ui.badge type="ghost">{{ $feature }}</x-ui.badge>
+                            @endforeach
+                        </div>
                     </div>
-                @endforeach
+                @endif
             </div>
 
-            {{-- Features --}}
-            @if ($car->special_features)
-                <div class="mt-5">
-                    <h3 class="font-semibold mb-2">Special Features</h3>
-                    <div class="flex flex-wrap gap-2">
-                        @foreach ($car->special_features as $feature)
-                            <span class="badge badge-outline">{{ $feature }}</span>
-                        @endforeach
-                    </div>
-                </div>
-            @endif
         </div>
-    </div>
 
-    {{-- Enquire CTA --}}
-    <div class="mt-12 bg-base-200 rounded-2xl p-8 text-center">
-        <h3 class="text-lg font-bold mb-2">Have a question about this car?</h3>
-        <p class="text-base-content/60 text-sm mb-4">Our team will get back to you within 24 hours.</p>
-        <a href="{{ route('contact') }}?car={{ $car->uuid }}" class="btn btn-outline">Send an Enquiry</a>
-    </div>
+        {{-- Right Column --}}
+        <div class="lg:col-span-1 space-y-5">
 
+            {{-- Order CTA --}}
+            <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
+                @auth
+                    <x-ui.button href="#" variant="black" size="lg" class="w-full justify-center">Order This Car</x-ui.button>
+                @else
+                    <x-ui.button href="{{ route('register') }}" variant="black" size="lg" class="w-full justify-center">Create Account to Order</x-ui.button>
+                    <p class="text-[12px] text-center text-gray-400 mt-2">
+                        Already have an account?
+                        <a href="{{ route('login') }}" class="text-gray-900 font-semibold hover:underline">Login</a>
+                    </p>
+                @endauth
+
+                @if ($car->whatsapp_enquiry_url)
+                    <a
+                        href="{{ $car->whatsapp_enquiry_url }}"
+                        target="_blank"
+                        rel="noopener"
+                        class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-[14px] font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+                    >
+                        <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.78-1.66-2.08-.173-.3-.018-.465.13-.615.134-.135.3-.345.45-.523.146-.181.194-.301.297-.496.1-.21.049-.375-.05-.524-.1-.149-.672-1.612-.922-2.206-.246-.579-.497-.5-.683-.51-.172-.008-.371-.01-.571-.01-.2 0-.522.074-.797.359-.273.3-1.045 1.02-1.045 2.475 0 1.453 1.07 2.86 1.22 3.06.149.195 2.06 3.135 5 4.275.71.255 1.265.405 1.696.52.713.18 1.36.15 1.87.09.57-.075 1.767-.72 2.016-1.41.255-.696.255-1.29.18-1.41-.074-.135-.27-.21-.57-.36z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.91.531 3.7 1.453 5.225L2 22l4.95-1.418A9.954 9.954 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.001a7.96 7.96 0 01-4.075-1.119l-.292-.174-3.025.866.866-2.94-.19-.304A7.962 7.962 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
+                        WhatsApp Us
+                    </a>
+                @endif
+            </div>
+
+            {{-- Enquiry form --}}
+            <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
+                <h2 class="text-[18px] font-bold text-gray-900 mb-1">Have a question about this car?</h2>
+                <p class="text-[13px] text-gray-500 mb-4">Our team will get back to you within 24 hours.</p>
+                <livewire:contact.contact-form :car-uuid="$car->uuid" :key="$car->uuid" />
+            </div>
+        </div>
+
+    </div>
 </div>

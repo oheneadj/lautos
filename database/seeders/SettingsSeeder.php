@@ -28,6 +28,9 @@ class SettingsSeeder extends Seeder
             'momo_number'          => '',
             'momo_name'            => 'Livingston Autos',
             'about_us'             => '',
+            'exchange_rate_usd_to_ghs' => '15.00',
+            'whatsapp_number'      => '+233550000000',
+            'demurrage_warning'    => 'Clearing fees and demurrage charges are paid separately at the port and are not included in this price. Delays in clearing your car after arrival may attract additional storage penalties from the shipping line and Ghana customs.',
         ];
 
         foreach ($defaults as $key => $value) {

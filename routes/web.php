@@ -10,11 +10,23 @@ Route::view('/', 'welcome')->name('home');
 // Cars
 Route::get('/cars', fn () => view('pages.cars.index'))->name('cars.index');
 
-Route::get('/cars/{uuid}', function (string $uuid) {
+Route::get('/cars/{slug}', function (string $slug) {
     $car = Car::with(['make', 'carModel', 'carTrim', 'images'])
-        ->where('uuid', $uuid)
+        ->where('slug', $slug)
         ->where('status', CarStatus::Available)
         ->firstOrFail();
+
+    $carTitle = "{$car->year} {$car->make->name} {$car->carModel->name}";
+    $carPrice = number_format($car->price_usd, 0);
+
+    // I set per-car meta here so each listing is uniquely discoverable in search results.
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle("{$carTitle} — \${$carPrice} | Livingston Autos");
+    \Artesaos\SEOTools\Facades\SEOMeta::setDescription("Buy a {$carTitle} for \${$carPrice} (+ shipping), imported from {$car->country_of_origin} by Livingston Autos. {$car->mileage} km, {$car->transmission}, {$car->fuel_type}.");
+    \Artesaos\SEOTools\Facades\OpenGraph::setTitle("{$carTitle} — \${$carPrice}");
+    \Artesaos\SEOTools\Facades\OpenGraph::setDescription("Imported from {$car->country_of_origin} by Livingston Autos.");
+    if ($car->images->first()) {
+        \Artesaos\SEOTools\Facades\OpenGraph::addImage(\Illuminate\Support\Facades\Storage::url($car->images->first()->path));
+    }
 
     return view('pages.cars.show', compact('car'));
 })->name('cars.show');

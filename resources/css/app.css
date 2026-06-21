@@ -1,13 +1,48 @@
 @import "tailwindcss";
-@plugin "flyonui";
-@import "flyonui/variants.css";
-@source "../node_modules/flyonui/flyonui.js";
+
+
 
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
+/* I self-host Outfit so --font-sans actually renders it instead of silently falling back to system-ui. */
+@font-face {
+    font-family: 'Outfit';
+    src: url('/fonts/outfit/Outfit-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/fonts/outfit/Outfit-SemiBold.ttf') format('truetype');
+    font-weight: 600;
+    font-display: swap;
+}
+
+@font-face {
+    font-family: 'Outfit';
+    src: url('/fonts/outfit/Outfit-Bold.ttf') format('truetype');
+    font-weight: 700;
+    font-display: swap;
+}
+
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+
+    /* Custom tokens */
+    --color-primary: #D52518;
+    --color-primary-content: #FFFFFF;
+    --color-secondary: #F4B303;
+    --color-success: #9ABC05;
+    --color-error: #F96015;
+    --color-accent: #FFC926;
+    --color-neutral: #121212;
+    --color-base-100: #FFFFFF;
+    --color-base-200: #F4F4F6;
+    --color-base-300: #E6E8EA;
+    --color-base-content: #1C1A18;
+    --color-info: #3b82f6;
 
     --color-zinc-50: #fafafa;
     --color-zinc-100: #f5f5f5;
@@ -20,4 +55,22 @@
     --color-zinc-800: #262626;
     --color-zinc-900: #171717;
     --color-zinc-950: #0a0a0a;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --color-base-100: #18181b;
+        --color-base-200: #09090b;
+        --color-base-300: #27272a;
+        --color-base-content: #f4f4f5;
+        --color-neutral: #fafafa;
+    }
+}
+
+.dark {
+    --color-base-100: #18181b;
+    --color-base-200: #09090b;
+    --color-base-300: #27272a;
+    --color-base-content: #f4f4f5;
+    --color-neutral: #fafafa;
 }

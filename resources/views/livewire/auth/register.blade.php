@@ -1,50 +1,66 @@
-<x-layouts::auth :title="__('Register')">
+<x-layouts::auth :title="__('Create account')">
     <div class="flex flex-col gap-6">
-        <x-auth-header :title="__('Create an account')" :description="__('Enter your details below to create your account')" />
+        <x-auth-header :title="__('Create your account')" :description="__('Enter your details below to get started')" />
 
-        <!-- Session Status -->
-        <x-auth-session-status class="text-center" :status="session('status')" />
+        <x-auth-session-status :status="session('status')" />
 
-        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-6">
+        <form method="POST" action="{{ route('register.store') }}" class="flex flex-col gap-5">
             @csrf
 
-            <!-- Name -->
-            <div class="space-y-2">
-                <label for="name" class="block text-sm font-medium text-zinc-700">{{ __('Name') }}</label>
-                <input id="name" name="name" type="text" value="{{ old('name') }}" required autofocus autocomplete="name" placeholder="{{ __('Full name') }}" class="input input-bordered w-full" />
-                @error('name') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
-            </div>
+            <x-ui.input
+                label="Full Name"
+                type="text"
+                id="name"
+                name="name"
+                :value="old('name')"
+                :required="true"
+                autofocus
+                autocomplete="name"
+                placeholder="John Mensah"
+                :error="$errors->first('name')"
+            />
 
-            <!-- Email Address -->
-            <div class="space-y-2">
-                <label for="email" class="block text-sm font-medium text-zinc-700">{{ __('Email address') }}</label>
-                <input id="email" name="email" type="email" value="{{ old('email') }}" required autocomplete="email" placeholder="email@example.com" class="input input-bordered w-full" />
-                @error('email') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
-            </div>
+            <x-ui.input
+                label="Email address"
+                type="email"
+                id="email"
+                name="email"
+                :value="old('email')"
+                :required="true"
+                autocomplete="email"
+                placeholder="you@example.com"
+                :error="$errors->first('email')"
+            />
 
-            <!-- Password -->
-            <div class="space-y-2">
-                <label for="password" class="block text-sm font-medium text-zinc-700">{{ __('Password') }}</label>
-                <input id="password" name="password" type="password" required autocomplete="new-password" placeholder="{{ __('Password') }}" class="input input-bordered w-full" />
-                @error('password') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
-            </div>
+            <x-ui.input
+                label="Password"
+                type="password"
+                id="password"
+                name="password"
+                :required="true"
+                autocomplete="new-password"
+                placeholder="Password"
+                :error="$errors->first('password')"
+            />
 
-            <!-- Confirm Password -->
-            <div class="space-y-2">
-                <label for="password_confirmation" class="block text-sm font-medium text-zinc-700">{{ __('Confirm password') }}</label>
-                <input id="password_confirmation" name="password_confirmation" type="password" required autocomplete="new-password" placeholder="{{ __('Confirm password') }}" class="input input-bordered w-full" />
-            </div>
+            <x-ui.input
+                label="Confirm Password"
+                type="password"
+                id="password_confirmation"
+                name="password_confirmation"
+                :required="true"
+                autocomplete="new-password"
+                placeholder="Confirm password"
+            />
 
-            <div class="flex items-center justify-end">
-                <button type="submit" class="btn btn-primary w-full" data-test="register-user-button">
-                    {{ __('Create account') }}
-                </button>
-            </div>
+            <x-ui.button type="submit" variant="primary" size="lg" class="w-full justify-center" data-test="register-user-button">
+                {{ __('Create account') }}
+            </x-ui.button>
         </form>
 
-        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600">
-            <span>{{ __('Already have an account?') }}</span>
-            <a href="{{ route('login') }}" wire:navigate class="text-zinc-900 underline hover:no-underline">{{ __('Log in') }}</a>
+        <div class="text-center pt-6 border-t border-base-content/5">
+            <span class="text-[13px] text-base-content/40 font-medium">Already have an account?</span>
+            <a href="{{ route('login') }}" wire:navigate class="text-primary font-semibold hover:text-primary/80 transition-colors ml-1">Log in</a>
         </div>
     </div>
 </x-layouts::auth>

@@ -1,9 +1,11 @@
 @props([
     'title',
-    'description',
+    'description' => null,
 ])
 
-<div class="flex w-full flex-col text-center">
-    <h1 class="text-xl font-semibold text-zinc-900">{{ $title }}</h1>
-    <p class="text-sm text-zinc-500">{{ $description }}</p>
+<div class="flex flex-col text-center gap-1">
+    <h1 class="text-xl font-semibold text-base-content">{{ $title }}</h1>
+    @if ($description)
+        <p class="text-[14px] text-base-content/50 font-medium leading-relaxed">{{ $description }}</p>
+    @endif
 </div>

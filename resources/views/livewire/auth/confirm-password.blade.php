@@ -7,18 +7,23 @@
 
         <x-auth-session-status class="text-center" :status="session('status')" />
 
-        <form method="POST" action="{{ route('password.confirm.store') }}" class="flex flex-col gap-6">
+        <form method="POST" action="{{ route('password.confirm.store') }}" class="flex flex-col gap-5">
             @csrf
 
-            <div class="space-y-2">
-                <label for="password" class="block text-sm font-medium text-zinc-700">{{ __('Password') }}</label>
-                <input id="password" name="password" type="password" required autocomplete="current-password" placeholder="{{ __('Password') }}" class="input input-bordered w-full" />
-                @error('password') <p class="text-xs text-red-500">{{ $message }}</p> @enderror
-            </div>
+            <x-ui.input
+                label="Password"
+                id="password"
+                name="password"
+                type="password"
+                :required="true"
+                autocomplete="current-password"
+                placeholder="{{ __('Password') }}"
+                :error="$errors->first('password')"
+            />
 
-            <button type="submit" class="btn btn-primary w-full" data-test="confirm-password-button">
+            <x-ui.button type="submit" variant="primary" size="lg" class="w-full justify-center" data-test="confirm-password-button">
                 {{ __('Confirm') }}
-            </button>
+            </x-ui.button>
         </form>
     </div>
 </x-layouts::auth>

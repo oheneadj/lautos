@@ -44,7 +44,7 @@
             <form method="POST" action="{{ route('two-factor.login.store') }}">
                 @csrf
 
-                <div class="space-y-5 text-center">
+                <div class="space-y-5 text-center mt-6">
                     <div x-show="!showRecoveryInput">
                         <div class="flex items-center justify-center my-5">
                             <input
@@ -57,7 +57,7 @@
                                 pattern="[0-9]*"
                                 autocomplete="one-time-code"
                                 placeholder="000000"
-                                class="input input-bordered w-48 text-center text-2xl font-bold tracking-[0.4em] placeholder:tracking-[0.4em] placeholder:text-zinc-300"
+                                class="w-48 px-4 py-3 bg-base-100 border border-base-content/10 rounded-xl text-center text-2xl font-bold tracking-[0.4em] placeholder:tracking-[0.4em] placeholder:text-base-content/20 outline-none focus:border-primary focus:ring-3 focus:ring-primary/20 transition-all duration-150"
                             />
                         </div>
                     </div>
@@ -71,18 +71,18 @@
                                 x-bind:required="showRecoveryInput"
                                 autocomplete="one-time-code"
                                 x-model="recovery_code"
-                                class="input input-bordered w-full"
+                                class="w-full px-[14px] py-[10px] text-[15px] bg-base-100 border border-base-content/10 rounded-lg transition-all duration-150 outline-none placeholder:text-base-content/40 focus:border-primary focus:ring-3 focus:ring-primary/20"
                             />
                         </div>
 
                         @error('recovery_code')
-                            <p class="text-sm text-red-500">{{ $message }}</p>
+                            <p class="text-sm text-error mb-3">{{ $message }}</p>
                         @enderror
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-full">
+                    <x-ui.button type="submit" variant="primary" size="lg" class="w-full justify-center">
                         {{ __('Continue') }}
-                    </button>
+                    </x-ui.button>
                 </div>
 
                 <div class="mt-5 space-x-0.5 text-sm leading-5 text-center">

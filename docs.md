@@ -129,30 +129,30 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 1
 
 **Acceptance Criteria:**
-- [ ] Laravel 13 project created and committed to version control
-- [ ] `.env.example` configured with all required keys (DB, mail, SMS, S3, Redis)
-- [ ] MySQL database created and connected
-- [ ] Tailwind CSS configured via Vite
-- [ ] AlpineJS installed and available globally
-- [ ] Livewire 4 installed and configured
-- [ ] FilamentPHP installed and accessible at `/admin`
-- [ ] FilamentShield installed and configured
-- [ ] Spatie Laravel Permission installed
-- [ ] Laravel Horizon installed and configured
-- [ ] Artesaos SEOTools installed
-- [ ] `develop` and `main` branches created in Git
+- [x] Laravel 13 project created and committed to version control
+- [x] `.env.example` configured with all required keys (DB, mail, SMS, S3, Redis)
+- [x] MySQL database created and connected
+- [x] Tailwind CSS configured via Vite
+- [x] AlpineJS installed and available globally
+- [x] Livewire 4 installed and configured
+- [x] FilamentPHP installed and accessible at `/admin`
+- [x] FilamentShield installed and configured
+- [x] Spatie Laravel Permission installed
+- [x] Laravel Horizon installed and configured
+- [x] Artesaos SEOTools installed
+- [x] `develop` and `main` branches created in Git
 
 **Tasks:**
-- [ ] `T-01-1` Run `laravel new livingston-autos`
-- [ ] `T-01-2` Install and configure Tailwind CSS + Vite
-- [ ] `T-01-3` Install Livewire 4 (`composer require livewire/livewire`)
-- [ ] `T-01-4` Install FilamentPHP (`composer require filament/filament`)
-- [ ] `T-01-5` Install FilamentShield (`composer require bezhansalleh/filament-shield`)
-- [ ] `T-01-6` Install Spatie Permission (`composer require spatie/laravel-permission`)
-- [ ] `T-01-7` Install Laravel Horizon (`composer require laravel/horizon`)
-- [ ] `T-01-8` Install SEOTools (`composer require artesaos/seotools`)
-- [ ] `T-01-9` Configure `.env.example` and `.env` locally
-- [ ] `T-01-10` Run initial migrations, commit scaffold
+- [x] `T-01-1` Run `laravel new livingston-autos`
+- [x] `T-01-2` Install and configure Tailwind CSS + Vite
+- [x] `T-01-3` Install Livewire 4 (`composer require livewire/livewire`)
+- [x] `T-01-4` Install FilamentPHP (`composer require filament/filament`)
+- [x] `T-01-5` Install FilamentShield (`composer require bezhansalleh/filament-shield`)
+- [x] `T-01-6` Install Spatie Permission (`composer require spatie/laravel-permission`)
+- [x] `T-01-7` Install Laravel Horizon (`composer require laravel/horizon`)
+- [x] `T-01-8` Install SEOTools (`composer require artesaos/seotools`)
+- [x] `T-01-9` Configure `.env.example` and `.env` locally
+- [x] `T-01-10` Run initial migrations, commit scaffold
 
 ---
 
@@ -164,24 +164,24 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 1
 
 **Acceptance Criteria:**
-- [ ] All migrations run without error on a fresh database
-- [ ] Foreign key constraints are in place
-- [ ] Soft deletes enabled on `cars`, `orders`, `users`
-- [ ] Timestamps on all tables
+- [x] All migrations run without error on a fresh database
+- [x] Foreign key constraints are in place
+- [x] Soft deletes enabled on `cars`, `orders`, `users`
+- [x] Timestamps on all tables
 
 **Tasks:**
-- [ ] `T-02-1` Create `users` migration (extend default with KYC fields)
-- [ ] `T-02-2` Create `cars` migration
-- [ ] `T-02-3` Create `car_images` migration
-- [ ] `T-02-4` Create `orders` migration
-- [ ] `T-02-5` Create `order_status_histories` migration
-- [ ] `T-02-6` Create `payment_proofs` migration
-- [ ] `T-02-7` Create `settings` migration (key-value store)
-- [ ] `T-02-8` Create `blog_posts` migration
-- [ ] `T-02-9` Create `blog_categories` migration
-- [ ] `T-02-10` Create `notifications` migration (Laravel default)
-- [ ] `T-02-11` Run all Spatie Permission migrations
-- [ ] `T-02-12` Write seeders: roles, permissions, default settings, demo cars
+- [x] `T-02-1` Create `users` migration (extend default with KYC fields)
+- [x] `T-02-2` Create `cars` migration
+- [x] `T-02-3` Create `car_images` migration
+- [x] `T-02-4` Create `orders` migration
+- [x] `T-02-5` Create `order_status_histories` migration
+- [x] `T-02-6` Create `payment_proofs` migration
+- [x] `T-02-7` Create `settings` migration (key-value store)
+- [x] `T-02-8` Create `blog_posts` migration
+- [x] `T-02-9` Create `blog_categories` migration
+- [x] `T-02-10` Create `notifications` migration (Laravel default)
+- [x] `T-02-11` Run all Spatie Permission migrations
+- [x] `T-02-12` Write seeders: roles, permissions, default settings, demo cars
 
 ---
 
@@ -199,21 +199,21 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 1
 
 **Acceptance Criteria:**
-- [ ] Admin login page at `/admin/login`
-- [ ] Incorrect credentials show a clear error message
-- [ ] 2FA is enforced for all admin accounts (TOTP via Google Authenticator)
-- [ ] 2FA setup prompt shown on first login
-- [ ] Admin session expires after 60 minutes of inactivity
-- [ ] Brute-force protection: account locked after 5 failed attempts
-- [ ] Password reset via email works correctly
+- [x] Admin login page at `/admin/login`
+- [x] Incorrect credentials show a clear error message
+- [x] 2FA is enforced for all admin accounts (TOTP via Google Authenticator)
+- [x] 2FA setup prompt shown on first login
+- [x] Admin session expires after 60 minutes of inactivity
+- [x] Brute-force protection: account locked after 5 failed attempts
+- [x] Password reset via email works correctly
 
 **Tasks:**
-- [ ] `T-03-1` Configure Fortify for admin authentication
-- [ ] `T-03-2` Enable TOTP 2FA via Fortify
-- [ ] `T-03-3` Customise Filament login page with Livingston Autos branding
-- [ ] `T-03-4` Configure session timeout (60 min)
-- [ ] `T-03-5` Add rate limiting to login route
-- [ ] `T-03-6` Test password reset flow end-to-end
+- [x] `T-03-1` Configure Fortify for admin authentication
+- [x] `T-03-2` Enable TOTP 2FA via Fortify
+- [x] `T-03-3` Customise Filament login page with Livingston Autos branding
+- [x] `T-03-4` Configure session timeout (60 min)
+- [x] `T-03-5` Add rate limiting to login route
+- [x] `T-03-6` Test password reset flow end-to-end
 
 ---
 
@@ -225,13 +225,13 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 1
 
 **Acceptance Criteria:**
-- [ ] Two default roles exist on fresh install: `super_admin` and `staff_admin`
-- [ ] Super Admin can create new roles from the admin panel
-- [ ] Super Admin can assign/revoke permissions per role
-- [ ] Super Admin can assign roles to admin users
-- [ ] Staff Admin cannot access the Roles & Permissions section
-- [ ] All Filament resources respect permission gates (view, create, edit, delete)
-- [ ] Permission changes take effect immediately without re-login
+- [x] Two default roles exist on fresh install: `super_admin` and `staff_admin`
+- [x] Super Admin can create new roles from the admin panel
+- [x] Super Admin can assign/revoke permissions per role
+- [x] Super Admin can assign roles to admin users
+- [x] Staff Admin cannot access the Roles & Permissions section
+- [x] All Filament resources respect permission gates (view, create, edit, delete)
+- [x] Permission changes take effect immediately without re-login
 
 **Default Permission Matrix:**
 
@@ -248,13 +248,13 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 | System Settings | ✅ | ❌ |
 
 **Tasks:**
-- [ ] `T-04-1` Run FilamentShield setup command to generate policies
-- [ ] `T-04-2` Define all permissions in `ShieldSeeder`
-- [ ] `T-04-3` Seed default `super_admin` and `staff_admin` roles
-- [ ] `T-04-4` Apply `->authorize()` gates to all Filament resources
-- [ ] `T-04-5` Build Roles management page in FilamentShield
-- [ ] `T-04-6` Build Admin Users resource (create/edit staff accounts)
-- [ ] `T-04-7` Test permission matrix for both roles
+- [x] `T-04-1` Run FilamentShield setup command to generate policies
+- [x] `T-04-2` Define all permissions in `ShieldSeeder`
+- [x] `T-04-3` Seed default `super_admin` and `staff_admin` roles
+- [x] `T-04-4` Apply `->authorize()` gates to all Filament resources
+- [x] `T-04-5` Build Roles management page in FilamentShield
+- [x] `T-04-6` Build Admin Users resource (create/edit staff accounts)
+- [x] `T-04-7` Test permission matrix for both roles
 
 ---
 

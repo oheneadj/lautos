@@ -45,6 +45,13 @@ class UserForm
                             ->label(fn (string $operation) => $operation === 'create' ? 'Password' : 'New Password (leave blank to keep)'),
                         Toggle::make('is_admin')
                             ->label('Admin Access'),
+                        // I let a Super Admin assign which staff role this user has —
+                        // canAccessPanel() requires both is_admin and at least one role.
+                        Select::make('roles')
+                            ->relationship('roles', 'name')
+                            ->multiple()
+                            ->preload()
+                            ->columnSpanFull(),
                     ]),
 
                 Section::make('KYC Verification')

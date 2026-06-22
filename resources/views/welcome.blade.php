@@ -16,51 +16,54 @@
                 <p class="text-lg text-white/70 mb-8 font-medium">Browse quality Japanese & Korean imports. Fully
                     inspected, competitively priced, delivered to your door.</p>
 
-                {{-- Embedded Search Form --}}
+                {{-- Embedded Search Form — every field maps to a filter CarCatalogue actually understands. --}}
+                @php
+                    $heroMakes = \App\Models\Make::withCount('cars')->orderByDesc('cars_count')->get();
+                @endphp
                 <form action="{{ route('cars.index') }}" method="GET" class="bg-white rounded-lg p-5 shadow-2xl">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
-                        <div>
-                            <label
-                                class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Condition</label>
-                            <select name="condition"
-                                class="w-full bg-gray-100 border-none rounded-lg p-3 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
-                                <option value="">Any Condition</option>
-                                <option value="new">New</option>
-                                <option value="used">Used</option>
-                            </select>
-                        </div>
                         <div>
                             <label
                                 class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Make</label>
                             <select name="make"
                                 class="w-full bg-gray-100 border-none rounded-lg p-3 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
                                 <option value="">Any Make</option>
-                                <option value="toyota">Toyota</option>
-                                <option value="hyundai">Hyundai</option>
-                                <option value="honda">Honda</option>
-                                <option value="kia">Kia</option>
-                                <option value="lexus">Lexus</option>
-                                <option value="nissan">Nissan</option>
+                                @foreach ($heroMakes as $make)
+                                    <option value="{{ $make->slug }}">{{ $make->name }}</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
                             <label
-                                class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Model</label>
-                            <select name="model"
+                                class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Transmission</label>
+                            <select name="transmission"
                                 class="w-full bg-gray-100 border-none rounded-lg p-3 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
-                                <option value="">Any Model</option>
+                                <option value="">Any Transmission</option>
+                                <option value="Automatic">Automatic</option>
+                                <option value="Manual">Manual</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label
+                                class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Min Year</label>
+                            <select name="min_year"
+                                class="w-full bg-gray-100 border-none rounded-lg p-3 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
+                                <option value="">Any Year</option>
+                                @foreach (range(now()->year, now()->year - 15) as $year)
+                                    <option value="{{ $year }}">{{ $year }}+</option>
+                                @endforeach
                             </select>
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Max
-                                Price</label>
-                            <select name="price"
+                                Price (GHS)</label>
+                            <select name="max_price"
                                 class="w-full bg-gray-100 border-none rounded-lg p-3 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
                                 <option value="">Any Price</option>
-                                <option value="10000">Under $10,000</option>
-                                <option value="20000">Under $20,000</option>
-                                <option value="30000">Under $30,000</option>
-                                <option value="50000">Under $50,000</option>
+                                <option value="100000">Under GHS 100,000</option>
+                                <option value="200000">Under GHS 200,000</option>
+                                <option value="300000">Under GHS 300,000</option>
+                                <option value="500000">Under GHS 500,000</option>
                             </select>
                         </div>
                     </div>

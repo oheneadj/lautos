@@ -110,4 +110,29 @@ class ShipmentTrackingTest extends TestCase
 
         $this->assertSame(OrderStatus::PaymentUploaded, $component->get('order')->status);
     }
+
+    #[Test]
+    public function a_rejected_payment_shows_the_admins_reason_on_the_dashboard(): void
+    {
+        $order = $this->makeOrder(['status' => OrderStatus::PaymentUploaded]);
+        $user = User::find($order->user_id);
+
+        (new \App\Services\OrderService())->rejectPayment($order, 'Amount does not match the invoice.');
+
+        Livewire::actingAs($user)
+            ->test(OrderDetail::class, ['order' => $order->refresh()])
+            ->assertSee('Payment Proof Rejected')
+            ->assertSee('Amount does not match the invoice.');
+    }
+
+    #[Test]
+    public function a_brand_new_order_does_not_show_a_rejection_notice(): void
+    {
+        $order = $this->makeOrder(['status' => OrderStatus::PendingPayment]);
+        $user = User::find($order->user_id);
+
+        Livewire::actingAs($user)
+            ->test(OrderDetail::class, ['order' => $order])
+            ->assertDontSee('Payment Proof Rejected');
+    }
 }

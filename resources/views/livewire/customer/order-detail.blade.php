@@ -24,6 +24,13 @@
             </div>
         </div>
 
+        {{-- Payment Rejection Notice --}}
+        @if ($this->rejectionReason)
+            <x-ui.alert type="danger" title="Payment Proof Rejected">
+                {{ __('Your last payment proof could not be verified') }}: "{{ $this->rejectionReason }}". {{ __('Please upload a new one below.') }}
+            </x-ui.alert>
+        @endif
+
         {{-- Demurrage Warning --}}
         @if ($this->showDemurrageWarning)
             <x-ui.alert type="warning" title="Important: Clearing Required">

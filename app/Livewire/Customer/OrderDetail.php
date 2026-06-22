@@ -137,6 +137,24 @@ class OrderDetail extends Component
         return $this->order->status === OrderStatus::ArrivedInGhana;
     }
 
+    /**
+     * Returns the admin's rejection reason if the order's most recent stage
+     * change was a payment rejection, so the customer sees why their order
+     * is back at Pending Payment instead of just seeing the upload form
+     * reappear with no explanation.
+     */
+    #[Computed]
+    public function rejectionReason(): ?string
+    {
+        $latest = $this->order->statusHistories->first();
+
+        if (! $latest || $latest->status !== OrderStatus::PendingPayment || ! $latest->notes) {
+            return null;
+        }
+
+        return $latest->notes;
+    }
+
     public function render()
     {
         return view('livewire.customer.order-detail');

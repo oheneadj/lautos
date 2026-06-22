@@ -1141,19 +1141,19 @@ Pending Payment
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 8
 
 **Acceptance Criteria:**
-- [ ] Dashboard home at `/dashboard`
-- [ ] Welcome message with customer's first name
-- [ ] KYC status banner: `Complete` (green) or `Incomplete — action needed` (amber, links to profile)
+- [x] Dashboard home at `/dashboard`
+- [x] Welcome message with customer's first name
+- [x] KYC status banner: `Complete` (green) or `Incomplete — action needed` (amber, links to profile)
 - [ ] Summary cards: Total Orders, Orders in Progress, Cars Delivered
 - [ ] Recent orders section: last 3 orders with status and stage progress indicator
-- [ ] `Browse More Cars` CTA button
-- [ ] Page is mobile-responsive
+- [x] `Browse More Cars` CTA button
+- [x] Page is mobile-responsive
 
 **Tasks:**
-- [ ] `T-38-1` Build `Dashboard` Livewire page component
+- [x] `T-38-1` Build `Dashboard` Livewire page component
 - [ ] `T-38-2` Build `KYCStatusBanner` component
-- [ ] `T-38-3` Build summary stat cards
-- [ ] `T-38-4` Build recent orders mini-list component
+- [x] `T-38-3` Build summary stat cards
+- [x] `T-38-4` Build recent orders mini-list component
 
 ---
 

@@ -39,7 +39,7 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
             ->line("We couldn't verify your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}.")
             ->line("Reason: {$this->reason}")
             ->line('Please upload a new payment proof from your dashboard.')
-            ->action('Upload New Proof', route('dashboard.index'))
+            ->action('Upload New Proof', route('dashboard.orders.show', $this->order->uuid))
             ->line('Contact us if you have any questions.');
     }
 }

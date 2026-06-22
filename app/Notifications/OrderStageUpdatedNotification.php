@@ -56,7 +56,7 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
         }
 
         return $mail
-            ->action('Track Your Order', route('dashboard.index'))
+            ->action('Track Your Order', route('dashboard.orders.show', $this->order->uuid))
             ->line('Thank you for choosing Livingston Autos.');
     }
 }

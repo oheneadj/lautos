@@ -31,9 +31,9 @@
                         <a href="{{ route('cars.index', ['make' => $make->slug]) }}" class="flex flex-col items-center gap-3 group w-full">
                             <div class="w-20 h-20 flex items-center justify-center transition-transform group-hover:scale-110">
                                 @if ($make->icon_path)
-                                    <img src="{{ Storage::url($make->icon_path) }}" class="w-full h-full object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" alt="{{ $make->name }} Logo">
+                                    <img src="{{ Storage::url($make->icon_path) }}" class="w-full h-full object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" alt="{{ $make->name }} Logo" loading="lazy">
                                 @else
-                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($make->name) }}&background=transparent&color=374151&bold=true&format=svg" class="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-all" alt="{{ $make->name }} Logo">
+                                    <img src="https://ui-avatars.com/api/?name={{ urlencode($make->name) }}&background=transparent&color=374151&bold=true&format=svg" class="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-all" alt="{{ $make->name }} Logo" loading="lazy">
                                 @endif
                             </div>
                             <span class="text-[13px] font-medium text-gray-500 group-hover:text-gray-900 transition-colors text-center">{{ $make->name }}</span>
@@ -60,7 +60,7 @@
                         <a href="{{ route('blog.show', $post->slug) }}" class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-md transition-shadow group">
                             @if ($post->cover_image_path)
                                 <div class="h-40 overflow-hidden">
-                                    <img src="{{ Storage::url($post->cover_image_path) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                                    <img src="{{ Storage::url($post->cover_image_path) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                                 </div>
                             @endif
                             <div class="p-5">

@@ -179,11 +179,11 @@
                             @if($make->icon_path)
                                 <img src="{{ Storage::url($make->icon_path) }}"
                                     class="w-full h-full object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all"
-                                    alt="{{ $make->name }} Logo">
+                                    alt="{{ $make->name }} Logo" loading="lazy">
                             @else
                                 <img src="https://ui-avatars.com/api/?name={{ urlencode($make->name) }}&background=transparent&color=374151&bold=true&format=svg"
                                     class="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-all"
-                                    alt="{{ $make->name }} Logo">
+                                    alt="{{ $make->name }} Logo" loading="lazy">
                             @endif
                         </div>
                         <span
@@ -401,7 +401,7 @@
                         class="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-shadow duration-300 group flex flex-col">
                         <div class="relative h-[200px] overflow-hidden">
                             <img src="{{ $post['image'] }}" alt="{{ $post['title'] }}"
-                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                                class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy">
                             <div class="absolute top-3 left-3">
                                 <span
                                     class="bg-primary text-white text-[11px] font-bold px-2.5 py-1 rounded-md">{{ $post['category'] }}</span>

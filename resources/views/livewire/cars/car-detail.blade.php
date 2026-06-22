@@ -36,7 +36,7 @@
                         class="relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() > $i ? 'cursor-zoom-in group' : 'cursor-default' }} {{ $i == 4 ? 'col-start-2 row-start-2' : '' }}"
                     >
                         @if ($car->images->count() > $i)
-                            <img src="{{ Storage::url($car->images[$i]->path) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $car->make->name }} thumbnail {{ $i }}">
+                            <img src="{{ Storage::url($car->images[$i]->path) }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" alt="{{ $car->make->name }} thumbnail {{ $i }}" loading="lazy">
                         @endif
 
                         @if ($i == 4 && $car->images->count() > 5)

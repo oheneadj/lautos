@@ -30,7 +30,16 @@ class GenerateSitemap extends Command
             ->add(Url::create(route('blog.index'))->setPriority(0.7))
             ->add(Url::create(route('about'))->setPriority(0.5))
             ->add(Url::create(route('contact'))->setPriority(0.5))
-            ->add(Url::create(route('payment-info'))->setPriority(0.4));
+            ->add(Url::create(route('pages.payment-info'))->setPriority(0.4))
+            ->add(Url::create(route('pages.how-it-works'))->setPriority(0.4))
+            ->add(Url::create(route('pages.shipping'))->setPriority(0.4))
+            ->add(Url::create(route('pages.customs-clearance'))->setPriority(0.4))
+            ->add(Url::create(route('pages.quality-guarantee'))->setPriority(0.4))
+            ->add(Url::create(route('pages.faqs'))->setPriority(0.4))
+            ->add(Url::create(route('pages.refund-policy'))->setPriority(0.3))
+            ->add(Url::create(route('pages.terms'))->setPriority(0.3))
+            ->add(Url::create(route('pages.privacy'))->setPriority(0.3))
+            ->add(Url::create(route('pages.fraud-awareness'))->setPriority(0.4));
 
         Car::where('status', CarStatus::Available)->get()->each(
             fn (Car $car) => $sitemap->add(

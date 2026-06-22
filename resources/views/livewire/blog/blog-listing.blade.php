@@ -30,7 +30,7 @@
                 <a href="{{ route('blog.show', $post->slug) }}" class="bg-base-100 border border-base-content/10 rounded-lg shadow-sm transition-all duration-200 hover:shadow-md group flex flex-col overflow-hidden">
                     @if ($post->featured_image_path)
                         <div class="h-40 overflow-hidden flex-shrink-0">
-                            <img src="{{ Storage::url($post->featured_image_path) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300">
+                            <img src="{{ Storage::url($post->featured_image_path) }}" alt="{{ $post->title }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" loading="lazy">
                         </div>
                     @endif
                     <div class="p-5 flex flex-col flex-1">

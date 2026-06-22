@@ -6,12 +6,15 @@ use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Services\CarService;
+use App\Services\ImageOptimizer;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
 /**
  * Tests syncing a car's photo set from an ordered list of storage paths.
+ * The image optimizer is stubbed here to a no-op — its own behaviour
+ * (resize + WebP conversion) is covered in ImageOptimizerTest.
  */
 class CarServiceTest extends TestCase
 {
@@ -25,12 +28,20 @@ class CarServiceTest extends TestCase
         return Car::factory()->create(['make_id' => $make->id, 'car_model_id' => $carModel->id]);
     }
 
+    private function makeService(): CarService
+    {
+        $optimizer = $this->createMock(ImageOptimizer::class);
+        $optimizer->method('optimize')->willReturnArgument(1);
+
+        return new CarService($optimizer);
+    }
+
     #[Test]
     public function it_creates_an_image_row_per_path_in_order(): void
     {
         $car = $this->makeCar();
 
-        (new CarService())->syncImages($car, ['cars/a.jpg', 'cars/b.jpg', 'cars/c.jpg']);
+        $this->makeService()->syncImages($car, ['cars/a.jpg', 'cars/b.jpg', 'cars/c.jpg']);
 
         $images = $car->images()->orderBy('sort_order')->get();
 
@@ -46,8 +57,8 @@ class CarServiceTest extends TestCase
     {
         $car = $this->makeCar();
 
-        (new CarService())->syncImages($car, ['cars/old-1.jpg', 'cars/old-2.jpg']);
-        (new CarService())->syncImages($car, ['cars/new-1.jpg']);
+        $this->makeService()->syncImages($car, ['cars/old-1.jpg', 'cars/old-2.jpg']);
+        $this->makeService()->syncImages($car, ['cars/new-1.jpg']);
 
         $images = $car->images;
 
@@ -60,8 +71,8 @@ class CarServiceTest extends TestCase
     {
         $car = $this->makeCar();
 
-        (new CarService())->syncImages($car, ['cars/first.jpg', 'cars/second.jpg']);
-        (new CarService())->syncImages($car, ['cars/second.jpg', 'cars/first.jpg']);
+        $this->makeService()->syncImages($car, ['cars/first.jpg', 'cars/second.jpg']);
+        $this->makeService()->syncImages($car, ['cars/second.jpg', 'cars/first.jpg']);
 
         $images = $car->images()->orderBy('sort_order')->get();
 

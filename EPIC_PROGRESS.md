@@ -24,7 +24,7 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 11 | Car Detail Page | 853 | DONE |
 | 12 | Blog (Public) | 890 | DONE |
 | 13 | Static Pages | 942 | DONE |
-| 14 | SEO & Performance | 1007 | PARTIAL — only car detail page wired |
+| 14 | SEO & Performance | 1007 | PARTIAL — 2 ACs deferred, see note below |
 | 15 | Customer Auth & KYC Registration | 1072 | NOT STARTED |
 | 16 | Customer Dashboard Home | 1130 | NOT STARTED |
 | 17 | Order Placement | 1160 | NOT STARTED |
@@ -33,4 +33,8 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 20 | Profile & KYC Management | 1281 | NOT STARTED |
 | 21 | Notifications | 1332 | NOT STARTED |
 
-Last audited: 2026-06-21.
+Last audited: 2026-06-22.
+
+**Epic 14 deferrals:**
+- "Images resized to 1200px gallery / 600px thumbnails" — only the single 1200px-max gallery size is built (`ImageOptimizer`, used by `CarService::syncImages`). There's no separate thumbnail-sized derivative or `CarImage` column to hold one yet; the car card just displays the gallery image at a smaller CSS size. Adding a real second size would need a schema change (a `thumbnail_path` column) — flagging this for a decision rather than building unused output or silently checking the box.
+- "Homepage and catalogue load under 3s on simulated 4G" — not something this environment can rigorously measure (no real network throttling / Lighthouse run available here). WebP conversion, lazy loading, and eager-loaded queries are all in place, which should satisfy this in practice, but it's unverified rather than confirmed.

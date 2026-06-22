@@ -1018,23 +1018,23 @@ Pending Payment
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 6
 
 **Acceptance Criteria:**
-- [ ] All pages have unique meta title and description
-- [ ] Open Graph tags set on all public pages (title, description, image, URL)
-- [ ] `sitemap.xml` generated and updated automatically (include: cars, blog posts, static pages)
-- [ ] `robots.txt` configured (block `/admin`, allow everything else)
-- [ ] Canonical URLs set on all pages
-- [ ] Structured data (JSON-LD) on car detail pages (`Product` schema with price)
-- [ ] All images have descriptive `alt` attributes
-- [ ] H1 tag on every page, logical heading hierarchy (H1 → H2 → H3)
-- [ ] Page URLs are lowercase, hyphenated, no special characters
+- [x] All pages have unique meta title and description
+- [x] Open Graph tags set on all public pages (title, description, image, URL)
+- [x] `sitemap.xml` generated and updated automatically (include: cars, blog posts, static pages)
+- [x] `robots.txt` configured (block `/admin`, allow everything else)
+- [x] Canonical URLs set on all pages
+- [x] Structured data (JSON-LD) on car detail pages (`Product` schema with price)
+- [x] All images have descriptive `alt` attributes
+- [x] H1 tag on every page, logical heading hierarchy (H1 → H2 → H3)
+- [x] Page URLs are lowercase, hyphenated, no special characters
 
 **Tasks:**
-- [ ] `T-34-1` Configure SEOTools defaults in `seotools.php` config
-- [ ] `T-34-2` Set per-page meta in all controllers/Livewire components
-- [ ] `T-34-3` Generate `sitemap.xml` using `spatie/laravel-sitemap`
-- [ ] `T-34-4` Write `robots.txt`
-- [ ] `T-34-5` Add JSON-LD `Product` schema to car detail page
-- [ ] `T-34-6` Audit all images for alt text
+- [x] `T-34-1` Configure SEOTools defaults in `seotools.php` config
+- [x] `T-34-2` Set per-page meta in all controllers/Livewire components
+- [x] `T-34-3` Generate `sitemap.xml` using `spatie/laravel-sitemap`
+- [x] `T-34-4` Write `robots.txt`
+- [x] `T-34-5` Add JSON-LD `Product` schema to car detail page
+- [x] `T-34-6` Audit all images for alt text
 
 ---
 
@@ -1046,20 +1046,20 @@ Pending Payment
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 6
 
 **Acceptance Criteria:**
-- [ ] Car listing images served in WebP format with lazy loading
+- [x] Car listing images served in WebP format with lazy loading
 - [ ] Images resized to appropriate dimensions on upload (max 1200px wide for gallery, 600px for thumbnails) using Laravel's image processing
-- [ ] Route caching and config caching enabled on production
-- [ ] Blade views cached on production
-- [ ] Database queries optimised: no N+1 queries (use `with()` eager loading throughout)
+- [x] Route caching and config caching enabled on production
+- [x] Blade views cached on production
+- [x] Database queries optimised: no N+1 queries (use `with()` eager loading throughout)
 - [ ] Homepage and catalogue load under 3 seconds on simulated 4G
 
 **Tasks:**
-- [ ] `T-35-1` Install `intervention/image` for server-side image resizing on upload
-- [ ] `T-35-2` Convert uploaded images to WebP on save
-- [ ] `T-35-3` Add `loading="lazy"` to all non-above-the-fold images
-- [ ] `T-35-4` Add `php artisan optimize` to deployment script
-- [ ] `T-35-5` Audit all Eloquent queries with Laravel Debugbar in development
-- [ ] `T-35-6` Add eager loading (`with()`) everywhere cars + images are queried
+- [x] `T-35-1` Install `intervention/image` for server-side image resizing on upload
+- [x] `T-35-2` Convert uploaded images to WebP on save
+- [x] `T-35-3` Add `loading="lazy"` to all non-above-the-fold images
+- [x] `T-35-4` Add `php artisan optimize` to deployment script
+- [x] `T-35-5` Audit all Eloquent queries with Laravel Debugbar in development
+- [x] `T-35-6` Add eager loading (`with()`) everywhere cars + images are queried
 
 ---
 

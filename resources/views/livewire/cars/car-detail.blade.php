@@ -174,7 +174,10 @@
                         <p class="text-[11px] font-bold uppercase tracking-widest text-gray-400 mb-2">Special Features</p>
                         <div class="flex flex-wrap gap-2">
                             @foreach ($car->special_features as $feature)
-                                <x-ui.badge type="ghost">{{ $feature }}</x-ui.badge>
+                                <span class="inline-flex items-center gap-1.5 pl-2 pr-3 py-1.5 rounded-full bg-primary text-white text-[13px] font-semibold shadow-sm">
+                                    <svg class="w-3.5 h-3.5 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                                    {{ $feature }}
+                                </span>
                             @endforeach
                         </div>
                     </div>
@@ -189,9 +192,9 @@
             {{-- Order CTA --}}
             <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
                 @auth
-                    <x-ui.button href="#" variant="black" size="lg" class="w-full justify-center">Order This Car</x-ui.button>
+                    <x-ui.button href="#" variant="primary" size="lg" class="w-full justify-center">Order This Car</x-ui.button>
                 @else
-                    <x-ui.button href="{{ route('register') }}" variant="black" size="lg" class="w-full justify-center">Create Account to Order</x-ui.button>
+                    <x-ui.button href="{{ route('register') }}" variant="primary" size="lg" class="w-full justify-center">Create Account to Order</x-ui.button>
                     <p class="text-[12px] text-center text-gray-400 mt-2">
                         Already have an account?
                         <a href="{{ route('login') }}" class="text-gray-900 font-semibold hover:underline">Login</a>

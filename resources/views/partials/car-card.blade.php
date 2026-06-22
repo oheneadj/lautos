@@ -47,7 +47,7 @@
         <div class="flex justify-between items-end mb-1">
             <div class="flex items-baseline gap-2">
                 <span class="text-[26px] font-bold text-gray-900 leading-none">${{ number_format($car->price_usd_cents / 100, 0) }}</span>
-                <span class="text-[14px] font-medium text-emerald-600 flex items-center">
+                <span class="text-[14px] font-medium text-secondary flex items-center">
                     GH₵{{ number_format($car->price_ghs, 0) }}
                 </span>
             </div>
@@ -70,7 +70,7 @@
 
         {{-- Badges --}}
         <div class="flex flex-wrap gap-2 mb-4">
-            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-emerald-50 text-emerald-700 text-[12px] font-medium border border-emerald-100">
+            <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-primary/10 text-primary text-[12px] font-medium border border-primary/20">
                 <svg class="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                 {{ $car->transmission }}
             </span>
@@ -84,7 +84,7 @@
 
         {{-- CTA Button --}}
         <div class="mt-auto">
-            <a href="{{ route('cars.show', $car->slug) }}" class="inline-block bg-[#1a1c23] text-white text-[14px] font-bold py-2.5 px-5 rounded-full hover:bg-black transition-colors">
+            <a href="{{ route('cars.show', $car->slug) }}" class="inline-block bg-primary text-white text-[14px] font-bold py-2.5 px-5 rounded-full hover:bg-primary/90 transition-colors">
                 Check Availability
             </a>
         </div>

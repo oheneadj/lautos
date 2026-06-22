@@ -1,5 +1,5 @@
-<div class="relative mb-6 w-full">
-    <h1 class="text-xl font-semibold text-zinc-900">{{ __('Settings') }}</h1>
-    <p class="text-sm text-zinc-500 mb-6">{{ __('Manage your profile and account settings') }}</p>
-    <div class="h-px bg-zinc-200"></div>
+<div class="mb-6 w-full">
+    <h1 class="text-[28px] font-semibold text-base-content leading-tight">{{ __('Settings') }}</h1>
+    <p class="text-[14px] text-base-content/50 mt-1 mb-6">{{ __('Manage your profile and account settings') }}</p>
+    <div class="h-px bg-base-content/5"></div>
 </div>

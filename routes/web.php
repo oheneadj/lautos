@@ -114,11 +114,40 @@ Route::get('/payment-info', function () {
     \Artesaos\SEOTools\Facades\OpenGraph::setDescription('Bank transfer and Mobile Money details for paying for your car.');
 
     return view('pages.payment-info');
-})->name('payment-info');
+})->name('pages.payment-info');
+
+Route::view('/how-it-works', 'pages.how-it-works')->name('pages.how-it-works');
+Route::view('/shipping-and-delivery', 'pages.shipping')->name('pages.shipping');
+Route::view('/customs-clearance', 'pages.customs-clearance')->name('pages.customs-clearance');
+Route::view('/quality-guarantee', 'pages.quality-guarantee')->name('pages.quality-guarantee');
+Route::view('/faqs', 'pages.faqs')->name('pages.faqs');
+Route::view('/refund-policy', 'pages.refund-policy')->name('pages.refund-policy');
+Route::view('/terms-and-conditions', 'pages.terms')->name('pages.terms');
+Route::view('/privacy-policy', 'pages.privacy')->name('pages.privacy');
+Route::view('/fraud-awareness', 'pages.fraud-awareness')->name('pages.fraud-awareness');
 
 // Authenticated customer area
-Route::middleware(['auth', 'verified'])->group(function () {
-    Route::view('dashboard', 'dashboard')->name('dashboard');
+Route::middleware(['auth'])->group(function () {
+    // We don't force 'verified' on the whole dashboard because we want
+    // users to be able to complete KYC and see the dashboard alerts.
+    // They are just restricted from certain actions if unverified.
+
+    // Auth & Registration Flow
+    Route::get('/register/kyc', \App\Livewire\Auth\CompleteKyc::class)->name('register.kyc');
+
+    Route::prefix('dashboard')->name('dashboard.')->group(function () {
+        Route::get('/', \App\Livewire\Customer\Dashboard::class)->name('index');
+        Route::get('/orders', \App\Livewire\Customer\OrderList::class)->name('orders');
+        Route::get('/orders/{order:uuid}', \App\Livewire\Customer\OrderDetail::class)->name('orders.show');
+        Route::get('/profile', \App\Livewire\Customer\ProfileEdit::class)->name('profile');
+
+        // New Features
+        Route::get('/saved-cars', \App\Livewire\Customer\SavedCars::class)->name('saved-cars');
+        Route::get('/invoices', \App\Livewire\Customer\Invoices::class)->name('invoices');
+        Route::get('/support', \App\Livewire\Customer\SupportTickets::class)->name('support');
+        Route::get('/support/{uuid}', \App\Livewire\Customer\SupportTicketDetail::class)->name('support.show');
+        Route::get('/notifications', \App\Livewire\Customer\NotificationsHub::class)->name('notifications');
+    });
 });
 
 // KYC document previews — only reachable via a signed, short-lived URL generated

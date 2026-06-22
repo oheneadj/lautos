@@ -6,10 +6,10 @@
 
 @php
 $styles = [
-    'success' => ['bg' => 'bg-success/10', 'border' => 'border-l-success', 'text' => 'text-success', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />'],
-    'warning' => ['bg' => 'bg-warning/10', 'border' => 'border-l-warning', 'text' => 'text-warning', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />'],
-    'danger'  => ['bg' => 'bg-error/10',   'border' => 'border-l-error',   'text' => 'text-error',   'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />'],
-    'info'    => ['bg' => 'bg-info/10',    'border' => 'border-l-info',    'text' => 'text-info',    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'],
+    'success' => ['bg' => 'bg-success/20', 'border' => 'border-l-success', 'text' => 'text-success', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />'],
+    'warning' => ['bg' => 'bg-warning/20', 'border' => 'border-l-warning', 'text' => 'text-warning', 'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />'],
+    'danger'  => ['bg' => 'bg-error/20',   'border' => 'border-l-error',   'text' => 'text-error',   'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />'],
+    'info'    => ['bg' => 'bg-info/20',    'border' => 'border-l-info',    'text' => 'text-info',    'icon' => '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />'],
 ];
 $s = $styles[$type] ?? $styles['info'];
 @endphp
@@ -23,10 +23,10 @@ $s = $styles[$type] ?? $styles['info'];
     </svg>
     <div class="flex-1 min-w-0">
         @if ($title)
-            <p class="text-[13px] font-semibold {{ $s['text'] }}">{{ $title }}</p>
+            <p class="text-[14px] font-bold text-base-content">{{ $title }}</p>
         @endif
         @if (!$slot->isEmpty())
-            <p class="text-[13px] font-normal leading-relaxed text-base-content/80">{{ $slot }}</p>
+            <p class="text-[13px] font-medium leading-relaxed text-base-content mt-1">{{ $slot }}</p>
         @endif
     </div>
     @if ($dismissible)

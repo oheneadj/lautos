@@ -25,7 +25,7 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 12 | Blog (Public) | 890 | DONE |
 | 13 | Static Pages | 942 | DONE |
 | 14 | SEO & Performance | 1007 | PARTIAL — 2 ACs deferred, see note below |
-| 15 | Customer Auth & KYC Registration | 1072 | NOT STARTED |
+| 15 | Customer Auth & KYC Registration | 1072 | PARTIAL — S3 storage deferred (same as Epic 3); 1 AC blocked on Epic 17 |
 | 16 | Customer Dashboard Home | 1130 | NOT STARTED |
 | 17 | Order Placement | 1160 | NOT STARTED |
 | 18 | Payment Proof Upload | 1216 | NOT STARTED |
@@ -34,6 +34,11 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 21 | Notifications | 1332 | NOT STARTED |
 
 Last audited: 2026-06-22.
+
+**Epic 15 deferrals:**
+- "KYC documents stored in private S3 storage" / `T-36-4` — stored on a local `private` disk instead (same root as `local`, but with `serve: false` so it's never auto-routed). Same deferral as Epic 3's car-photo storage: no AWS credentials in this environment. Swapping to S3 later is a one-line `FILESYSTEM_DISK`/disk-config change, no code changes needed, since everything already calls `Storage::disk('private')` by name.
+- "Email verification required before placing a first order" — can't be verified yet because order placement (Epic 17) doesn't exist. Revisit when that's built.
+- Fixed in passing: KYC documents were actually being served from the *public* disk in `KycDocumentController` (a leftover from before the `private` disk existed) — this would have made every KYC document reachable through the `public/storage` symlink with no signature check at all. Now fixed and covered by tests.
 
 **Epic 14 deferrals:**
 - "Images resized to 1200px gallery / 600px thumbnails" — only the single 1200px-max gallery size is built (`ImageOptimizer`, used by `CarService::syncImages`). There's no separate thumbnail-sized derivative or `CarImage` column to hold one yet; the car card just displays the gallery image at a smaller CSS size. Adding a real second size would need a schema change (a `thumbnail_path` column) — flagging this for a decision rather than building unused output or silently checking the box.

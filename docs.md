@@ -1083,25 +1083,25 @@ Pending Payment
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 7
 
 **Acceptance Criteria:**
-- [ ] Registration form accessible at `/register`
+- [x] Registration form accessible at `/register`
 - [ ] Fields: Full Name, Email, Phone Number, Password, Confirm Password
-- [ ] After basic registration, customer is taken to a KYC completion step
-- [ ] KYC step fields: Residential Address, Ghana Card Number (required if no TIN), TIN (required if no Ghana Card)
-- [ ] System validates: at least one of Ghana Card Number or TIN is provided
-- [ ] Customer can upload Ghana Card scan (image or PDF, max 5MB)
-- [ ] Customer can upload TIN document (image or PDF, max 5MB, optional if Ghana Card uploaded)
+- [x] After basic registration, customer is taken to a KYC completion step
+- [x] KYC step fields: Residential Address, Ghana Card Number (required if no TIN), TIN (required if no Ghana Card)
+- [x] System validates: at least one of Ghana Card Number or TIN is provided
+- [x] Customer can upload Ghana Card scan (image or PDF, max 5MB)
+- [x] Customer can upload TIN document (image or PDF, max 5MB, optional if Ghana Card uploaded)
 - [ ] KYC documents stored in private S3 storage (not publicly accessible by URL)
 - [ ] Email verification required before placing a first order
-- [ ] KYC step can be skipped and completed later from the dashboard, but a banner reminds the customer
+- [x] KYC step can be skipped and completed later from the dashboard, but a banner reminds the customer
 
 **Tasks:**
 - [ ] `T-36-1` Build `Register` Livewire component (step 1: basic info)
-- [ ] `T-36-2` Build `CompleteKYC` Livewire component (step 2: KYC info + uploads)
-- [ ] `T-36-3` Add GhanaCard + TIN validation rule (at least one required)
+- [x] `T-36-2` Build `CompleteKYC` Livewire component (step 2: KYC info + uploads)
+- [x] `T-36-3` Add GhanaCard + TIN validation rule (at least one required)
 - [ ] `T-36-4` Configure private S3 disk for KYC documents
-- [ ] `T-36-5` Configure email verification (Laravel Fortify)
-- [ ] `T-36-6` Build `KYCReminder` banner component for dashboard
-- [ ] `T-36-7` Encrypt Ghana Card and TIN fields at rest (cast with encryption)
+- [x] `T-36-5` Configure email verification (Laravel Fortify)
+- [x] `T-36-6` Build `KYCReminder` banner component for dashboard
+- [x] `T-36-7` Encrypt Ghana Card and TIN fields at rest (cast with encryption)
 
 ---
 
@@ -1113,17 +1113,17 @@ Pending Payment
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 7
 
 **Acceptance Criteria:**
-- [ ] Login form at `/login`
-- [ ] Failed login shows clear error (do not reveal if email exists — show generic message)
-- [ ] `Remember Me` option available
-- [ ] Password reset via email link works correctly
-- [ ] After login, customer is redirected to their dashboard
-- [ ] After registration + email verification, customer is redirected to dashboard
+- [x] Login form at `/login`
+- [x] Failed login shows clear error (do not reveal if email exists — show generic message)
+- [x] `Remember Me` option available
+- [x] Password reset via email link works correctly
+- [x] After login, customer is redirected to their dashboard
+- [x] After registration + email verification, customer is redirected to dashboard
 
 **Tasks:**
-- [ ] `T-37-1` Build `Login` Livewire component with branded styling
-- [ ] `T-37-2` Configure Fortify password reset
-- [ ] `T-37-3` Set post-login redirect to `/dashboard`
+- [x] `T-37-1` Build `Login` Livewire component with branded styling
+- [x] `T-37-2` Configure Fortify password reset
+- [x] `T-37-3` Set post-login redirect to `/dashboard`
 
 ---
 

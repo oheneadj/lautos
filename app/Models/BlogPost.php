@@ -38,6 +38,16 @@ class BlogPost extends Model
         ];
     }
 
+    /**
+     * The public blog route looks posts up by slug manually, but admin
+     * (Filament) resolves the record via route-model-binding — this is
+     * what actually makes that use uuid instead of the integer id.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     protected static function booted(): void
     {
         static::creating(function (self $post) {

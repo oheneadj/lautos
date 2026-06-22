@@ -62,6 +62,15 @@ class User extends Authenticatable implements FilamentUser
         ];
     }
 
+    /**
+     * I route by uuid everywhere — the integer id must never appear in an
+     * admin URL or anywhere else (CLAUDE.md security rule).
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     protected static function booted(): void
     {
         // I auto-generate uuid on creation so the caller never has to remember.

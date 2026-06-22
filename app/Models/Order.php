@@ -40,6 +40,16 @@ class Order extends Model
         ];
     }
 
+    /**
+     * I route by uuid everywhere — admin links, customer dashboard links,
+     * and Filament's resource URLs all need this, not just the explicit
+     * {order:uuid} route bindings I write by hand.
+     */
+    public function getRouteKeyName(): string
+    {
+        return 'uuid';
+    }
+
     protected static function booted(): void
     {
         static::creating(function (self $order) {

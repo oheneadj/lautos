@@ -94,12 +94,10 @@
                                     <label for="paymentProofFile" class="text-[13px] font-medium text-base-content block mb-1">
                                         {{ __('Receipt / Screenshot') }} <span class="text-error ml-0.5">*</span>
                                     </label>
-                                    <input
-                                        type="file"
-                                        id="paymentProofFile"
+                                    <x-ui.filepond
                                         wire:model="paymentProofFile"
-                                        accept=".jpg,.jpeg,.png,.pdf"
-                                        class="mt-1.5 block w-full text-[13px] text-base-content/60 file:mr-3 file:py-[6px] file:px-3 file:rounded-lg file:border file:border-base-content/10 file:text-[12px] file:font-bold file:bg-base-100 file:text-base-content hover:file:bg-base-200 file:cursor-pointer transition-colors"
+                                        accepts="image/jpeg, image/png, application/pdf"
+                                        maxSize="10MB"
                                     />
                                     @error('paymentProofFile')
                                         <span class="text-xs text-error flex items-center gap-1 mt-1.5">⚠ {{ $message }}</span>

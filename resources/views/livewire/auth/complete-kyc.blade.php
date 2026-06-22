@@ -44,12 +44,10 @@
                 <label for="ghana_card_file" class="text-[13px] font-medium text-base-content">
                     Ghana Card Document <span class="text-base-content/40 font-normal">(optional scan/photo)</span>
                 </label>
-                <input
-                    type="file"
-                    id="ghana_card_file"
+                <x-ui.filepond
                     wire:model="ghana_card_file"
-                    accept=".jpg,.jpeg,.png,.pdf"
-                    class="mt-1 block w-full text-sm text-base-content/60 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-base-200 file:text-base-content/80 hover:file:bg-base-300 file:cursor-pointer"
+                    accepts="image/jpeg, image/png, application/pdf"
+                    maxSize="5MB"
                 />
                 @error('ghana_card_file')
                     <span class="text-xs text-error flex items-center gap-1 mt-1"><span>⚠</span> {{ $message }}</span>
@@ -72,12 +70,10 @@
                 <label for="tin_file" class="text-[13px] font-medium text-base-content">
                     TIN Document <span class="text-base-content/40 font-normal">(optional scan/photo)</span>
                 </label>
-                <input
-                    type="file"
-                    id="tin_file"
+                <x-ui.filepond
                     wire:model="tin_file"
-                    accept=".jpg,.jpeg,.png,.pdf"
-                    class="mt-1 block w-full text-sm text-base-content/60 file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-medium file:bg-base-200 file:text-base-content/80 hover:file:bg-base-300 file:cursor-pointer"
+                    accepts="image/jpeg, image/png, application/pdf"
+                    maxSize="5MB"
                 />
                 @error('tin_file')
                     <span class="text-xs text-error flex items-center gap-1 mt-1"><span>⚠</span> {{ $message }}</span>

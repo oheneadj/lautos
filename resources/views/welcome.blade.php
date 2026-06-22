@@ -347,7 +347,7 @@
                             <div class="text-[13px] text-gray-500">{{ $review['date'] }}</div>
                         </div>
                         <div class="text-[13px] text-gray-500 mb-4">Owns this car</div>
-                        <div class="flex gap-1 text-[#a855f7] mb-4">
+                        <div class="flex gap-1 text-secondary mb-4">
                             @for($i = 0; $i < 5; $i++)
                                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                                     <path

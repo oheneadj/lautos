@@ -19,7 +19,7 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 6 | Blog Management | 575 | DONE |
 | 7 | System Settings | 626 | DONE |
 | 8 | Admin Dashboard Widgets | 692 | DONE |
-| 9 | Homepage | 729 | PARTIAL — US-26 WhatsApp button missing |
+| 9 | Homepage | 729 | DONE |
 | 10 | Car Catalogue | 817 | DONE |
 | 11 | Car Detail Page | 853 | DONE |
 | 12 | Blog (Public) | 890 | DONE |

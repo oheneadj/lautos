@@ -45,16 +45,16 @@
 
             {{-- Logo --}}
             <a href="{{ route('home') }}" class="flex items-center gap-1.5 hover:opacity-80 transition-opacity duration-200">
-                <span class="font-black text-[24px] tracking-tight text-[#8b5cf6]">Livingston<span class="text-gray-900">Autos</span></span>
+                <span class="font-black text-[24px] tracking-tight text-primary">Livingston<span class="text-gray-900">Autos</span></span>
             </a>
 
             {{-- Desktop Nav --}}
             <nav class="hidden lg:flex items-center gap-8">
-                <a href="{{ route('cars.index') }}" class="text-[15px] font-bold text-gray-800 hover:text-[#8b5cf6] transition-colors flex items-center gap-1.5">
+                <a href="{{ route('cars.index') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors flex items-center gap-1.5">
                     Cars for sale 
                     <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </a>
-                <a href="{{ route('blog.index') }}" class="text-[15px] font-bold text-gray-800 hover:text-[#8b5cf6] transition-colors flex items-center gap-1.5">
+                <a href="{{ route('blog.index') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors flex items-center gap-1.5">
                     News & reviews 
                     <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </a>
@@ -62,16 +62,16 @@
 
             {{-- Actions --}}
             <div class="flex items-center gap-6">
-                <button class="hidden md:flex items-center justify-center text-gray-600 hover:text-[#8b5cf6] transition-colors">
+                <button class="hidden md:flex items-center justify-center text-gray-600 hover:text-primary transition-colors">
                     <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
                 </button>
                 @auth
-                    <a href="{{ route('dashboard') }}" class="flex items-center gap-2 text-[15px] font-bold text-gray-800 hover:text-[#8b5cf6] transition-colors">
+                    <a href="{{ route('dashboard.index') }}" class="flex items-center gap-2 text-[15px] font-bold text-gray-800 hover:text-primary transition-colors">
                         <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         Profile
                     </a>
                 @else
-                    <a href="{{ route('login') }}" class="flex items-center gap-2 text-[15px] font-bold text-gray-800 hover:text-[#8b5cf6] transition-colors">
+                    <a href="{{ route('login') }}" class="flex items-center gap-2 text-[15px] font-bold text-gray-800 hover:text-primary transition-colors">
                         <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
                         Sign In
                     </a>
@@ -97,8 +97,8 @@
             x-transition:enter-end="opacity-100 translate-y-0"
             x-cloak
         >
-            <a href="{{ route('cars.index') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-[#8b5cf6]">Cars for sale</a>
-            <a href="{{ route('blog.index') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-[#8b5cf6]">News & reviews</a>
+            <a href="{{ route('cars.index') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">Cars for sale</a>
+            <a href="{{ route('blog.index') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">News & reviews</a>
         </div>
     </header>
 
@@ -309,6 +309,8 @@
             </div>
         </div>
     </footer>
+
+    <x-whatsapp-button />
 
     @livewireScripts
 </body>

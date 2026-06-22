@@ -59,8 +59,8 @@ class Settings extends Page implements HasForms
                     ->columns(2)
                     ->schema([
                         TextInput::make('bank_name')->disabled(fn () => ! Auth::user()?->hasRole('super_admin')),
-                        TextInput::make('account_name')->disabled(fn () => ! Auth::user()?->hasRole('super_admin')),
-                        TextInput::make('account_number')->disabled(fn () => ! Auth::user()?->hasRole('super_admin')),
+                        TextInput::make('bank_account_name')->label('Account Name')->disabled(fn () => ! Auth::user()?->hasRole('super_admin')),
+                        TextInput::make('bank_account_number')->label('Account Number')->disabled(fn () => ! Auth::user()?->hasRole('super_admin')),
                         TextInput::make('momo_number')->label('MoMo Number')->disabled(fn () => ! Auth::user()?->hasRole('super_admin')),
                         TextInput::make('momo_name')->label('MoMo Name')->disabled(fn () => ! Auth::user()?->hasRole('super_admin')),
                     ]),

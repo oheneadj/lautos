@@ -21,8 +21,8 @@ class SettingsService
     public const KEYS = [
         'exchange_rate_usd_to_ghs',
         'bank_name',
-        'account_name',
-        'account_number',
+        'bank_account_name',
+        'bank_account_number',
         'momo_number',
         'momo_name',
         'demurrage_warning',

@@ -740,18 +740,18 @@ Pending Payment
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 5
 
 **Acceptance Criteria:**
-- [ ] Hero section: brand logo, headline, sub-headline, CTA button (`Browse Cars`)
-- [ ] Hero background is a high-quality car image (admin-uploadable or hardcoded initially)
-- [ ] Navigation: Logo, Browse Cars, Blog, About Us, Contact — with WhatsApp icon
-- [ ] Navigation is sticky on scroll
-- [ ] Navigation collapses to hamburger menu on mobile
-- [ ] Page is fully responsive at 375px, 768px, 1280px
+- [x] Hero section: brand logo, headline, sub-headline, CTA button (`Browse Cars`)
+- [x] Hero background is a high-quality car image (admin-uploadable or hardcoded initially)
+- [x] Navigation: Logo, Browse Cars, Blog, About Us, Contact — with WhatsApp icon
+- [x] Navigation is sticky on scroll
+- [x] Navigation collapses to hamburger menu on mobile
+- [x] Page is fully responsive at 375px, 768px, 1280px
 
 **Tasks:**
-- [ ] `T-23-1` Create base Blade layout (`layouts/app.blade.php`) with Tailwind
-- [ ] `T-23-2` Build sticky navigation component
-- [ ] `T-23-3` Build mobile hamburger menu with AlpineJS `x-show` toggle
-- [ ] `T-23-4` Build hero section component
+- [x] `T-23-1` Create base Blade layout (`layouts/app.blade.php`) with Tailwind
+- [x] `T-23-2` Build sticky navigation component
+- [x] `T-23-3` Build mobile hamburger menu with AlpineJS `x-show` toggle
+- [x] `T-23-4` Build hero section component
 
 ---
 
@@ -763,16 +763,16 @@ Pending Payment
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 5
 
 **Acceptance Criteria:**
-- [ ] Homepage shows the 6 most recently added `Available` cars as cards
-- [ ] Each card shows: primary photo, make, model, year, price (USD + GHS), status badge
-- [ ] Cards link to the car detail page
-- [ ] A `View All Cars` button links to the full catalogue
-- [ ] Cards are displayed in a responsive 3-column grid (desktop), 2-column (tablet), 1-column (mobile)
+- [x] Homepage shows the 6 most recently added `Available` cars as cards
+- [x] Each card shows: primary photo, make, model, year, price (USD + GHS), status badge
+- [x] Cards link to the car detail page
+- [x] A `View All Cars` button links to the full catalogue
+- [x] Cards are displayed in a responsive 3-column grid (desktop), 2-column (tablet), 1-column (mobile)
 
 **Tasks:**
-- [ ] `T-24-1` Create `CarCard` Blade component
-- [ ] `T-24-2` Build featured cars section (query 6 latest available)
-- [ ] `T-24-3` Build responsive grid layout with Tailwind
+- [x] `T-24-1` Create `CarCard` Blade component
+- [x] `T-24-2` Build featured cars section (query 6 latest available)
+- [x] `T-24-3` Build responsive grid layout with Tailwind
 
 ---
 
@@ -784,14 +784,14 @@ Pending Payment
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 5
 
 **Acceptance Criteria:**
-- [ ] Section titled `How It Works` or similar
-- [ ] Shows 4–5 steps: Browse → Order → Pay → Track → Receive
-- [ ] Each step has an icon, short title, and 1–2 sentence description
-- [ ] Section is visually distinct from the car listing area
+- [x] Section titled `How It Works` or similar
+- [x] Shows 4–5 steps: Browse → Order → Pay → Track → Receive
+- [x] Each step has an icon, short title, and 1–2 sentence description
+- [x] Section is visually distinct from the car listing area
 
 **Tasks:**
-- [ ] `T-25-1` Build `HowItWorks` Blade component
-- [ ] `T-25-2` Design with Tailwind using brand colours
+- [x] `T-25-1` Build `HowItWorks` Blade component
+- [x] `T-25-2` Design with Tailwind using brand colours
 
 ---
 
@@ -803,14 +803,14 @@ Pending Payment
 **Priority:** Must Have | **Points:** 1 | **Sprint:** 5
 
 **Acceptance Criteria:**
-- [ ] Floating WhatsApp button visible on all pages (fixed bottom-right)
-- [ ] Links to `https://wa.me/{business_number}` with a default message: `Hello, I am interested in your cars.`
-- [ ] Button is accessible (aria-label set)
-- [ ] Button does not obscure important content on mobile
+- [x] Floating WhatsApp button visible on all pages (fixed bottom-right)
+- [x] Links to `https://wa.me/{business_number}` with a default message: `Hello, I am interested in your cars.`
+- [x] Button is accessible (aria-label set)
+- [x] Button does not obscure important content on mobile
 
 **Tasks:**
-- [ ] `T-26-1` Build `WhatsAppButton` Blade component included in `layouts/app.blade.php`
-- [ ] `T-26-2` Load WhatsApp number from settings
+- [x] `T-26-1` Build `WhatsAppButton` Blade component included in `layouts/app.blade.php`
+- [x] `T-26-2` Load WhatsApp number from settings
 
 ---
 

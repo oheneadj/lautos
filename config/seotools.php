@@ -15,7 +15,9 @@ return [
             'description'  => 'Livingston Autos imports quality used vehicles from South Korea and Japan to Ghana, with full shipment tracking and offline payment support.', // set false to total remove
             'separator'    => ' — ',
             'keywords'     => [],
-            'canonical'    => false, // Set to null or 'full' to use Url::full(), set to 'current' to use Url::current(), set false to total remove
+            // I default every page to its own current URL as the canonical — pages that need
+            // something more specific (e.g. stripping query params) can still override it.
+            'canonical'    => 'current',
             'robots'       => false, // Set to 'all', 'none' or any combination of index/noindex and follow/nofollow
         ],
         /*

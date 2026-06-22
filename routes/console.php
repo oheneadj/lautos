@@ -1,6 +1,7 @@
 <?php
 
 use App\Console\Commands\ArchiveSoldCars;
+use App\Console\Commands\GenerateSitemap;
 use App\Console\Commands\PublishScheduledPosts;
 use Illuminate\Foundation\Inspiring;
 use Illuminate\Support\Facades\Artisan;
@@ -14,3 +15,7 @@ Schedule::command(PublishScheduledPosts::class)->everyMinute();
 
 // Ghana doesn't observe DST, so Africa/Accra is always UTC+0 — this runs at midnight Ghana time.
 Schedule::command(ArchiveSoldCars::class)->dailyAt('00:00')->timezone('Africa/Accra');
+
+// I regenerate the sitemap hourly rather than on every car/post save — search engines
+// don't need it that fresh, and this avoids regenerating on every single admin edit.
+Schedule::command(GenerateSitemap::class)->hourly();

@@ -5,10 +5,24 @@ use App\Models\BlogPost;
 use App\Models\Car;
 use Illuminate\Support\Facades\Route;
 
-Route::view('/', 'welcome')->name('home');
+Route::get('/', function () {
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle('Livingston Autos — Quality Japanese & Korean Imports', false);
+    \Artesaos\SEOTools\Facades\SEOMeta::setDescription('Browse quality Japanese & Korean import cars in Ghana, fully inspected and delivered to your door by Livingston Autos.');
+    \Artesaos\SEOTools\Facades\OpenGraph::setTitle('Livingston Autos — Quality Japanese & Korean Imports');
+    \Artesaos\SEOTools\Facades\OpenGraph::setDescription('Browse quality Japanese & Korean import cars in Ghana, fully inspected and delivered to your door.');
+
+    return view('welcome');
+})->name('home');
 
 // Cars
-Route::get('/cars', fn () => view('pages.cars.index'))->name('cars.index');
+Route::get('/cars', function () {
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle('Cars for Sale | Livingston Autos', false);
+    \Artesaos\SEOTools\Facades\SEOMeta::setDescription('Browse our full inventory of quality Japanese & Korean import cars, with prices in USD and GHS.');
+    \Artesaos\SEOTools\Facades\OpenGraph::setTitle('Cars for Sale');
+    \Artesaos\SEOTools\Facades\OpenGraph::setDescription('Browse our full inventory of quality Japanese & Korean import cars.');
+
+    return view('pages.cars.index');
+})->name('cars.index');
 
 Route::get('/cars/{slug}', function (string $slug) {
     $car = Car::with(['make', 'carModel', 'carTrim', 'images'])
@@ -20,7 +34,7 @@ Route::get('/cars/{slug}', function (string $slug) {
     $carPrice = number_format($car->price_usd, 0);
 
     // I set per-car meta here so each listing is uniquely discoverable in search results.
-    \Artesaos\SEOTools\Facades\SEOMeta::setTitle("{$carTitle} — \${$carPrice} | Livingston Autos");
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle("{$carTitle} — \${$carPrice} | Livingston Autos", false);
     \Artesaos\SEOTools\Facades\SEOMeta::setDescription("Buy a {$carTitle} for \${$carPrice} (+ shipping), imported from {$car->country_of_origin} by Livingston Autos. {$car->mileage} km, {$car->transmission}, {$car->fuel_type}.");
     \Artesaos\SEOTools\Facades\OpenGraph::setTitle("{$carTitle} — \${$carPrice}");
     \Artesaos\SEOTools\Facades\OpenGraph::setDescription("Imported from {$car->country_of_origin} by Livingston Autos.");
@@ -28,11 +42,33 @@ Route::get('/cars/{slug}', function (string $slug) {
         \Artesaos\SEOTools\Facades\OpenGraph::addImage(\Illuminate\Support\Facades\Storage::url($car->images->first()->path));
     }
 
+    // Product structured data so search engines can show price/availability directly in results.
+    \Artesaos\SEOTools\Facades\JsonLd::setType('Product');
+    \Artesaos\SEOTools\Facades\JsonLd::setTitle($carTitle);
+    \Artesaos\SEOTools\Facades\JsonLd::setDescription("Imported from {$car->country_of_origin}. {$car->mileage} km, {$car->transmission}, {$car->fuel_type}.");
+    if ($car->images->first()) {
+        \Artesaos\SEOTools\Facades\JsonLd::addImage(\Illuminate\Support\Facades\Storage::url($car->images->first()->path));
+    }
+    \Artesaos\SEOTools\Facades\JsonLd::addValue('offers', [
+        '@type' => 'Offer',
+        'priceCurrency' => 'USD',
+        'price' => number_format($car->price_usd, 2, '.', ''),
+        'availability' => 'https://schema.org/InStock',
+        'url' => route('cars.show', $car->slug),
+    ]);
+
     return view('pages.cars.show', compact('car'));
 })->name('cars.show');
 
 // Blog
-Route::get('/blog', fn () => view('pages.blog.index'))->name('blog.index');
+Route::get('/blog', function () {
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle('Blog | Livingston Autos', false);
+    \Artesaos\SEOTools\Facades\SEOMeta::setDescription('Tips, guides, and news on buying and importing cars to Ghana from Livingston Autos.');
+    \Artesaos\SEOTools\Facades\OpenGraph::setTitle('Livingston Autos Blog');
+    \Artesaos\SEOTools\Facades\OpenGraph::setDescription('Tips, guides, and news on buying and importing cars to Ghana.');
+
+    return view('pages.blog.index');
+})->name('blog.index');
 
 Route::get('/blog/{slug}', function (string $slug) {
     $post = BlogPost::with(['category', 'author'])
@@ -40,15 +76,45 @@ Route::get('/blog/{slug}', function (string $slug) {
         ->where('slug', $slug)
         ->firstOrFail();
 
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle("{$post->title} | Livingston Autos", false);
+    \Artesaos\SEOTools\Facades\SEOMeta::setDescription($post->excerpt);
+    \Artesaos\SEOTools\Facades\OpenGraph::setTitle($post->title);
+    \Artesaos\SEOTools\Facades\OpenGraph::setDescription($post->excerpt);
+    if ($post->cover_image_path) {
+        \Artesaos\SEOTools\Facades\OpenGraph::addImage(\Illuminate\Support\Facades\Storage::url($post->cover_image_path));
+    }
+
     return view('pages.blog.show', compact('post'));
 })->name('blog.show');
 
 // Contact
-Route::view('/contact', 'pages.contact')->name('contact');
+Route::get('/contact', function () {
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle('Contact Us | Livingston Autos', false);
+    \Artesaos\SEOTools\Facades\SEOMeta::setDescription('Reach Livingston Autos by phone, email, or WhatsApp — we reply within 24 hours.');
+    \Artesaos\SEOTools\Facades\OpenGraph::setTitle('Contact Livingston Autos');
+    \Artesaos\SEOTools\Facades\OpenGraph::setDescription('Reach us by phone, email, or WhatsApp — we reply within 24 hours.');
+
+    return view('pages.contact');
+})->name('contact');
 
 // Static pages
-Route::view('/about', 'pages.about')->name('about');
-Route::view('/payment-info', 'pages.payment-info')->name('payment-info');
+Route::get('/about', function () {
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle('About Us | Livingston Autos', false);
+    \Artesaos\SEOTools\Facades\SEOMeta::setDescription('Livingston Autos imports quality used vehicles from Japan and Korea to Ghana, with full shipment tracking and offline payment support.');
+    \Artesaos\SEOTools\Facades\OpenGraph::setTitle('About Livingston Autos');
+    \Artesaos\SEOTools\Facades\OpenGraph::setDescription('Quality Japanese & Korean imports, delivered to your door.');
+
+    return view('pages.about');
+})->name('about');
+
+Route::get('/payment-info', function () {
+    \Artesaos\SEOTools\Facades\SEOMeta::setTitle('Payment Information | Livingston Autos', false);
+    \Artesaos\SEOTools\Facades\SEOMeta::setDescription('Bank transfer and Mobile Money details for paying for your car, plus step-by-step payment instructions.');
+    \Artesaos\SEOTools\Facades\OpenGraph::setTitle('Payment Information');
+    \Artesaos\SEOTools\Facades\OpenGraph::setDescription('Bank transfer and Mobile Money details for paying for your car.');
+
+    return view('pages.payment-info');
+})->name('payment-info');
 
 // Authenticated customer area
 Route::middleware(['auth', 'verified'])->group(function () {

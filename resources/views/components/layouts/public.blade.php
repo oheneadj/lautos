@@ -11,6 +11,7 @@
     @endphp
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
+    {!! JsonLd::generate() !!}
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     @livewireStyles
     <style>

@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\CarStatus;
 use App\Models\BlogPost;
 use App\Models\Car;
 use Illuminate\Support\Facades\Route;
@@ -25,9 +24,12 @@ Route::get('/cars', function () {
 })->name('cars.index');
 
 Route::get('/cars/{slug}', function (string $slug) {
+    // I use the same visibility scope as the catalogue, not a strict Available
+    // check, so a car doesn't 404 the moment someone places an order on it —
+    // it should just show as Reserved/unorderable instead of disappearing.
     $car = Car::with(['make', 'carModel', 'carTrim', 'images'])
         ->where('slug', $slug)
-        ->where('status', CarStatus::Available)
+        ->visibleOnCatalogue()
         ->firstOrFail();
 
     $carTitle = "{$car->year} {$car->make->name} {$car->carModel->name}";

@@ -12,15 +12,46 @@ namespace App\Services;
 
 use App\Enums\CarStatus;
 use App\Enums\OrderStatus;
+use App\Events\OrderPlaced;
 use App\Events\OrderStageUpdated;
 use App\Events\PaymentConfirmed;
 use App\Events\PaymentRejected;
+use App\Models\Car;
 use App\Models\Order;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 use InvalidArgumentException;
 
 class OrderService
 {
+    /**
+     * Places a new order for a car — creates the order in Pending Payment
+     * and immediately reserves the car so it can't be double-booked while
+     * payment is outstanding.
+     */
+    public function createOrder(User $user, Car $car): Order
+    {
+        if ($car->status !== CarStatus::Available) {
+            throw new InvalidArgumentException('This car is no longer available to order.');
+        }
+
+        $order = Order::create([
+            'user_id'                 => $user->id,
+            'car_id'                  => $car->id,
+            'status'                  => OrderStatus::PendingPayment,
+            'price_usd_cents'         => $car->price_usd_cents,
+            'shipping_cost_usd_cents' => $car->shipping_cost_usd_cents,
+        ]);
+
+        $car->update(['status' => CarStatus::Reserved]);
+
+        $this->logHistory($order, OrderStatus::PendingPayment);
+
+        OrderPlaced::dispatch($order);
+
+        return $order;
+    }
+
     /**
      * Confirms a customer's uploaded payment proof — moves the order to
      * Payment Confirmed and reserves the car.

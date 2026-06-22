@@ -134,8 +134,8 @@
                                     <div>
                                         <p class="text-[13px] font-medium text-base-content">{{ basename($proof->file_path) }}</p>
                                         <p class="text-[12px] text-base-content/40 font-medium mt-0.5">{{ $proof->created_at->format('d M, Y h:i A') }}</p>
-                                        @if ($proof->transaction_note)
-                                            <p class="text-[11px] text-base-content/60 mt-1 italic">"{{ $proof->transaction_note }}"</p>
+                                        @if ($proof->note)
+                                            <p class="text-[11px] text-base-content/60 mt-1 italic">"{{ $proof->note }}"</p>
                                         @endif
                                     </div>
                                     <x-ui.badge type="success">{{ __('Submitted') }}</x-ui.badge>

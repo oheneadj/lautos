@@ -1171,25 +1171,25 @@ Pending Payment
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 8
 
 **Acceptance Criteria:**
-- [ ] `Order This Car` button on car detail page redirects guests to login/register
-- [ ] Authenticated customers see an order confirmation modal
-- [ ] Modal shows: car details, price (USD + GHS), shipping cost, basic total
-- [ ] Customer confirms order with a single click
-- [ ] Order is created in `Pending Payment` status
-- [ ] Car status immediately changes to `Reserved`
-- [ ] Customer is redirected to the order detail page
-- [ ] Payment instructions (bank account + MoMo) shown prominently on order page
+- [x] `Order This Car` button on car detail page redirects guests to login/register
+- [x] Authenticated customers see an order confirmation modal
+- [x] Modal shows: car details, price (USD + GHS), shipping cost, basic total
+- [x] Customer confirms order with a single click
+- [x] Order is created in `Pending Payment` status
+- [x] Car status immediately changes to `Reserved`
+- [x] Customer is redirected to the order detail page
+- [x] Payment instructions (bank account + MoMo) shown prominently on order page
 - [ ] Customer receives email + SMS confirmation with payment details
-- [ ] If KYC is incomplete, a warning is shown but order can still be placed (KYC must be completed before delivery)
+- [x] If KYC is incomplete, a warning is shown but order can still be placed (KYC must be completed before delivery)
 
 **Tasks:**
-- [ ] `T-39-1` Build `PlaceOrder` Livewire component/action (modal)
-- [ ] `T-39-2` Create `OrderService::createOrder()` method
-- [ ] `T-39-3` Wire order creation to car status update (Reserved)
-- [ ] `T-39-4` Dispatch `OrderPlaced` event
+- [x] `T-39-1` Build `PlaceOrder` Livewire component/action (modal)
+- [x] `T-39-2` Create `OrderService::createOrder()` method
+- [x] `T-39-3` Wire order creation to car status update (Reserved)
+- [x] `T-39-4` Dispatch `OrderPlaced` event
 - [ ] `T-39-5` Send email + SMS on order placement
-- [ ] `T-39-6` Show payment instructions on order detail page
-- [ ] `T-39-7` Add KYC incomplete warning to order modal
+- [x] `T-39-6` Show payment instructions on order detail page
+- [x] `T-39-7` Add KYC incomplete warning to order modal
 
 ---
 
@@ -1201,15 +1201,15 @@ Pending Payment
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 8
 
 **Acceptance Criteria:**
-- [ ] Orders page at `/dashboard/orders`
-- [ ] Shows all orders with: car photo, make/model, order date, current status, action button
-- [ ] Orders sorted by most recent first
-- [ ] Status shown with colour-coded badges
-- [ ] Each order links to its detail page
+- [x] Orders page at `/dashboard/orders`
+- [x] Shows all orders with: car photo, make/model, order date, current status, action button
+- [x] Orders sorted by most recent first
+- [x] Status shown with colour-coded badges
+- [x] Each order links to its detail page
 
 **Tasks:**
-- [ ] `T-40-1` Build `OrderList` Livewire component
-- [ ] `T-40-2` Scope query to authenticated customer only (`where('user_id', auth()->id())`)
+- [x] `T-40-1` Build `OrderList` Livewire component
+- [x] `T-40-2` Scope query to authenticated customer only (`where('user_id', auth()->id())`)
 
 ---
 

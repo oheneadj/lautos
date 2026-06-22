@@ -72,11 +72,31 @@ class CarDetailPageTest extends TestCase
     }
 
     #[Test]
-    public function a_sold_car_is_not_reachable_on_the_public_page(): void
+    public function a_car_sold_more_than_7_days_ago_is_not_reachable_on_the_public_page(): void
     {
         $car = $this->makeCar(CarStatus::Sold);
+        $car->update(['sold_at' => now()->subDays(10)]);
 
         $this->get(route('cars.show', $car->slug))->assertNotFound();
+    }
+
+    #[Test]
+    public function a_recently_sold_car_is_still_reachable_within_its_7_day_window(): void
+    {
+        $car = $this->makeCar(CarStatus::Sold);
+        $car->update(['sold_at' => now()->subDays(2)]);
+
+        $this->get(route('cars.show', $car->slug))->assertOk();
+    }
+
+    #[Test]
+    public function a_reserved_car_is_still_reachable_but_not_orderable(): void
+    {
+        $car = $this->makeCar(CarStatus::Reserved);
+
+        $this->get(route('cars.show', $car->slug))
+            ->assertOk()
+            ->assertSee('Reserved');
     }
 
     #[Test]

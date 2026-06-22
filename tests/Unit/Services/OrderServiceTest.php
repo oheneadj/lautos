@@ -4,6 +4,7 @@ namespace Tests\Unit\Services;
 
 use App\Enums\CarStatus;
 use App\Enums\OrderStatus;
+use App\Events\OrderPlaced;
 use App\Events\OrderStageUpdated;
 use App\Events\PaymentConfirmed;
 use App\Events\PaymentRejected;
@@ -11,6 +12,7 @@ use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
+use App\Models\User;
 use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -36,6 +38,53 @@ class OrderServiceTest extends TestCase
         $car = Car::factory()->create(['make_id' => $make->id, 'car_model_id' => $carModel->id]);
 
         return Order::factory()->create(array_merge(['car_id' => $car->id], $attributes));
+    }
+
+    private function makeAvailableCar(): Car
+    {
+        $make = Make::firstOrCreate(['name' => 'Toyota']);
+        $carModel = CarModel::firstOrCreate(['make_id' => $make->id, 'name' => 'Corolla']);
+
+        return Car::factory()->create([
+            'make_id' => $make->id,
+            'car_model_id' => $carModel->id,
+            'status' => CarStatus::Available,
+            'price_usd_cents' => 1500000,
+            'shipping_cost_usd_cents' => 200000,
+        ]);
+    }
+
+    #[Test]
+    public function placing_an_order_creates_it_pending_and_reserves_the_car(): void
+    {
+        Event::fake([OrderPlaced::class]);
+
+        $car = $this->makeAvailableCar();
+        $user = User::factory()->create();
+
+        $order = (new OrderService())->createOrder($user, $car);
+
+        $this->assertSame(OrderStatus::PendingPayment, $order->status);
+        $this->assertSame(1500000, $order->price_usd_cents);
+        $this->assertSame(200000, $order->shipping_cost_usd_cents);
+        $this->assertSame(CarStatus::Reserved, $car->refresh()->status);
+        $this->assertDatabaseHas('order_status_histories', [
+            'order_id' => $order->id,
+            'status' => OrderStatus::PendingPayment->value,
+        ]);
+        Event::assertDispatched(OrderPlaced::class);
+    }
+
+    #[Test]
+    public function an_already_reserved_car_cannot_be_ordered_again(): void
+    {
+        $car = $this->makeAvailableCar();
+        $car->update(['status' => CarStatus::Reserved]);
+        $user = User::factory()->create();
+
+        $this->expectException(InvalidArgumentException::class);
+
+        (new OrderService())->createOrder($user, $car);
     }
 
     #[Test]

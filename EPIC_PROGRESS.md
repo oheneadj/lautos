@@ -27,13 +27,19 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 14 | SEO & Performance | 1007 | PARTIAL — 2 ACs deferred, see note below |
 | 15 | Customer Auth & KYC Registration | 1072 | PARTIAL — S3 storage deferred (same as Epic 3); 1 AC blocked on Epic 17 |
 | 16 | Customer Dashboard Home | 1130 | PARTIAL — 2 ACs differ from the literal spec, see note below |
-| 17 | Order Placement | 1160 | NOT STARTED |
+| 17 | Order Placement | 1160 | PARTIAL — SMS confirmation deferred to Epic 21, same as Epics 4/5 |
 | 18 | Payment Proof Upload | 1216 | NOT STARTED |
 | 19 | Shipment Tracking | 1248 | NOT STARTED |
 | 20 | Profile & KYC Management | 1281 | NOT STARTED |
 | 21 | Notifications | 1332 | NOT STARTED |
 
 Last audited: 2026-06-22.
+
+**Epic 17 notes:**
+- This entire epic was missing before I got to it — there was no `PlaceOrder` flow at all, so the otherwise-solid Epic 18/19 work (payment proof upload, shipment tracking) was unreachable. Built `OrderService::createOrder()`, the `OrderPlaced` event/notification, and a modal in `CarDetail` (the existing car-detail Livewire component, rather than a brand-new component — it already owns the `$car` the modal needs).
+- SMS confirmation is deferred to Epic 21, consistent with every other "email + SMS" AC in this project (no Arkesel credentials in this environment).
+- Fixed in passing: the car detail route was excluding `Reserved` cars (404), which would have made every car a customer just ordered disappear from view for everyone else the moment it was reserved, contradicting the catalogue page's own visibility rule. Now uses the same `visibleOnCatalogue` scope as the catalogue.
+- Fixed in passing: `OrderDetail::uploadPaymentProof()` was writing to a `transaction_note` key that doesn't exist on `PaymentProof` (real column is `note`) — the customer's note was being silently dropped on every upload.
 
 **Epic 16 deferrals:**
 - "Summary cards: Total Orders, Orders in Progress, Cars Delivered" — the dashboard's stat cards are Total Orders, Saved Cars, Open Tickets, New Alerts, with an "Order Pipeline" panel breaking orders down by every stage (which covers "in progress" and "delivered" as rows, just not as dedicated top-level cards). This was already built this way before I got to this epic — leaving as-is rather than rebuilding a working page to match the literal AC wording, but flagging the deviation.

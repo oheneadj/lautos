@@ -61,8 +61,8 @@ class OrderDetail extends Component
         );
 
         $this->order->paymentProofs()->create([
-            'file_path'        => $path,
-            'transaction_note' => $this->transactionNote ?: null,
+            'file_path' => $path,
+            'note'      => $this->transactionNote ?: null,
         ]);
 
         // Advance the pipeline if we're still waiting for payment.

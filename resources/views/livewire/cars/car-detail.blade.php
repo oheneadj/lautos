@@ -192,7 +192,11 @@
             {{-- Order CTA --}}
             <div class="bg-white border border-gray-200 rounded-lg p-6 hover:shadow-lg transition-shadow duration-300">
                 @auth
-                    <x-ui.button href="#" variant="primary" size="lg" class="w-full justify-center">Order This Car</x-ui.button>
+                    @if ($car->status->value === 'available')
+                        <x-ui.button type="button" wire:click="openOrderModal" variant="primary" size="lg" class="w-full justify-center">Order This Car</x-ui.button>
+                    @else
+                        <x-ui.button type="button" disabled variant="primary" size="lg" class="w-full justify-center opacity-50 cursor-not-allowed">{{ $car->status->label() }}</x-ui.button>
+                    @endif
                 @else
                     <x-ui.button href="{{ route('register') }}" variant="primary" size="lg" class="w-full justify-center">Create Account to Order</x-ui.button>
                     <p class="text-[12px] text-center text-gray-400 mt-2">
@@ -227,4 +231,49 @@
         </div>
 
     </div>
+
+    {{-- Order Confirmation Modal --}}
+    @auth
+        @if ($showOrderModal)
+            <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4" wire:click.self="closeOrderModal">
+                <div class="bg-white rounded-xl max-w-md w-full p-6 shadow-2xl">
+                    <h2 class="text-[18px] font-bold text-gray-900 mb-4">Confirm Your Order</h2>
+
+                    <div class="space-y-2 text-[14px] text-gray-700 border-y border-gray-100 py-4">
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Car</span>
+                            <span class="font-semibold">{{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Price</span>
+                            <span>${{ number_format($car->price_usd, 0) }} (GHS {{ number_format($car->price_ghs, 0) }})</span>
+                        </div>
+                        <div class="flex justify-between">
+                            <span class="text-gray-500">Shipping</span>
+                            <span>${{ number_format($car->shipping_cost_usd, 0) }} (GHS {{ number_format($car->shipping_cost_ghs, 0) }})</span>
+                        </div>
+                        <div class="flex justify-between font-bold text-gray-900 pt-2 border-t border-gray-100">
+                            <span>Total</span>
+                            <span>${{ number_format($car->total_usd_cents / 100, 0) }} (GHS {{ number_format($car->total_ghs, 0) }})</span>
+                        </div>
+                    </div>
+
+                    @if ($this->kycIncomplete)
+                        <div class="mt-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-[12px] px-3 py-2">
+                            Your KYC isn't complete yet. You can still place this order, but you'll need to finish KYC before your car can be delivered.
+                        </div>
+                    @endif
+
+                    @error('order')
+                        <p class="mt-4 text-[13px] text-red-600">{{ $message }}</p>
+                    @enderror
+
+                    <div class="flex gap-3 mt-6">
+                        <x-ui.button type="button" wire:click="closeOrderModal" variant="secondary" class="w-full justify-center">Cancel</x-ui.button>
+                        <x-ui.button type="button" wire:click="confirmOrder" variant="primary" class="w-full justify-center" wire:loading.attr="disabled">Confirm Order</x-ui.button>
+                    </div>
+                </div>
+            </div>
+        @endif
+    @endauth
 </div>

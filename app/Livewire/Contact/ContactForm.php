@@ -8,6 +8,7 @@
 
 namespace App\Livewire\Contact;
 
+use App\Events\ContactEnquirySubmitted;
 use App\Models\Car;
 use App\Models\ContactEnquiry;
 use Livewire\Component;
@@ -65,13 +66,15 @@ class ContactForm extends Component
             $message = "Regarding: {$car->year} {$car->make->name} {$car->carModel->name}\n\n{$message}";
         }
 
-        ContactEnquiry::create([
+        $enquiry = ContactEnquiry::create([
             'name'    => $this->name,
             'email'   => $this->email,
             'phone'   => $this->phone,
             'subject' => $this->subject,
             'message' => $message,
         ]);
+
+        ContactEnquirySubmitted::dispatch($enquiry);
 
         $this->reset(['name', 'email', 'phone', 'message']);
         $this->submitted = true;

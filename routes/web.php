@@ -46,6 +46,10 @@ Route::get('/blog/{slug}', function (string $slug) {
 // Contact
 Route::view('/contact', 'pages.contact')->name('contact');
 
+// Static pages
+Route::view('/about', 'pages.about')->name('about');
+Route::view('/payment-info', 'pages.payment-info')->name('payment-info');
+
 // Authenticated customer area
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');

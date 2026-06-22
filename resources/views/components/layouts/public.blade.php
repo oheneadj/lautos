@@ -55,8 +55,14 @@
                     <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
                 </a>
                 <a href="{{ route('blog.index') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors flex items-center gap-1.5">
-                    News & reviews 
+                    News & reviews
                     <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </a>
+                <a href="{{ route('about') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors">
+                    About Us
+                </a>
+                <a href="{{ route('contact') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors">
+                    Contact
                 </a>
             </nav>
 
@@ -99,6 +105,8 @@
         >
             <a href="{{ route('cars.index') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">Cars for sale</a>
             <a href="{{ route('blog.index') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">News & reviews</a>
+            <a href="{{ route('about') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">About Us</a>
+            <a href="{{ route('contact') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">Contact</a>
         </div>
     </header>
 

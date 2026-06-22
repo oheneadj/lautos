@@ -23,7 +23,7 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 10 | Car Catalogue | 817 | DONE |
 | 11 | Car Detail Page | 853 | DONE |
 | 12 | Blog (Public) | 890 | DONE |
-| 13 | Static Pages | 942 | PARTIAL — US-31/33 missing |
+| 13 | Static Pages | 942 | DONE |
 | 14 | SEO & Performance | 1007 | PARTIAL — only car detail page wired |
 | 15 | Customer Auth & KYC Registration | 1072 | NOT STARTED |
 | 16 | Customer Dashboard Home | 1130 | NOT STARTED |

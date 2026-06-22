@@ -2,12 +2,14 @@
 
 namespace Tests\Feature\Public;
 
+use App\Events\ContactEnquirySubmitted;
 use App\Livewire\Contact\ContactForm;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\ContactEnquiry;
 use App\Models\Make;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -34,6 +36,20 @@ class ContactFormTest extends TestCase
             'email'   => 'kofi@example.com',
             'subject' => 'General Enquiry',
         ]);
+    }
+
+    #[Test]
+    public function submitting_an_enquiry_dispatches_an_event_so_the_admin_gets_notified(): void
+    {
+        Event::fake([ContactEnquirySubmitted::class]);
+
+        Livewire::test(ContactForm::class)
+            ->set('name', 'Kofi Mensah')
+            ->set('email', 'kofi@example.com')
+            ->set('message', 'I would like to know more about your import process.')
+            ->call('submit');
+
+        Event::assertDispatched(ContactEnquirySubmitted::class);
     }
 
     #[Test]

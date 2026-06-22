@@ -953,13 +953,13 @@ Pending Payment
 **Priority:** Must Have | **Points:** 1 | **Sprint:** 6
 
 **Acceptance Criteria:**
-- [ ] Page at `/about`
-- [ ] Content: company story, sourcing (Korea + Japan), how long in business
-- [ ] Can be updated from the admin settings or hardcoded initially
+- [x] Page at `/about`
+- [x] Content: company story, sourcing (Korea + Japan), how long in business
+- [x] Can be updated from the admin settings or hardcoded initially
 
 **Tasks:**
-- [ ] `T-31-1` Build `About` Blade view
-- [ ] `T-31-2` (Optional) Add editable content fields to admin Settings
+- [x] `T-31-1` Build `About` Blade view
+- [x] `T-31-2` (Optional) Add editable content fields to admin Settings
 
 ---
 
@@ -971,16 +971,16 @@ Pending Payment
 **Priority:** Must Have | **Points:** 1 | **Sprint:** 6
 
 **Acceptance Criteria:**
-- [ ] Page at `/contact`
-- [ ] Shows: phone number, email, WhatsApp link, physical address
-- [ ] Simple contact enquiry form: name, email, phone, message
-- [ ] Form submissions are emailed to Mr. Seth and stored in the database
-- [ ] Success message shown after submission
+- [x] Page at `/contact`
+- [x] Shows: phone number, email, WhatsApp link, physical address
+- [x] Simple contact enquiry form: name, email, phone, message
+- [x] Form submissions are emailed to Mr. Seth and stored in the database
+- [x] Success message shown after submission
 
 **Tasks:**
-- [ ] `T-32-1` Build `Contact` Blade view with Livewire form component
-- [ ] `T-32-2` Create `contact_enquiries` table
-- [ ] `T-32-3` Send contact form submission email to admin
+- [x] `T-32-1` Build `Contact` Blade view with Livewire form component
+- [x] `T-32-2` Create `contact_enquiries` table
+- [x] `T-32-3` Send contact form submission email to admin
 
 ---
 
@@ -992,15 +992,15 @@ Pending Payment
 **Priority:** Must Have | **Points:** 1 | **Sprint:** 6
 
 **Acceptance Criteria:**
-- [ ] Page at `/payment-info`
-- [ ] Shows bank account details and MoMo number (from settings)
-- [ ] Shows clear step-by-step payment instructions
-- [ ] Includes demurrage/clearing warning
-- [ ] Content updates automatically when admin changes payment details in settings
+- [x] Page at `/payment-info`
+- [x] Shows bank account details and MoMo number (from settings)
+- [x] Shows clear step-by-step payment instructions
+- [x] Includes demurrage/clearing warning
+- [x] Content updates automatically when admin changes payment details in settings
 
 **Tasks:**
-- [ ] `T-33-1` Build `PaymentInfo` Blade view
-- [ ] `T-33-2` Load bank and MoMo details from `settings` table
+- [x] `T-33-1` Build `PaymentInfo` Blade view
+- [x] `T-33-2` Load bank and MoMo details from `settings` table
 
 ---
 

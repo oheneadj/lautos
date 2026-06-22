@@ -1259,22 +1259,22 @@ Pending Payment
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 9
 
 **Acceptance Criteria:**
-- [ ] Order detail page at `/dashboard/orders/{id}` shows a vertical timeline
-- [ ] All 9 stages are shown in sequence
-- [ ] Completed stages: shown with a filled check icon and the date/time completed
-- [ ] Current stage: highlighted with a pulsing/active indicator
-- [ ] Upcoming stages: shown greyed out
-- [ ] Estimated arrival date shown prominently once car is `Shipped`
-- [ ] Clearing fee warning banner shown from `Arrived in Ghana` stage onwards
-- [ ] Timeline updates in real-time without page refresh (Livewire polling or push)
+- [x] Order detail page at `/dashboard/orders/{id}` shows a vertical timeline
+- [x] All 9 stages are shown in sequence
+- [x] Completed stages: shown with a filled check icon and the date/time completed
+- [x] Current stage: highlighted with a pulsing/active indicator
+- [x] Upcoming stages: shown greyed out
+- [x] Estimated arrival date shown prominently once car is `Shipped`
+- [x] Clearing fee warning banner shown from `Arrived in Ghana` stage onwards
+- [x] Timeline updates in real-time without page refresh (Livewire polling or push)
 
 **Tasks:**
-- [ ] `T-42-1` Build `ShipmentTimeline` Livewire component
-- [ ] `T-42-2` Query `order_status_histories` to render completed stages with timestamps
-- [ ] `T-42-3` Style timeline with Tailwind (vertical line, icons, states)
-- [ ] `T-42-4` Add Livewire polling (`wire:poll.30s`) to refresh timeline
-- [ ] `T-42-5` Show `estimated_arrival_date` after `Shipped` stage
-- [ ] `T-42-6` Build demurrage warning banner component (shows from `Arrived in Ghana`)
+- [x] `T-42-1` Build `ShipmentTimeline` Livewire component
+- [x] `T-42-2` Query `order_status_histories` to render completed stages with timestamps
+- [x] `T-42-3` Style timeline with Tailwind (vertical line, icons, states)
+- [x] `T-42-4` Add Livewire polling (`wire:poll.30s`) to refresh timeline
+- [x] `T-42-5` Show `estimated_arrival_date` after `Shipped` stage
+- [x] `T-42-6` Build demurrage warning banner component (shows from `Arrived in Ghana`)
 
 ---
 

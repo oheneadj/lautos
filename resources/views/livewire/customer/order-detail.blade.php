@@ -1,4 +1,4 @@
-    <div class="space-y-6">
+    <div class="space-y-6" wire:poll.30s="refreshOrder">
         {{-- Back Link & Header --}}
         <div>
             <a href="{{ route('dashboard.orders') }}" wire:navigate class="inline-flex items-center gap-2 text-[11px] font-bold uppercase tracking-widest text-base-content/60 hover:text-error transition-colors mb-4">

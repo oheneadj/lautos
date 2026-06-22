@@ -29,11 +29,14 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 16 | Customer Dashboard Home | 1130 | PARTIAL — 2 ACs differ from the literal spec, see note below |
 | 17 | Order Placement | 1160 | PARTIAL — SMS confirmation deferred to Epic 21, same as Epics 4/5 |
 | 18 | Payment Proof Upload | 1216 | PARTIAL — S3 + SMS deferred, same pattern as other epics |
-| 19 | Shipment Tracking | 1248 | NOT STARTED |
+| 19 | Shipment Tracking | 1248 | DONE |
 | 20 | Profile & KYC Management | 1281 | NOT STARTED |
 | 21 | Notifications | 1332 | NOT STARTED |
 
 Last audited: 2026-06-22.
+
+**Epic 19 notes:**
+- Everything was already built correctly except live updates — added `wire:poll.30s` plus a `refreshOrder()` method that actually reloads the order and its relations (polling alone doesn't refetch anything; it just re-runs `render()` on stale component state, which I confirmed and fixed). Added test coverage since none existed for this page at all.
 
 **Epic 18 notes:**
 - The component, table, upload validation, multi-proof support, and Pending Payment → Payment Uploaded transition were already correctly built before I got here. I added the admin notification (`PaymentProofUploaded` event, email-only, same SMS deferral as everywhere else) and fixed two bugs: the `transaction_note` → `note` column mismatch (see Epic 17 notes) and missing test coverage (none existed for this component at all).

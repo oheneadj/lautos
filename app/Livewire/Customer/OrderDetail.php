@@ -40,7 +40,18 @@ class OrderDetail extends Component
         // I verify ownership — no customer should access another customer's order.
         abort_unless($order->user_id === Auth::id(), 403);
 
-        $this->order = $order->load([
+        $this->order = $order;
+        $this->refreshOrder();
+    }
+
+    /**
+     * Reloads the order from the database — called on mount and by the
+     * polling timer so an admin advancing the stage shows up here without
+     * the customer needing to refresh the page themselves.
+     */
+    public function refreshOrder(): void
+    {
+        $this->order->refresh()->load([
             'car.make', 'car.carModel', 'car.images',
             'statusHistories', 'paymentProofs',
         ]);

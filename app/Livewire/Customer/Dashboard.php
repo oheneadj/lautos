@@ -78,10 +78,17 @@ class Dashboard extends Component
         return Auth::user()->supportTickets()->where('status', 'Open')->count();
     }
 
+    /**
+     * Sums price + shipping across every order the customer has ever
+     * placed — reuses Order's own total accessor rather than duplicating
+     * that math here.
+     */
     #[Computed]
-    public function unreadNotificationsCount(): int
+    public function totalSpendUsdCents(): int
     {
-        return Auth::user()->unreadNotifications()->count();
+        return Auth::user()->orders()
+            ->get(['price_usd_cents', 'shipping_cost_usd_cents'])
+            ->sum(fn ($order) => $order->total_usd_cents);
     }
 
     #[Computed]

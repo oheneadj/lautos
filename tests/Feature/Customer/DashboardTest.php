@@ -83,4 +83,40 @@ class DashboardTest extends TestCase
         $response->assertSee('Toyota');
         $response->assertDontSee('Hyundai');
     }
+
+    #[Test]
+    public function it_shows_the_lifetime_total_spend_across_all_orders(): void
+    {
+        $car = $this->makeCar();
+        $user = User::factory()->create();
+
+        Order::factory()->create([
+            'user_id' => $user->id,
+            'car_id' => $car->id,
+            'price_usd_cents' => 1500000,
+            'shipping_cost_usd_cents' => 200000,
+        ]);
+        Order::factory()->create([
+            'user_id' => $user->id,
+            'car_id' => $car->id,
+            'price_usd_cents' => 800000,
+            'shipping_cost_usd_cents' => 100000,
+        ]);
+
+        // Total: (15000 + 2000) + (8000 + 1000) = 26000.
+        $this->actingAs($user)
+            ->get(route('dashboard.index'))
+            ->assertSee('$26,000')
+            ->assertSee('TOTAL SPEND');
+    }
+
+    #[Test]
+    public function the_header_button_links_to_the_notifications_page(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('dashboard.index'))
+            ->assertSee(route('dashboard.notifications'), false);
+    }
 }

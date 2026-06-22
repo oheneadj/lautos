@@ -36,6 +36,7 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Payment Confirmed — Your Order is Reserved')
             ->greeting("Hi {$notifiable->name},")
+            ->line("Order reference: {$this->order->reference}")
             ->line("We've confirmed your payment for the {$car->year} {$car->make->name} {$car->carModel->name}.")
             ->line('Your car is now reserved and we will begin processing your purchase.')
             ->action('View Your Order', route('dashboard.index'))

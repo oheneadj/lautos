@@ -12,11 +12,11 @@ use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class PaymentRejectedNotification extends Notification implements ShouldQueue
+class PaymentProofReceivedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Order $order, public string $reason)
+    public function __construct(public Order $order)
     {
     }
 
@@ -33,13 +33,11 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
         $car = $this->order->car;
 
         return (new MailMessage)
-            ->subject('Payment Proof Rejected — Action Needed')
+            ->subject('Payment Proof Received')
             ->greeting("Hi {$notifiable->name},")
             ->line("Order reference: {$this->order->reference}")
-            ->line("We couldn't verify your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}.")
-            ->line("Reason: {$this->reason}")
-            ->line('Please upload a new payment proof from your dashboard.')
-            ->action('Upload New Proof', route('dashboard.index'))
-            ->line('Contact us if you have any questions.');
+            ->line("We've received your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}.")
+            ->line("We're reviewing it now and will confirm your order shortly.")
+            ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid));
     }
 }

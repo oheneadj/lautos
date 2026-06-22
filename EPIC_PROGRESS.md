@@ -31,9 +31,17 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 18 | Payment Proof Upload | 1216 | PARTIAL — S3 + SMS deferred, same pattern as other epics |
 | 19 | Shipment Tracking | 1248 | DONE |
 | 20 | Profile & KYC Management | 1281 | DONE (S3 storage backend deferred, same as elsewhere) |
-| 21 | Notifications | 1332 | NOT STARTED |
+| 21 | Notifications | 1332 | PARTIAL — US-46 (SMS) entirely deferred, no Arkesel credentials; T-45-4 (dedicated queue) deferred, see note |
 
 Last audited: 2026-06-22.
+
+**Epic 21 notes:**
+- All 8 notification-matrix events have a working email: Order Placed, Payment Proof Received (added — was completely missing), Payment Confirmed, Car Shipped/Arrived/Delivered (one `OrderStageUpdatedNotification`, now with stage-specific demurrage and delivered content), Payment Rejected, KYC Resubmission Requested (already existed).
+- Used Laravel's Notification classes (not raw `Mailable`s) — they're the idiomatic fit given every other epic already wires its events through `Notification`/listener pairs, and `toMail()` gives identical branded output without a second parallel class hierarchy.
+- Published and rebranded Laravel's default markdown mail theme (`resources/views/vendor/mail`) — buttons/links now use the site's red (`#D52518`) instead of Laravel's default black, verified by sending a real email through Mailpit and checking the rendered HTML.
+- Added `Order::reference` (a short `LA-XXXXXXXX` code from the uuid) and included it in every customer-facing order email, satisfying the "order reference" AC — there was no human-readable order number anywhere before this.
+- **T-45-4 (route notification mail onto a dedicated `notifications` queue) is deliberately NOT done.** The only active queue worker in this environment runs `queue:work --queue=default` (Herd-managed, outside this codebase's control). Adding a second queue name here would mean every email silently stops sending — nothing would ever pick the jobs up — which is a worse outcome than leaving it on `default`. This should be revisited together with whoever manages the production queue worker process.
+- US-46 (SMS) is fully deferred — no Arkesel/Hubtel credentials in this environment, same as every other SMS AC in this project (Epics 4, 5, 15, 17, 18, 20 all have the identical deferral).
 
 **Epic 20 notes:**
 - KYC status display, the resubmission-reason banner, and the document upload itself were already built correctly. Added: a Full Name field (was missing entirely), a link to the existing `/settings/security` page for password changes rather than duplicating Fortify's already-correct, secured password logic into this component (DRY), old-file deletion on document replacement, and the `KycDocumentsSubmitted` admin notification (email only — SMS deferred to Epic 21 as usual).

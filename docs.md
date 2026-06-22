@@ -1343,12 +1343,12 @@ Pending Payment
 **Priority:** Must Have | **Points:** 5 | **Sprint:** 9
 
 **Acceptance Criteria:**
-- [ ] Emails sent for all events in the notification matrix (see SRS Section 5.6)
-- [ ] Emails use a branded Livingston Autos HTML template
-- [ ] Emails include: order reference, car details, current status, next steps
-- [ ] Payment instruction email includes full bank and MoMo details
-- [ ] Clearing warning email includes the demurrage warning text
-- [ ] All emails have a plain-text fallback
+- [x] Emails sent for all events in the notification matrix (see SRS Section 5.6)
+- [x] Emails use a branded Livingston Autos HTML template
+- [x] Emails include: order reference, car details, current status, next steps
+- [x] Payment instruction email includes full bank and MoMo details
+- [x] Clearing warning email includes the demurrage warning text
+- [x] All emails have a plain-text fallback
 
 **Notification Events:**
 | Event | Template |
@@ -1363,11 +1363,11 @@ Pending Payment
 | KYC Resubmission Requested | Reason + link to profile |
 
 **Tasks:**
-- [ ] `T-45-1` Build branded HTML email layout template
-- [ ] `T-45-2` Create Mailable class for each notification event (8 mailables)
-- [ ] `T-45-3` Create and register Listeners for each event
+- [x] `T-45-1` Build branded HTML email layout template
+- [x] `T-45-2` Create Mailable class for each notification event (8 mailables)
+- [x] `T-45-3` Create and register Listeners for each event
 - [ ] `T-45-4` Queue all mail jobs on the `notifications` queue
-- [ ] `T-45-5` Test each email with Mailtrap in development
+- [x] `T-45-5` Test each email with Mailtrap in development
 
 ---
 

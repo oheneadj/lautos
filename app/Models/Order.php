@@ -67,6 +67,16 @@ class Order extends Model
     }
 
     /**
+     * There's no separate sequential order number — I use the first 8
+     * characters of the uuid as a short, human-quotable reference for
+     * emails and support conversations.
+     */
+    public function getReferenceAttribute(): string
+    {
+        return 'LA-'.strtoupper(substr($this->uuid, 0, 8));
+    }
+
+    /**
      * There's no separate payment_status column — payment is just the first
      * three stages of the same pipeline. I derive a label here so the admin
      * table/filters can show it as its own concept without duplicating state.

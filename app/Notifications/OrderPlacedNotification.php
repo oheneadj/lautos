@@ -38,6 +38,7 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
         return (new MailMessage)
             ->subject('Order Confirmed — Payment Instructions')
             ->greeting("Hi {$notifiable->name},")
+            ->line("Order reference: {$this->order->reference}")
             ->line("We've reserved the {$car->year} {$car->make->name} {$car->carModel->name} for you. Total due: \${$total}.")
             ->line('Bank: '.Setting::get('bank_name', '—').' · Account: '.Setting::get('account_number', '—').' ('.Setting::get('account_name', '—').')')
             ->line('Mobile Money: '.Setting::get('momo_number', '—').' ('.Setting::get('momo_name', '—').')')

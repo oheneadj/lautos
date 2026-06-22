@@ -13,6 +13,7 @@
 namespace App\Livewire\Customer;
 
 use App\Enums\KycStatus;
+use App\Events\KycDocumentsSubmitted;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
@@ -28,6 +29,7 @@ class ProfileEdit extends Component
 {
     use WithFileUploads;
 
+    public string $name = '';
     public string $phone = '';
     public string $address = '';
     public string $ghana_card_number = '';
@@ -45,6 +47,7 @@ class ProfileEdit extends Component
     public function mount(): void
     {
         $user = Auth::user();
+        $this->name = $user->name;
         $this->phone = $user->phone ?? '';
         $this->address = $user->address ?? '';
         $this->ghana_card_number = $user->ghana_card_number ?? '';
@@ -54,6 +57,7 @@ class ProfileEdit extends Component
     public function updateProfile(): void
     {
         $this->validate([
+            'name'               => ['required', 'string', 'max:255'],
             'address'            => ['required', 'string', 'max:500'],
             'ghana_card_number'  => ['required_without:tin_number', 'nullable', 'string', 'max:50'],
             'tin_number'         => ['required_without:ghana_card_number', 'nullable', 'string', 'max:50'],
@@ -67,12 +71,20 @@ class ProfileEdit extends Component
         $user = Auth::user();
 
         $data = [
+            'name'              => $this->name,
             'address'           => $this->address,
             'ghana_card_number' => $this->ghana_card_number ?: null,
             'tin_number'        => $this->tin_number ?: null,
         ];
 
+        $newDocumentUploaded = (bool) $this->ghana_card_file || (bool) $this->tin_file;
+
         if ($this->ghana_card_file) {
+            // I delete the old file first so a replaced document doesn't leave an orphaned upload behind.
+            if ($user->ghana_card_path) {
+                Storage::disk('private')->delete($user->ghana_card_path);
+            }
+
             $data['ghana_card_path'] = $this->ghana_card_file->store(
                 "kyc/{$user->uuid}",
                 'private'
@@ -80,20 +92,30 @@ class ProfileEdit extends Component
         }
 
         if ($this->tin_file) {
+            if ($user->tin_path) {
+                Storage::disk('private')->delete($user->tin_path);
+            }
+
             $data['tin_path'] = $this->tin_file->store(
                 "kyc/{$user->uuid}",
                 'private'
             );
         }
 
-        // If the user's KYC was previously rejected, re-submitting documents
-        // resets the status back to Pending for admin review.
-        if ($user->kyc_status === KycStatus::NeedsResubmission) {
+        // Any new document upload puts KYC back in front of an admin for review,
+        // regardless of whether it was previously rejected or never reviewed yet.
+        if ($newDocumentUploaded) {
             $data['kyc_status'] = KycStatus::Pending;
             $data['kyc_notes'] = null;
         }
 
         $user->update($data);
+
+        if ($newDocumentUploaded) {
+            KycDocumentsSubmitted::dispatch($user);
+        }
+
+        $this->reset(['ghana_card_file', 'tin_file']);
 
         $this->dispatch('toast', message: __('Profile and KYC updated successfully.'));
     }

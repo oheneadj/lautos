@@ -1292,16 +1292,16 @@ Pending Payment
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 9
 
 **Acceptance Criteria:**
-- [ ] Profile page at `/dashboard/profile`
-- [ ] Customer can edit: Full Name, Phone Number, Residential Address
-- [ ] Customer can change their password (current password required)
-- [ ] Email address cannot be changed (sensitive — requires separate verification flow)
-- [ ] Success message shown on save
+- [x] Profile page at `/dashboard/profile`
+- [x] Customer can edit: Full Name, Phone Number, Residential Address
+- [x] Customer can change their password (current password required)
+- [x] Email address cannot be changed (sensitive — requires separate verification flow)
+- [x] Success message shown on save
 
 **Tasks:**
-- [ ] `T-43-1` Build `EditProfile` Livewire component
+- [x] `T-43-1` Build `EditProfile` Livewire component
 - [ ] `T-43-2` Build `ChangePassword` Livewire component
-- [ ] `T-43-3` Add form validation
+- [x] `T-43-3` Add form validation
 
 ---
 
@@ -1313,19 +1313,19 @@ Pending Payment
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 9
 
 **Acceptance Criteria:**
-- [ ] KYC section on profile page shows current document status
-- [ ] Customer can upload/replace Ghana Card document
-- [ ] Customer can upload/replace TIN document
-- [ ] After upload, KYC status resets to `Pending Review`
-- [ ] Admin is notified of new KYC submission
-- [ ] If KYC was `Needs Resubmission`, the admin's reason is shown so customer knows what to fix
+- [x] KYC section on profile page shows current document status
+- [x] Customer can upload/replace Ghana Card document
+- [x] Customer can upload/replace TIN document
+- [x] After upload, KYC status resets to `Pending Review`
+- [x] Admin is notified of new KYC submission
+- [x] If KYC was `Needs Resubmission`, the admin's reason is shown so customer knows what to fix
 
 **Tasks:**
-- [ ] `T-44-1` Build `KYCDocuments` Livewire component
-- [ ] `T-44-2` Show current KYC status and admin feedback if resubmission requested
-- [ ] `T-44-3` Handle file replacement (delete old, store new in private S3)
-- [ ] `T-44-4` Reset `kyc_status` to `pending` on new upload
-- [ ] `T-44-5` Notify admin of new KYC submission
+- [x] `T-44-1` Build `KYCDocuments` Livewire component
+- [x] `T-44-2` Show current KYC status and admin feedback if resubmission requested
+- [x] `T-44-3` Handle file replacement (delete old, store new in private S3)
+- [x] `T-44-4` Reset `kyc_status` to `pending` on new upload
+- [x] `T-44-5` Notify admin of new KYC submission
 
 ---
 

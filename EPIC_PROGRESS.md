@@ -30,10 +30,14 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 17 | Order Placement | 1160 | PARTIAL — SMS confirmation deferred to Epic 21, same as Epics 4/5 |
 | 18 | Payment Proof Upload | 1216 | PARTIAL — S3 + SMS deferred, same pattern as other epics |
 | 19 | Shipment Tracking | 1248 | DONE |
-| 20 | Profile & KYC Management | 1281 | NOT STARTED |
+| 20 | Profile & KYC Management | 1281 | DONE (S3 storage backend deferred, same as elsewhere) |
 | 21 | Notifications | 1332 | NOT STARTED |
 
 Last audited: 2026-06-22.
+
+**Epic 20 notes:**
+- KYC status display, the resubmission-reason banner, and the document upload itself were already built correctly. Added: a Full Name field (was missing entirely), a link to the existing `/settings/security` page for password changes rather than duplicating Fortify's already-correct, secured password logic into this component (DRY), old-file deletion on document replacement, and the `KycDocumentsSubmitted` admin notification (email only — SMS deferred to Epic 21 as usual).
+- T-44-3's "private S3" wording — delete-old/store-new is implemented; the storage backend is the local `private` disk, same deferral as Epics 3/15/18.
 
 **Epic 19 notes:**
 - Everything was already built correctly except live updates — added `wire:poll.30s` plus a `refreshOrder()` method that actually reloads the order and its relations (polling alone doesn't refetch anything; it just re-runs `render()` on stale component state, which I confirmed and fixed). Added test coverage since none existed for this page at all.

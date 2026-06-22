@@ -71,6 +71,28 @@
         <div class="bg-white border border-base-content/5 shadow-sm rounded-xl overflow-hidden">
             <form wire:submit="updateProfile">
                 <div class="p-6 md:p-8 space-y-8">
+                    {{-- Basic Info Section --}}
+                    <div>
+                        <h2 class="text-[11px] font-bold uppercase tracking-widest text-base-content/60 border-b border-base-content/5 pb-2.5 mb-6">
+                            {{ __('Basic Info') }}
+                        </h2>
+                        <div class="grid gap-5">
+                            <div>
+                                <x-ui.input
+                                    label="{{ __('Full Name') }}"
+                                    id="name"
+                                    wire:model="name"
+                                    error="{{ $errors->first('name') }}"
+                                    required
+                                />
+                            </div>
+                            <p class="text-[12px] text-base-content/40">
+                                {{ __('To change your password, visit') }}
+                                <a href="{{ route('security.edit') }}" wire:navigate class="font-semibold text-primary hover:underline">{{ __('Security Settings') }}</a>.
+                            </p>
+                        </div>
+                    </div>
+
                     {{-- Contact Info Section --}}
                     <div>
                         <h2 class="text-[11px] font-bold uppercase tracking-widest text-base-content/60 border-b border-base-content/5 pb-2.5 mb-6">

@@ -1227,20 +1227,20 @@ Pending Payment
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 8
 
 **Acceptance Criteria:**
-- [ ] Upload option visible on order detail page when status is `Pending Payment`
-- [ ] Customer can upload image (JPG, PNG) or PDF, max 10MB
-- [ ] Customer can add a short note (e.g. transaction reference number)
-- [ ] Multiple proofs can be uploaded for the same order
-- [ ] After upload, order status changes to `Payment Uploaded`
+- [x] Upload option visible on order detail page when status is `Pending Payment`
+- [x] Customer can upload image (JPG, PNG) or PDF, max 10MB
+- [x] Customer can add a short note (e.g. transaction reference number)
+- [x] Multiple proofs can be uploaded for the same order
+- [x] After upload, order status changes to `Payment Uploaded`
 - [ ] Admin receives email + SMS notification that a proof has been uploaded
 - [ ] Uploaded proofs stored in private S3 storage
-- [ ] Upload button is hidden once status moves past `Payment Uploaded`
+- [x] Upload button is hidden once status moves past `Payment Uploaded`
 
 **Tasks:**
-- [ ] `T-41-1` Build `UploadPaymentProof` Livewire component
-- [ ] `T-41-2` Create `payment_proofs` table (order_id, file_path, note, uploaded_at)
+- [x] `T-41-1` Build `UploadPaymentProof` Livewire component
+- [x] `T-41-2` Create `payment_proofs` table (order_id, file_path, note, uploaded_at)
 - [ ] `T-41-3` Store proofs in private S3 disk
-- [ ] `T-41-4` Update order status to `Payment Uploaded` on first successful upload
+- [x] `T-41-4` Update order status to `Payment Uploaded` on first successful upload
 - [ ] `T-41-5` Dispatch `PaymentProofUploaded` event → notify admin via email + SMS
 
 ---

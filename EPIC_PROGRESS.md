@@ -28,12 +28,16 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 15 | Customer Auth & KYC Registration | 1072 | PARTIAL — S3 storage deferred (same as Epic 3); 1 AC blocked on Epic 17 |
 | 16 | Customer Dashboard Home | 1130 | PARTIAL — 2 ACs differ from the literal spec, see note below |
 | 17 | Order Placement | 1160 | PARTIAL — SMS confirmation deferred to Epic 21, same as Epics 4/5 |
-| 18 | Payment Proof Upload | 1216 | NOT STARTED |
+| 18 | Payment Proof Upload | 1216 | PARTIAL — S3 + SMS deferred, same pattern as other epics |
 | 19 | Shipment Tracking | 1248 | NOT STARTED |
 | 20 | Profile & KYC Management | 1281 | NOT STARTED |
 | 21 | Notifications | 1332 | NOT STARTED |
 
 Last audited: 2026-06-22.
+
+**Epic 18 notes:**
+- The component, table, upload validation, multi-proof support, and Pending Payment → Payment Uploaded transition were already correctly built before I got here. I added the admin notification (`PaymentProofUploaded` event, email-only, same SMS deferral as everywhere else) and fixed two bugs: the `transaction_note` → `note` column mismatch (see Epic 17 notes) and missing test coverage (none existed for this component at all).
+- S3 deferred for the same reason as Epics 3/15 (no AWS credentials here) — already using the `private` disk by name, so swapping later is a config change, not a code change.
 
 **Epic 17 notes:**
 - This entire epic was missing before I got to it — there was no `PlaceOrder` flow at all, so the otherwise-solid Epic 18/19 work (payment proof upload, shipment tracking) was unreachable. Built `OrderService::createOrder()`, the `OrderPlaced` event/notification, and a modal in `CarDetail` (the existing car-detail Livewire component, rather than a brand-new component — it already owns the `$car` the modal needs).

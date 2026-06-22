@@ -10,6 +10,7 @@
 namespace App\Livewire\Customer;
 
 use App\Enums\OrderStatus;
+use App\Events\PaymentProofUploaded;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
@@ -72,6 +73,8 @@ class OrderDetail extends Component
 
         $this->reset(['paymentProofFile', 'transactionNote']);
         $this->order->refresh();
+
+        PaymentProofUploaded::dispatch($this->order);
 
         $this->dispatch('toast', message: __('Payment proof uploaded successfully.'));
     }

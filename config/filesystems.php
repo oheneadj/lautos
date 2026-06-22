@@ -38,6 +38,19 @@ return [
             'report' => false,
         ],
 
+        // KYC documents and payment proofs live here — same root as "local",
+        // just named explicitly so it's obvious at every call site that the
+        // file is never reachable through the public/storage symlink.
+        // serve is off so Laravel doesn't also register a /storage route for
+        // it — it's only ever read through our own signed controller.
+        'private' => [
+            'driver' => 'local',
+            'root' => storage_path('app/private'),
+            'serve' => false,
+            'throw' => false,
+            'report' => false,
+        ],
+
         'public' => [
             'driver' => 'local',
             'root' => storage_path('app/public'),

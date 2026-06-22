@@ -26,10 +26,10 @@ class KycDocumentController extends Controller
             default => abort(404),
         };
 
-        if (empty($path) || ! Storage::disk('public')->exists($path)) {
+        if (empty($path) || ! Storage::disk('private')->exists($path)) {
             abort(404);
         }
 
-        return Storage::disk('public')->response($path);
+        return Storage::disk('private')->response($path);
     }
 }

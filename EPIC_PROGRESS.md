@@ -17,7 +17,7 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 4 | Order Management | 389 | PARTIAL — SMS half of "email + SMS" ACs deferred to Epic 21 (no Arkesel credentials yet); email side is built and tested |
 | 5 | User & KYC Management | 526 | PARTIAL — SMS half of KYC resubmission notification deferred to Epic 21; email side built and tested |
 | 6 | Blog Management | 575 | DONE |
-| 7 | System Settings | 626 | PARTIAL — no admin UI for settings |
+| 7 | System Settings | 626 | DONE |
 | 8 | Admin Dashboard Widgets | 692 | NOT STARTED |
 | 9 | Homepage | 729 | PARTIAL — US-26 WhatsApp button missing |
 | 10 | Car Catalogue | 817 | DONE |

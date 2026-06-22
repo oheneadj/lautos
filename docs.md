@@ -637,18 +637,18 @@ Pending Payment
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 4
 
 **Acceptance Criteria:**
-- [ ] Exchange rate setting is accessible in the admin Settings page
-- [ ] Only users with the `update_exchange_rate` permission can change it
-- [ ] Changing the rate immediately updates all GHS prices shown on the public catalogue and customer dashboard
-- [ ] Previous rate and timestamp of last update are shown for reference
-- [ ] Change is logged in `activity_log` with the admin's name and both old/new values
+- [x] Exchange rate setting is accessible in the admin Settings page
+- [x] Only users with the `update_exchange_rate` permission can change it
+- [x] Changing the rate immediately updates all GHS prices shown on the public catalogue and customer dashboard
+- [x] Previous rate and timestamp of last update are shown for reference
+- [x] Change is logged in `activity_log` with the admin's name and both old/new values
 
 **Tasks:**
-- [ ] `T-19-1` Create `settings` table with key-value structure (or use `spatie/laravel-settings`)
-- [ ] `T-19-2` Build Settings page in Filament
-- [ ] `T-19-3` Add permission gate for exchange rate field
-- [ ] `T-19-4` Cache exchange rate and bust cache on update
-- [ ] `T-19-5` Log exchange rate changes via activity log
+- [x] `T-19-1` Create `settings` table with key-value structure (or use `spatie/laravel-settings`)
+- [x] `T-19-2` Build Settings page in Filament
+- [x] `T-19-3` Add permission gate for exchange rate field
+- [x] `T-19-4` Cache exchange rate and bust cache on update
+- [x] `T-19-5` Log exchange rate changes via activity log
 
 ---
 
@@ -660,15 +660,15 @@ Pending Payment
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 4
 
 **Acceptance Criteria:**
-- [ ] Settings page includes: bank name, account name, account number, MoMo number, MoMo name
-- [ ] Only Super Admin can update payment details
-- [ ] Updated details immediately reflect on customer order pages and the Payment Info public page
-- [ ] Changes are logged in `activity_log`
+- [x] Settings page includes: bank name, account name, account number, MoMo number, MoMo name
+- [x] Only Super Admin can update payment details
+- [x] Updated details immediately reflect on customer order pages and the Payment Info public page
+- [x] Changes are logged in `activity_log`
 
 **Tasks:**
-- [ ] `T-20-1` Add payment details keys to settings table seeder
-- [ ] `T-20-2` Add payment details fields to Filament Settings page
-- [ ] `T-20-3` Apply Super Admin only gate to these fields
+- [x] `T-20-1` Add payment details keys to settings table seeder
+- [x] `T-20-2` Add payment details fields to Filament Settings page
+- [x] `T-20-3` Apply Super Admin only gate to these fields
 
 ---
 
@@ -680,12 +680,12 @@ Pending Payment
 **Priority:** Should Have | **Points:** 1 | **Sprint:** 4
 
 **Acceptance Criteria:**
-- [ ] Admin can edit the demurrage warning text shown on order pages and the calculator (Phase 2)
-- [ ] Changes reflect immediately without a deployment
+- [x] Admin can edit the demurrage warning text shown on order pages and the calculator (Phase 2)
+- [x] Changes reflect immediately without a deployment
 
 **Tasks:**
-- [ ] `T-21-1` Add `demurrage_warning` key to settings table
-- [ ] `T-21-2` Add textarea field to Filament Settings page
+- [x] `T-21-1` Add `demurrage_warning` key to settings table
+- [x] `T-21-2` Add textarea field to Filament Settings page
 
 ---
 

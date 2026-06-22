@@ -11,6 +11,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\PermissionRegistrar;
 
@@ -30,6 +31,10 @@ class RolesAndPermissionsSeeder extends Seeder
     {
         // I reset the permission cache before seeding so stale entries don't cause conflicts.
         app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        // This permission isn't tied to a Filament resource, so Shield never generates it —
+        // I seed it directly. Super Admin always passes via the Gate::before bypass.
+        Permission::firstOrCreate(['name' => 'update_exchange_rate', 'guard_name' => 'web']);
 
         Role::firstOrCreate(['name' => 'super_admin', 'guard_name' => 'web']);
         Role::firstOrCreate(['name' => 'customer',    'guard_name' => 'web']);

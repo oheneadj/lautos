@@ -35,7 +35,7 @@ class KycResubmissionRequestedNotification extends Notification implements Shoul
             ->greeting("Hi {$notifiable->name},")
             ->line('We need you to resubmit your identity documents before we can verify your account.')
             ->line("Reason: {$this->reason}")
-            ->action('Update Your Documents', route('dashboard'))
+            ->action('Update Your Documents', route('dashboard.index'))
             ->line('Contact us if you have any questions.');
     }
 }

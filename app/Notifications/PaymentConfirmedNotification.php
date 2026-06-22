@@ -38,7 +38,7 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
             ->greeting("Hi {$notifiable->name},")
             ->line("We've confirmed your payment for the {$car->year} {$car->make->name} {$car->carModel->name}.")
             ->line('Your car is now reserved and we will begin processing your purchase.')
-            ->action('View Your Order', route('dashboard'))
+            ->action('View Your Order', route('dashboard.index'))
             ->line('Thank you for choosing Livingston Autos.');
     }
 }

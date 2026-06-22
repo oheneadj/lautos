@@ -703,20 +703,20 @@ Pending Payment
 **Priority:** Should Have | **Points:** 3 | **Sprint:** 4
 
 **Acceptance Criteria:**
-- [ ] Dashboard shows stat cards: Total Available Cars, Total Reserved Cars, Total Sold Cars (all time)
-- [ ] Dashboard shows: Orders Requiring Action (Payment Uploaded — awaiting confirmation)
-- [ ] Dashboard shows: Orders by Stage (count per shipment stage)
-- [ ] Dashboard shows: Recently Added Cars (last 5, with thumbnail and status)
-- [ ] Dashboard shows: Recent Orders (last 10, with customer, car, status)
-- [ ] All stats respect the logged-in user's permissions (staff see only what they manage)
+- [x] Dashboard shows stat cards: Total Available Cars, Total Reserved Cars, Total Sold Cars (all time)
+- [x] Dashboard shows: Orders Requiring Action (Payment Uploaded — awaiting confirmation)
+- [x] Dashboard shows: Orders by Stage (count per shipment stage)
+- [x] Dashboard shows: Recently Added Cars (last 5, with thumbnail and status)
+- [x] Dashboard shows: Recent Orders (last 10, with customer, car, status)
+- [x] All stats respect the logged-in user's permissions (staff see only what they manage)
 
 **Tasks:**
-- [ ] `T-22-1` Build `CarStatsWidget` (available / reserved / sold counts)
-- [ ] `T-22-2` Build `ActionRequiredWidget` (orders pending payment confirmation)
-- [ ] `T-22-3` Build `OrdersByStageWidget` (counts per stage)
-- [ ] `T-22-4` Build `RecentOrdersTable` widget
-- [ ] `T-22-5` Build `RecentCarsTable` widget
-- [ ] `T-22-6` Arrange widgets in a responsive grid layout
+- [x] `T-22-1` Build `CarStatsWidget` (available / reserved / sold counts)
+- [x] `T-22-2` Build `ActionRequiredWidget` (orders pending payment confirmation)
+- [x] `T-22-3` Build `OrdersByStageWidget` (counts per stage)
+- [x] `T-22-4` Build `RecentOrdersTable` widget
+- [x] `T-22-5` Build `RecentCarsTable` widget
+- [x] `T-22-6` Arrange widgets in a responsive grid layout
 
 ---
 

@@ -537,15 +537,15 @@ Pending Payment
 **Priority:** Must Have | **Points:** 2 | **Sprint:** 3
 
 **Acceptance Criteria:**
-- [ ] Table shows: name, email, phone, registration date, KYC status, number of orders
-- [ ] Searchable by name, email, phone
-- [ ] Filterable by KYC status (Verified / Pending / Incomplete)
-- [ ] Clicking a customer opens their detail view
+- [x] Table shows: name, email, phone, registration date, KYC status, number of orders
+- [x] Searchable by name, email, phone
+- [x] Filterable by KYC status (Verified / Pending / Incomplete)
+- [x] Clicking a customer opens their detail view
 
 **Tasks:**
-- [ ] `T-15-1` Build `CustomerResource` in Filament
-- [ ] `T-15-2` Add KYC status column and filter
-- [ ] `T-15-3` Link to customer detail page
+- [x] `T-15-1` Build `CustomerResource` in Filament
+- [x] `T-15-2` Add KYC status column and filter
+- [x] `T-15-3` Link to customer detail page
 
 ---
 
@@ -557,17 +557,17 @@ Pending Payment
 **Priority:** Must Have | **Points:** 3 | **Sprint:** 3
 
 **Acceptance Criteria:**
-- [ ] Customer detail page shows all profile fields and KYC document uploads
-- [ ] Ghana Card image / PDF can be previewed inline
-- [ ] TIN document can be previewed inline
-- [ ] Admin can mark KYC as `Verified` or `Needs Resubmission`
+- [x] Customer detail page shows all profile fields and KYC document uploads
+- [x] Ghana Card image / PDF can be previewed inline
+- [x] TIN document can be previewed inline
+- [x] Admin can mark KYC as `Verified` or `Needs Resubmission`
 - [ ] If `Needs Resubmission`, admin enters a reason; customer receives email + SMS notification
-- [ ] KYC status is shown on the customer list table
+- [x] KYC status is shown on the customer list table
 
 **Tasks:**
-- [ ] `T-16-1` Add `kyc_status` and `kyc_notes` to `users` table
-- [ ] `T-16-2` Build KYC document viewer in customer detail page
-- [ ] `T-16-3` Add `VerifyKYC` and `RequestResubmission` Filament actions
+- [x] `T-16-1` Add `kyc_status` and `kyc_notes` to `users` table
+- [x] `T-16-2` Build KYC document viewer in customer detail page
+- [x] `T-16-3` Add `VerifyKYC` and `RequestResubmission` Filament actions
 - [ ] `T-16-4` Wire KYC resubmission notification (email + SMS)
 
 ---

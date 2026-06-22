@@ -51,4 +51,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::view('dashboard', 'dashboard')->name('dashboard');
 });
 
+// KYC document previews — only reachable via a signed, short-lived URL generated
+// by the admin Customer detail page. Never link the storage path directly.
+Route::get('/admin/kyc-documents/{user:uuid}/{type}', [\App\Http\Controllers\Admin\KycDocumentController::class, 'show'])
+    ->middleware(['signed', 'auth'])
+    ->name('admin.kyc-documents.show');
+
 require __DIR__.'/settings.php';

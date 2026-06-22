@@ -15,7 +15,7 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 2 | Authentication & Roles/Permissions | 188 | DONE |
 | 3 | Car Management | 261 | PARTIAL — T-05-8 (S3 storage) deliberately deferred, no AWS credentials in this environment |
 | 4 | Order Management | 389 | PARTIAL — SMS half of "email + SMS" ACs deferred to Epic 21 (no Arkesel credentials yet); email side is built and tested |
-| 5 | User & KYC Management | 526 | NOT STARTED |
+| 5 | User & KYC Management | 526 | PARTIAL — SMS half of KYC resubmission notification deferred to Epic 21; email side built and tested |
 | 6 | Blog Management | 575 | DONE |
 | 7 | System Settings | 626 | PARTIAL — no admin UI for settings |
 | 8 | Admin Dashboard Widgets | 692 | NOT STARTED |

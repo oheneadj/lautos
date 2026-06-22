@@ -20,8 +20,10 @@ test('new users can register', function () {
         'password_confirmation' => 'password',
     ]);
 
+    // I redirect to the KYC step rather than the dashboard so customers
+    // provide Ghana Card / TIN details right after signing up (US-36).
     $response->assertSessionHasNoErrors()
-        ->assertRedirect(route('dashboard', absolute: false));
+        ->assertRedirect(route('register.kyc', absolute: false));
 
     $this->assertAuthenticated();
 });

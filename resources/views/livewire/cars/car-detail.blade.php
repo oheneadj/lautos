@@ -199,11 +199,15 @@
                 @endauth
 
                 @if ($car->whatsapp_enquiry_url)
+                    {{-- I use WhatsApp's own brand green here, same as the floating button —
+                         it should read as "the WhatsApp button", not a themed UI element. --}}
                     <a
                         href="{{ $car->whatsapp_enquiry_url }}"
                         target="_blank"
                         rel="noopener"
-                        class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl border border-gray-200 py-3 text-[14px] font-semibold text-gray-900 hover:bg-gray-50 transition-colors"
+                        aria-label="Chat with us on WhatsApp about this car"
+                        class="mt-3 w-full inline-flex items-center justify-center gap-2 rounded-xl py-3 text-[14px] font-semibold text-white transition-opacity hover:opacity-90"
+                        style="background-color: #25D366;"
                     >
                         <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.498 14.382c-.301-.15-1.767-.867-2.04-.966-.273-.101-.473-.15-.673.15-.197.295-.771.964-.944 1.162-.175.195-.349.21-.646.075-.3-.15-1.263-.465-2.403-1.485-.888-.795-1.484-1.78-1.66-2.08-.173-.3-.018-.465.13-.615.134-.135.3-.345.45-.523.146-.181.194-.301.297-.496.1-.21.049-.375-.05-.524-.1-.149-.672-1.612-.922-2.206-.246-.579-.497-.5-.683-.51-.172-.008-.371-.01-.571-.01-.2 0-.522.074-.797.359-.273.3-1.045 1.02-1.045 2.475 0 1.453 1.07 2.86 1.22 3.06.149.195 2.06 3.135 5 4.275.71.255 1.265.405 1.696.52.713.18 1.36.15 1.87.09.57-.075 1.767-.72 2.016-1.41.255-.696.255-1.29.18-1.41-.074-.135-.27-.21-.57-.36z"/><path d="M12 2C6.477 2 2 6.477 2 12c0 1.91.531 3.7 1.453 5.225L2 22l4.95-1.418A9.954 9.954 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.001a7.96 7.96 0 01-4.075-1.119l-.292-.174-3.025.866.866-2.94-.19-.304A7.962 7.962 0 014 12c0-4.411 3.589-8 8-8s8 3.589 8 8-3.589 8-8 8z"/></svg>
                         WhatsApp Us

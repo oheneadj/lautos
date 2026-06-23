@@ -2,12 +2,16 @@
 
 namespace Tests\Feature\Customer;
 
+use App\Enums\BlogStatus;
 use App\Enums\KycStatus;
 use App\Enums\OrderStatus;
+use App\Models\BlogCategory;
+use App\Models\BlogPost;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
+use App\Models\SupportTicket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -118,5 +122,86 @@ class DashboardTest extends TestCase
         $this->actingAs($user)
             ->get(route('dashboard.index'))
             ->assertSee(route('dashboard.notifications'), false);
+    }
+
+    #[Test]
+    public function it_only_shows_the_authenticated_customers_own_saved_cars(): void
+    {
+        $myCar = $this->makeCar();
+
+        $otherMake = Make::create(['name' => 'Hyundai']);
+        $otherModel = CarModel::create(['make_id' => $otherMake->id, 'name' => 'Tucson']);
+        $otherCar = Car::factory()->create(['make_id' => $otherMake->id, 'car_model_id' => $otherModel->id]);
+
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        $user->savedCars()->attach($myCar->id);
+        $otherUser->savedCars()->attach($otherCar->id);
+
+        $response = $this->actingAs($user)->get(route('dashboard.index'));
+
+        $response->assertOk();
+        $response->assertSee('Toyota');
+        $response->assertDontSee('Hyundai');
+    }
+
+    #[Test]
+    public function it_only_shows_the_authenticated_customers_own_support_tickets(): void
+    {
+        $user = User::factory()->create();
+        $otherUser = User::factory()->create();
+
+        SupportTicket::create(['user_id' => $user->id, 'subject' => 'My shipment is delayed', 'status' => 'Open']);
+        SupportTicket::create(['user_id' => $otherUser->id, 'subject' => 'Someone elses ticket', 'status' => 'Open']);
+
+        $response = $this->actingAs($user)->get(route('dashboard.index'));
+
+        $response->assertOk();
+        $response->assertSee('My shipment is delayed');
+        $response->assertDontSee('Someone elses ticket');
+    }
+
+    #[Test]
+    public function it_shows_the_two_most_recent_published_blog_posts(): void
+    {
+        $category = BlogCategory::create(['name' => 'Import Guides', 'slug' => 'import-guides']);
+        $author = User::factory()->create();
+
+        BlogPost::create([
+            'blog_category_id' => $category->id,
+            'author_id' => $author->id,
+            'title' => 'How to Clear Customs',
+            'excerpt' => 'A guide.',
+            'body' => 'Body.',
+            'status' => BlogStatus::Published,
+            'published_at' => now()->subDay(),
+        ]);
+        BlogPost::create([
+            'blog_category_id' => $category->id,
+            'author_id' => $author->id,
+            'title' => 'Still a Draft',
+            'excerpt' => 'A guide.',
+            'body' => 'Body.',
+            'status' => BlogStatus::Draft,
+        ]);
+
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard.index'));
+
+        $response->assertOk();
+        $response->assertSee('How to Clear Customs');
+        $response->assertDontSee('Still a Draft');
+    }
+
+    #[Test]
+    public function the_duplicate_recent_orders_table_is_gone(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('dashboard.index'))
+            ->assertDontSee('All Recent Orders');
     }
 }

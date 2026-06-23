@@ -13,6 +13,7 @@ namespace App\Livewire\Customer;
 
 use App\Enums\KycStatus;
 use App\Enums\OrderStatus;
+use App\Models\BlogPost;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
@@ -119,6 +120,34 @@ class Dashboard extends Component
         }
 
         return $stages;
+    }
+
+    #[Computed]
+    public function recentSavedCars()
+    {
+        return Auth::user()->savedCars()
+            ->with(['make', 'carModel', 'images'])
+            ->latest('car_user.created_at')
+            ->take(3)
+            ->get();
+    }
+
+    #[Computed]
+    public function activeTickets()
+    {
+        return Auth::user()->supportTickets()
+            ->latest()
+            ->take(3)
+            ->get();
+    }
+
+    #[Computed]
+    public function latestBlogPosts()
+    {
+        return BlogPost::published()
+            ->latest('published_at')
+            ->take(2)
+            ->get();
     }
 
     public function render()

@@ -102,12 +102,20 @@
     </div>
 
     {{-- Main Car Title --}}
-    <h1 class="text-3xl font-bold text-gray-900 mb-8">
-        {{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}
-        @if ($car->carTrim)
-            <span class="text-gray-400 font-normal">{{ $car->carTrim->name }}</span>
+    <div class="flex flex-wrap items-center gap-3 mb-8">
+        <h1 class="text-3xl font-bold text-gray-900">
+            {{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}
+            @if ($car->carTrim)
+                <span class="text-gray-400 font-normal">{{ $car->carTrim->name }}</span>
+            @endif
+        </h1>
+        @if ($this->reservationsCount > 0)
+            <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-50 text-rose-600 text-[13px] font-medium border border-rose-100" title="{{ $this->reservationsCount }} {{ Str::plural('person', $this->reservationsCount) }} reserved this car">
+                <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H11.25m4.5 0v-.001A4.5 4.5 0 0 0 11.25 9h-1.5a4.5 4.5 0 0 0-4.5 4.5v3.75m9 0H7.5" /></svg>
+                {{ $this->reservationsCount }} {{ Str::plural('Reservation', $this->reservationsCount) }}
+            </span>
         @endif
-    </h1>
+    </div>
 
     {{-- Two Column Layout --}}
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-12">
@@ -197,6 +205,10 @@
                     @else
                         <x-ui.button type="button" disabled variant="primary" size="lg" class="w-full justify-center opacity-50 cursor-not-allowed">{{ $car->status->label() }}</x-ui.button>
                     @endif
+
+                    <div class="mt-3">
+                        <livewire:cars.save-car-button :car="$car" :with-label="true" :key="'save-car-detail-'.$car->uuid" />
+                    </div>
                 @else
                     <x-ui.button href="{{ route('register') }}" variant="primary" size="lg" class="w-full justify-center">Create Account to Order</x-ui.button>
                     <p class="text-[12px] text-center text-gray-400 mt-2">
@@ -258,7 +270,14 @@
                         </div>
                     </div>
 
-                    @if ($this->kycIncomplete)
+                    @if ($this->emailUnverified)
+                        <div class="mt-4 rounded-lg bg-red-50 border border-red-200 text-red-800 text-[12px] px-3 py-2 flex items-center justify-between gap-3 flex-wrap">
+                            <span>Please verify your email address before placing an order.</span>
+                            <button type="button" wire:click="resendVerification" class="font-semibold underline hover:no-underline whitespace-nowrap cursor-pointer">
+                                Resend Verification Email
+                            </button>
+                        </div>
+                    @elseif ($this->kycIncomplete)
                         <div class="mt-4 rounded-lg bg-amber-50 border border-amber-200 text-amber-800 text-[12px] px-3 py-2">
                             Your KYC isn't complete yet. You can still place this order, but you'll need to finish KYC before your car can be delivered.
                         </div>
@@ -270,7 +289,14 @@
 
                     <div class="flex gap-3 mt-6">
                         <x-ui.button type="button" wire:click="closeOrderModal" variant="secondary" class="w-full justify-center">Cancel</x-ui.button>
-                        <x-ui.button type="button" wire:click="confirmOrder" variant="primary" class="w-full justify-center" wire:loading.attr="disabled">Confirm Order</x-ui.button>
+                        <x-ui.button
+                            type="button"
+                            wire:click="confirmOrder"
+                            variant="primary"
+                            class="w-full justify-center"
+                            wire:loading.attr="disabled"
+                            :disabled="$this->emailUnverified"
+                        >Confirm Order</x-ui.button>
                     </div>
                 </div>
             </div>

@@ -41,73 +41,114 @@
 <body class="bg-base-100 text-base-content antialiased font-sans">
 
     {{-- Nav --}}
-    <header class="bg-white sticky top-0 z-50 shadow-sm">
-        <div class="max-w-[90rem] mx-auto px-4 lg:px-8 h-[72px] flex items-center justify-between gap-6">
+    <header class="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-gray-100" x-data="{ mobileOpen: false }">
+        <div class="max-w-[90rem] mx-auto px-4 lg:px-8 h-[60px] flex items-center justify-between gap-6">
 
             {{-- Logo --}}
-            <a href="{{ route('home') }}" class="flex items-center gap-1.5 hover:opacity-80 transition-opacity duration-200">
-                <span class="font-black text-[24px] tracking-tight text-primary">Livingston<span class="text-gray-900">Autos</span></span>
+            <a href="{{ route('home') }}" class="flex items-center gap-1.5 hover:opacity-80 transition-opacity duration-200 flex-shrink-0">
+                <span class="font-black text-[22px] tracking-tight text-primary">Livingston<span class="text-gray-900">Autos</span></span>
             </a>
 
             {{-- Desktop Nav --}}
-            <nav class="hidden lg:flex items-center gap-8">
-                <a href="{{ route('cars.index') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors flex items-center gap-1.5">
-                    Cars for sale 
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            <nav class="hidden lg:flex items-center gap-1 flex-1 justify-center">
+                <a href="{{ route('home') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 {{ request()->routeIs('home') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                    {{ __('Home') }}
                 </a>
-                <a href="{{ route('blog.index') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors flex items-center gap-1.5">
-                    News & reviews
-                    <svg class="w-3.5 h-3.5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                <a href="{{ route('cars.index') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 {{ request()->routeIs('cars.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                    {{ __('Search') }}
                 </a>
-                <a href="{{ route('about') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors">
-                    About Us
+                <a href="{{ route('pages.shipping') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 {{ request()->routeIs('pages.shipping') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                    {{ __('Shipping') }}
                 </a>
-                <a href="{{ route('contact') }}" class="text-[15px] font-bold text-gray-800 hover:text-primary transition-colors">
-                    Contact
+                <a href="{{ route('pages.how-it-works') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 {{ request()->routeIs('pages.how-it-works') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                    {{ __('How to Buy') }}
+                </a>
+                <a href="{{ route('about') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 {{ request()->routeIs('about') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                    {{ __('About Us') }}
+                </a>
+                <a href="{{ route('contact') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium transition-all duration-150 {{ request()->routeIs('contact') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
+                    {{ __('Help') }}
                 </a>
             </nav>
 
-            {{-- Actions --}}
-            <div class="flex items-center gap-6">
-                <button class="hidden md:flex items-center justify-center text-gray-600 hover:text-primary transition-colors">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-                </button>
+            {{-- Right Side --}}
+            <div class="flex items-center gap-2 flex-shrink-0">
                 @auth
-                    <a href="{{ route('dashboard.index') }}" class="flex items-center gap-2 text-[15px] font-bold text-gray-800 hover:text-primary transition-colors">
-                        <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                        Profile
+                    {{-- Notification Bell --}}
+                    <a href="{{ route('dashboard.notifications') }}" class="relative p-2 rounded-lg text-gray-400 hover:text-gray-700 hover:bg-gray-50 transition-all duration-150" title="{{ __('Notifications') }}">
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M14.857 17.082a23.848 23.848 0 0 0 5.454-1.31A8.967 8.967 0 0 1 18 9.75V9A6 6 0 0 0 6 9v.75a8.967 8.967 0 0 1-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 0 1-5.714 0m5.714 0a3 3 0 1 1-5.714 0" /></svg>
+                        @if(auth()->user()->unreadNotifications->count() > 0)
+                            <span class="absolute top-1 right-1 flex items-center justify-center min-w-[16px] h-4 px-1 rounded-full bg-red-500 text-white text-[9px] font-bold leading-none shadow-sm">
+                                {{ auth()->user()->unreadNotifications->count() > 9 ? '9+' : auth()->user()->unreadNotifications->count() }}
+                            </span>
+                        @endif
                     </a>
+
+                    <div class="hidden lg:block w-px h-6 bg-gray-200"></div>
+
+                    {{-- User Profile Dropdown --}}
+                    <div x-data="{ open: false }" class="relative">
+                        <button @click="open = !open" class="flex items-center gap-2 rounded-lg px-2 py-1.5 hover:bg-gray-50 transition-all duration-150 cursor-pointer">
+                            <div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white text-[11px] font-bold border-2 border-primary/20 shadow-sm">
+                                {{ auth()->user()->initials() }}
+                            </div>
+                            <span class="hidden lg:block text-[13px] font-semibold text-gray-700 truncate max-w-[100px]">{{ auth()->user()->name }}</span>
+                            <svg class="w-3.5 h-3.5 text-gray-400 hidden lg:block" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" /></svg>
+                        </button>
+
+                        <div x-show="open" @click.outside="open = false" x-transition class="absolute right-0 top-full mt-2 w-52 rounded-xl border border-gray-100 bg-white shadow-xl p-1.5 z-50" style="display: none;">
+                            <div class="px-3 py-2.5">
+                                <p class="text-[13px] font-semibold text-gray-900 truncate">{{ auth()->user()->name }}</p>
+                                <p class="text-[11px] text-gray-400 truncate">{{ auth()->user()->email }}</p>
+                            </div>
+                            <div class="my-1 h-px bg-gray-100"></div>
+                            <a href="{{ route('dashboard.index') }}" class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3.75 6A2.25 2.25 0 0 1 6 3.75h2.25A2.25 2.25 0 0 1 10.5 6v2.25a2.25 2.25 0 0 1-2.25 2.25H6a2.25 2.25 0 0 1-2.25-2.25V6Z" /></svg>
+                                {{ __('Dashboard') }}
+                            </a>
+                            <a href="{{ route('dashboard.orders') }}" class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m0 12.75h7.5m-7.5 3H12M10.5 2.25H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                                {{ __('My Orders') }}
+                            </a>
+                            <a href="{{ route('dashboard.saved-cars') }}" class="flex items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-gray-600 hover:bg-gray-50 hover:text-gray-900 transition-colors">
+                                <svg class="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+                                {{ __('Saved Cars') }}
+                            </a>
+                            <div class="my-1 h-px bg-gray-100"></div>
+                            <form method="POST" action="{{ route('logout') }}" class="w-full">
+                                @csrf
+                                <button type="submit" class="flex w-full items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] font-medium text-red-500/70 hover:bg-red-50 hover:text-red-600 transition-colors cursor-pointer">
+                                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6a2.25 2.25 0 0 0-2.25 2.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15m3 0 3-3m0 0-3-3m3 3H9" /></svg>
+                                    {{ __('Log Out') }}
+                                </button>
+                            </form>
+                        </div>
+                    </div>
                 @else
-                    <a href="{{ route('login') }}" class="flex items-center gap-2 text-[15px] font-bold text-gray-800 hover:text-primary transition-colors">
-                        <svg class="w-6 h-6 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
-                        Sign In
+                    <a href="{{ route('login') }}" class="text-[13px] font-semibold text-gray-600 hover:text-gray-900 transition-colors px-3 py-1.5">
+                        {{ __('Log in') }}
+                    </a>
+                    <a href="{{ route('register') }}" class="text-[13px] font-bold text-white bg-primary hover:bg-primary/90 px-5 py-2 rounded-lg transition-all duration-150 shadow-sm">
+                        {{ __('Register') }}
                     </a>
                 @endauth
 
                 {{-- Mobile toggle --}}
-                <button class="lg:hidden p-2 -mr-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" x-data @click="$dispatch('toggle-mobile-menu')">
-                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
+                <button class="lg:hidden p-2 -mr-2 rounded-lg hover:bg-gray-100 text-gray-600 transition-colors" @click="mobileOpen = !mobileOpen">
+                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" /></svg>
                 </button>
             </div>
         </div>
 
         {{-- Mobile menu --}}
-        <div
-            class="lg:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1 shadow-lg absolute w-full"
-            x-data="{ open: false }"
-            @toggle-mobile-menu.window="open = !open"
-            x-show="open"
-            x-transition:enter="transition duration-150 ease-out"
-            x-transition:enter-start="opacity-0 -translate-y-2"
-            x-transition:enter-end="opacity-100 translate-y-0"
-            x-cloak
-        >
-            <a href="{{ route('cars.index') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">Cars for sale</a>
-            <a href="{{ route('blog.index') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">News & reviews</a>
-            <a href="{{ route('about') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">About Us</a>
-            <a href="{{ route('contact') }}" class="block px-3 py-3 text-[15px] font-bold text-gray-800 rounded-lg hover:bg-gray-50 hover:text-primary">Contact</a>
+        <div class="lg:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1 shadow-lg absolute w-full" x-show="mobileOpen" x-transition:enter="transition duration-150 ease-out" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak>
+            <a href="{{ route('home') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Home') }}</a>
+            <a href="{{ route('cars.index') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Search Cars') }}</a>
+            <a href="{{ route('pages.shipping') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Shipping') }}</a>
+            <a href="{{ route('pages.how-it-works') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('How to Buy') }}</a>
+            <a href="{{ route('about') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('About Us') }}</a>
+            <a href="{{ route('contact') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Help') }}</a>
+            <a href="{{ route('blog.index') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Blog') }}</a>
         </div>
     </header>
 

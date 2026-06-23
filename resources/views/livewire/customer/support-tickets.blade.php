@@ -15,13 +15,13 @@
 
     {{-- Tickets Table --}}
     @if ($tickets->isEmpty())
-        <div class="bg-base-100 border border-base-content/5 rounded-xl p-14 text-center shadow-sm">
+        <x-ui.card class="p-14 text-center">
             <svg class="mx-auto w-12 h-12 text-base-content/20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 12.76c0 1.6 1.123 2.994 2.707 3.227 1.087.16 2.185.283 3.293.369V21l4.184-4.183a1.14 1.14 0 0 1 .778-.332 48.294 48.294 0 0 0 5.83-.498c1.585-.233 2.708-1.626 2.708-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" /></svg>
             <p class="mt-3 text-[15px] font-bold text-base-content">{{ __('No support tickets') }}</p>
             <p class="mt-1 text-[13px] text-base-content/40">{{ __('You haven\'t opened any support tickets yet.') }}</p>
-        </div>
+        </x-ui.card>
     @else
-        <div class="bg-white border border-base-content/5 shadow-sm rounded-xl flex flex-col overflow-hidden">
+        <x-ui.card class="flex flex-col overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-base-200 border-b border-base-content/5">
@@ -64,7 +64,7 @@
                     </tbody>
                 </table>
             </div>
-        </div>
+        </x-ui.card>
 
         <div class="pt-4">
             {{ $tickets->links() }}

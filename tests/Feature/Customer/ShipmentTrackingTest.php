@@ -42,7 +42,7 @@ class ShipmentTrackingTest extends TestCase
 
         $this->assertCount(9, $pipeline);
         $this->assertSame(
-            array_map(fn ($status) => $status->label(), OrderStatus::cases()),
+            array_map(fn ($status) => $status->label(), OrderStatus::pipeline()),
             array_column($pipeline, 'label')
         );
     }
@@ -134,5 +134,36 @@ class ShipmentTrackingTest extends TestCase
         Livewire::actingAs($user)
             ->test(OrderDetail::class, ['order' => $order])
             ->assertDontSee('Payment Proof Rejected');
+    }
+
+    #[Test]
+    public function a_cancelled_order_shows_the_cancellation_reason_instead_of_the_timeline(): void
+    {
+        $order = $this->makeOrder(['status' => OrderStatus::PendingPayment]);
+        $user = User::find($order->user_id);
+
+        $order->statusHistories()->create([
+            'status' => OrderStatus::Cancelled,
+            'notes' => 'Another buyer completed payment for this car first.',
+        ]);
+        $order->update(['status' => OrderStatus::Cancelled]);
+
+        Livewire::actingAs($user)
+            ->test(OrderDetail::class, ['order' => $order->refresh()])
+            ->assertSee('Order Cancelled')
+            ->assertSee('Another buyer completed payment for this car first.')
+            ->assertDontSee('Shipment Timeline');
+    }
+
+    #[Test]
+    public function an_active_order_does_not_show_a_cancellation_notice(): void
+    {
+        $order = $this->makeOrder(['status' => OrderStatus::PendingPayment]);
+        $user = User::find($order->user_id);
+
+        Livewire::actingAs($user)
+            ->test(OrderDetail::class, ['order' => $order])
+            ->assertDontSee('Order Cancelled')
+            ->assertSee('Shipment Timeline');
     }
 }

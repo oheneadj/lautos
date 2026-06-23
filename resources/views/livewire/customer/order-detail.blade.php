@@ -24,6 +24,13 @@
             </div>
         </div>
 
+        {{-- Cancellation Notice --}}
+        @if ($this->isCancelled)
+            <x-ui.alert type="danger" title="Order Cancelled">
+                {{ $this->cancellationReason ?? __('This order was cancelled.') }}
+            </x-ui.alert>
+        @endif
+
         {{-- Payment Rejection Notice --}}
         @if ($this->rejectionReason)
             <x-ui.alert type="danger" title="Payment Proof Rejected">
@@ -41,11 +48,9 @@
         <div class="grid gap-4 lg:grid-cols-3">
             {{-- Left: Timeline & Payment (2 cols) --}}
             <div class="lg:col-span-2 space-y-4">
-                {{-- Shipment Timeline --}}
-                <div class="bg-white border border-base-content/5 rounded-xl shadow-sm">
-                    <div class="flex items-center justify-between px-6 py-4 border-b border-base-content/5">
-                        <h2 class="text-lg font-semibold text-base-content">{{ __('Shipment Timeline') }}</h2>
-                    </div>
+                {{-- Shipment Timeline (hidden for cancelled orders — there's no progress to show) --}}
+                @unless ($this->isCancelled)
+                <x-ui.card title="{{ __('Shipment Timeline') }}" headerBorder>
                     <div class="p-6">
                         <div class="relative">
                             @foreach ($this->pipeline as $index => $stage)
@@ -87,14 +92,12 @@
                             @endforeach
                         </div>
                     </div>
-                </div>
+                </x-ui.card>
+                @endunless
 
                 {{-- Payment Proof Upload --}}
                 @if ($this->canUploadProof)
-                    <div class="bg-white border border-base-content/5 rounded-xl shadow-sm">
-                        <div class="px-6 py-4 border-b border-base-content/5">
-                            <h2 class="text-lg font-semibold text-base-content">{{ __('Upload Payment Proof') }}</h2>
-                        </div>
+                    <x-ui.card title="{{ __('Upload Payment Proof') }}" headerBorder>
                         <div class="p-6">
                             <form wire:submit="uploadPaymentProof" class="space-y-4">
                                 <div>
@@ -124,15 +127,12 @@
                                 </x-ui.button>
                             </form>
                         </div>
-                    </div>
+                    </x-ui.card>
                 @endif
 
                 {{-- Uploaded Proofs --}}
                 @if ($order->paymentProofs->isNotEmpty())
-                    <div class="bg-white border border-base-content/5 rounded-xl shadow-sm">
-                        <div class="px-6 py-4 border-b border-base-content/5">
-                            <h2 class="text-lg font-semibold text-base-content">{{ __('Payment Proofs Submitted') }}</h2>
-                        </div>
+                    <x-ui.card title="{{ __('Payment Proofs Submitted') }}" headerBorder>
                         <div class="divide-y divide-base-content/5">
                             @foreach ($order->paymentProofs as $proof)
                                 <div class="flex items-center justify-between px-6 py-3.5">
@@ -147,17 +147,14 @@
                                 </div>
                             @endforeach
                         </div>
-                    </div>
+                    </x-ui.card>
                 @endif
             </div>
 
             {{-- Right: Order Summary & Payment Info (1 col) --}}
             <div class="space-y-4">
                 {{-- Order Summary --}}
-                <div class="bg-white border border-base-content/5 rounded-xl shadow-sm">
-                    <div class="px-5 py-4 border-b border-base-content/5">
-                        <h2 class="text-lg font-semibold text-base-content">{{ __('Order Summary') }}</h2>
-                    </div>
+                <x-ui.card title="{{ __('Order Summary') }}" headerBorder>
                     <div class="p-5 space-y-4">
                         @if ($order->car && $order->car->images->first())
                             <div class="aspect-video rounded-lg bg-base-200 overflow-hidden">
@@ -188,14 +185,11 @@
                             </div>
                         @endif
                     </div>
-                </div>
+                </x-ui.card>
 
                 {{-- Payment Instructions --}}
                 @if ($this->canUploadProof)
-                    <div class="bg-white border border-base-content/5 rounded-xl shadow-sm">
-                        <div class="px-5 py-4 border-b border-base-content/5">
-                            <h2 class="text-lg font-semibold text-base-content">{{ __('Payment Instructions') }}</h2>
-                        </div>
+                    <x-ui.card title="{{ __('Payment Instructions') }}" headerBorder>
                         <div class="p-5 space-y-5">
                             {{-- Bank Transfer --}}
                             <div>
@@ -218,7 +212,7 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </x-ui.card>
                 @endif
             </div>
         </div>

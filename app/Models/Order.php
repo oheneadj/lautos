@@ -86,6 +86,7 @@ class Order extends Model
         return match ($this->status) {
             OrderStatus::PendingPayment => 'Pending',
             OrderStatus::PaymentUploaded => 'Uploaded',
+            OrderStatus::Cancelled => 'Cancelled',
             default => 'Confirmed',
         };
     }

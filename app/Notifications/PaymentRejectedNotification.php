@@ -25,7 +25,7 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -41,5 +41,21 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
             ->line('Please upload a new payment proof from your dashboard.')
             ->action('Upload New Proof', route('dashboard.orders.show', $this->order->uuid))
             ->line('Contact us if you have any questions.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        $car = $this->order->car;
+
+        return [
+            'title' => 'Payment Proof Rejected',
+            'message' => "We couldn't verify your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}. Reason: {$this->reason}",
+            'icon' => 'document',
+            'action_url' => route('dashboard.orders.show', $this->order->uuid),
+            'action_text' => 'Upload New Proof',
+        ];
     }
 }

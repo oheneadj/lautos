@@ -8,6 +8,7 @@ use App\Events\OrderPlaced;
 use App\Events\OrderStageUpdated;
 use App\Events\PaymentConfirmed;
 use App\Events\PaymentRejected;
+use App\Events\ReservationLost;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
@@ -55,7 +56,7 @@ class OrderServiceTest extends TestCase
     }
 
     #[Test]
-    public function placing_an_order_creates_it_pending_and_reserves_the_car(): void
+    public function placing_an_order_creates_it_pending_without_locking_the_car(): void
     {
         Event::fake([OrderPlaced::class]);
 
@@ -67,7 +68,9 @@ class OrderServiceTest extends TestCase
         $this->assertSame(OrderStatus::PendingPayment, $order->status);
         $this->assertSame(1500000, $order->price_usd_cents);
         $this->assertSame(200000, $order->shipping_cost_usd_cents);
-        $this->assertSame(CarStatus::Reserved, $car->refresh()->status);
+        // The car only locks once payment is confirmed — see confirmPayment() tests below.
+        // Placing an order must never block other customers from also trying to buy it.
+        $this->assertSame(CarStatus::Available, $car->refresh()->status);
         $this->assertDatabaseHas('order_status_histories', [
             'order_id' => $order->id,
             'status' => OrderStatus::PendingPayment->value,
@@ -85,6 +88,66 @@ class OrderServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         (new OrderService())->createOrder($user, $car);
+    }
+
+    #[Test]
+    public function two_different_customers_can_both_have_an_open_order_on_the_same_car(): void
+    {
+        Event::fake([OrderPlaced::class]);
+
+        $car = $this->makeAvailableCar();
+        $firstBuyer = User::factory()->create();
+        $secondBuyer = User::factory()->create();
+
+        $service = new OrderService();
+        $firstOrder = $service->createOrder($firstBuyer, $car);
+        $secondOrder = $service->createOrder($secondBuyer, $car);
+
+        $this->assertNotSame($firstOrder->id, $secondOrder->id);
+        $this->assertSame(CarStatus::Available, $car->refresh()->status);
+    }
+
+    #[Test]
+    public function placing_a_second_order_on_the_same_car_reuses_the_existing_open_order(): void
+    {
+        Event::fake([OrderPlaced::class]);
+
+        $car = $this->makeAvailableCar();
+        $user = User::factory()->create();
+
+        $service = new OrderService();
+        $firstOrder = $service->createOrder($user, $car);
+        $secondAttempt = $service->createOrder($user, $car);
+
+        $this->assertSame($firstOrder->id, $secondAttempt->id);
+        $this->assertSame(1, Order::where('user_id', $user->id)->where('car_id', $car->id)->count());
+    }
+
+    #[Test]
+    public function confirming_one_buyers_payment_cancels_every_other_open_order_on_the_same_car(): void
+    {
+        Event::fake([PaymentConfirmed::class, ReservationLost::class]);
+
+        $car = $this->makeAvailableCar();
+        $winner = User::factory()->create();
+        $loser = User::factory()->create();
+
+        $service = new OrderService();
+        $winningOrder = $service->createOrder($winner, $car);
+        $losingOrder = $service->createOrder($loser, $car);
+
+        $winningOrder->update(['status' => OrderStatus::PaymentUploaded]);
+        $service->confirmPayment($winningOrder);
+
+        $this->assertSame(OrderStatus::PaymentConfirmed, $winningOrder->refresh()->status);
+        $this->assertSame(CarStatus::Reserved, $car->refresh()->status);
+        $this->assertSame(OrderStatus::Cancelled, $losingOrder->refresh()->status);
+        $this->assertDatabaseHas('order_status_histories', [
+            'order_id' => $losingOrder->id,
+            'status' => OrderStatus::Cancelled->value,
+            'notes' => 'Another buyer completed payment for this car first.',
+        ]);
+        Event::assertDispatched(ReservationLost::class, fn ($event) => $event->order->id === $losingOrder->id);
     }
 
     #[Test]

@@ -7,9 +7,9 @@
             <x-ui.badge :type="$car->status->colour()" dot>{{ $car->status->label() }}</x-ui.badge>
         </div>
         {{-- Heart Icon --}}
-        <button class="bg-white rounded-full p-1.5 shadow-md hover:scale-110 transition-transform pointer-events-auto">
-            <svg class="w-5 h-5 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
-        </button>
+        <div class="pointer-events-auto">
+            @livewire('cars.save-car-button', ['car' => $car], 'save-car-'.$car->uuid)
+        </div>
     </div>
 
     {{-- Image Container --}}
@@ -79,6 +79,12 @@
                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 21h12M5 21V5a1 1 0 011-1h6a1 1 0 011 1v16M9 9h0m9 12v-7a2 2 0 00-2-2h-1m3 2v5a1 1 0 01-2 0"/></svg>
                 {{ $car->fuel_type }}
             </span>
+            @if (($car->orders_count ?? 0) > 0)
+                <span class="inline-flex items-center gap-1 px-2.5 py-1 rounded bg-rose-50 text-rose-600 text-[12px] font-medium border border-rose-100" title="{{ $car->orders_count }} {{ Str::plural('person', $car->orders_count) }} reserved this car">
+                    <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 18.75h-9m9 0a3 3 0 0 1 3 3h-15a3 3 0 0 1 3-3m9 0v-3.375c0-.621-.503-1.125-1.125-1.125h-.871M7.5 18.75v-3.375c0-.621.504-1.125 1.125-1.125h.872m5.007 0H11.25m4.5 0v-.001A4.5 4.5 0 0 0 11.25 9h-1.5a4.5 4.5 0 0 0-4.5 4.5v3.75m9 0H7.5" /></svg>
+                    {{ $car->orders_count }} {{ Str::plural('Reservation', $car->orders_count) }}
+                </span>
+            @endif
         </div>
 
 

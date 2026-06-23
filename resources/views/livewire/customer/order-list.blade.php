@@ -30,13 +30,13 @@
 
         {{-- Orders Table --}}
         @if ($this->orders->isEmpty())
-            <div class="bg-base-100 border border-base-content/5 rounded-xl p-14 text-center shadow-sm">
+            <x-ui.card class="p-14 text-center">
                 <svg class="mx-auto w-12 h-12 text-base-content/20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
                 <p class="mt-3 text-[15px] font-bold text-base-content">{{ __('No orders found') }}</p>
                 <p class="mt-1 text-[13px] text-base-content/40">{{ $statusFilter ? __('Try a different filter or browse our catalogue.') : __('Start by browsing our available cars!') }}</p>
-            </div>
+            </x-ui.card>
         @else
-            <div class="bg-white border border-base-content/5 shadow-sm rounded-xl flex flex-col overflow-hidden">
+            <x-ui.card class="flex flex-col overflow-hidden">
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="bg-base-200 border-b border-base-content/5">
@@ -110,7 +110,7 @@
                         </tbody>
                     </table>
                 </div>
-            </div>
+            </x-ui.card>
 
             <div class="pt-4">
                 {{ $this->orders->links() }}

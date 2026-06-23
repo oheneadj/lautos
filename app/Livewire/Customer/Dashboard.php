@@ -115,6 +115,7 @@ class Dashboard extends Component
                     'label' => $status->label(),
                     'count' => $count,
                     'colour' => $status->colour(),
+                    'value' => $status->value,
                 ];
             }
         }
@@ -128,16 +129,7 @@ class Dashboard extends Component
         return Auth::user()->savedCars()
             ->with(['make', 'carModel', 'images'])
             ->latest('car_user.created_at')
-            ->take(3)
-            ->get();
-    }
-
-    #[Computed]
-    public function activeTickets()
-    {
-        return Auth::user()->supportTickets()
-            ->latest()
-            ->take(3)
+            ->take(2)
             ->get();
     }
 

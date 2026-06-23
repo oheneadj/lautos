@@ -26,8 +26,8 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        // I only send mail for now — SMS (Arkesel) is wired up in Epic 21.
-        return ['mail'];
+        // I only send mail + database for now — SMS (Arkesel) is wired up in Epic 21.
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -44,5 +44,22 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
             ->line('Mobile Money: '.Setting::get('momo_number', '—').' ('.Setting::get('momo_name', '—').')')
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid))
             ->line('Once we receive your payment proof, we will confirm your order and begin processing your purchase.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        $car = $this->order->car;
+        $total = number_format($this->order->total_usd_cents / 100, 0);
+
+        return [
+            'title' => 'Order Confirmed',
+            'message' => "We've reserved the {$car->year} {$car->make->name} {$car->carModel->name} for you. Total due: \${$total}.",
+            'icon' => 'check',
+            'action_url' => route('dashboard.orders.show', $this->order->uuid),
+            'action_text' => 'View Order',
+        ];
     }
 }

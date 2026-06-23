@@ -8,6 +8,7 @@
 
 namespace App\Livewire\Cars;
 
+use App\Enums\OrderStatus;
 use App\Models\Car;
 use App\Models\Make;
 use Livewire\Component;
@@ -57,6 +58,9 @@ class CarCatalogue extends Component
     public function render()
     {
         $query = Car::with(['make', 'carModel', 'carTrim', 'images' => fn ($q) => $q->orderBy('sort_order')->limit(1)])
+            // I exclude Cancelled orders from the count — those lost the race to another
+            // buyer's confirmed payment, so they shouldn't inflate the reservation badge.
+            ->withCount(['orders' => fn ($q) => $q->where('status', '!=', OrderStatus::Cancelled)])
             ->visibleOnCatalogue();
 
         if ($this->search) {

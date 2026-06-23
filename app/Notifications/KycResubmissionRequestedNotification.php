@@ -24,8 +24,8 @@ class KycResubmissionRequestedNotification extends Notification implements Shoul
      */
     public function via(object $notifiable): array
     {
-        // I only send mail for now — SMS (Arkesel) is wired up in Epic 21.
-        return ['mail'];
+        // I only send SMS-less mail + database for now — SMS (Arkesel) is wired up in Epic 21.
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -37,5 +37,19 @@ class KycResubmissionRequestedNotification extends Notification implements Shoul
             ->line("Reason: {$this->reason}")
             ->action('Update Your Documents', route('dashboard.profile'))
             ->line('Contact us if you have any questions.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        return [
+            'title' => 'KYC Resubmission Required',
+            'message' => "We need you to resubmit your identity documents. Reason: {$this->reason}",
+            'icon' => 'document',
+            'action_url' => route('dashboard.profile'),
+            'action_text' => 'Update Documents',
+        ];
     }
 }

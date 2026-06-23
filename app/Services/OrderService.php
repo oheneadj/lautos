@@ -16,6 +16,7 @@ use App\Events\OrderPlaced;
 use App\Events\OrderStageUpdated;
 use App\Events\PaymentConfirmed;
 use App\Events\PaymentRejected;
+use App\Events\ReservationLost;
 use App\Models\Car;
 use App\Models\Order;
 use App\Models\User;
@@ -25,14 +26,28 @@ use InvalidArgumentException;
 class OrderService
 {
     /**
-     * Places a new order for a car — creates the order in Pending Payment
-     * and immediately reserves the car so it can't be double-booked while
-     * payment is outstanding.
+     * Places a new order for a car. I don't lock the car here — only a
+     * confirmed payment does that (see confirmPayment()). Locking on order
+     * placement let a customer with no intent to pay block the car forever,
+     * since there was no way to recover it. Multiple customers can have an
+     * open order on the same car at once; the first one whose payment gets
+     * confirmed wins it.
      */
     public function createOrder(User $user, Car $car): Order
     {
         if ($car->status !== CarStatus::Available) {
             throw new InvalidArgumentException('This car is no longer available to order.');
+        }
+
+        // I reuse an existing open order rather than letting the same
+        // customer pile up duplicates on the same car.
+        $existing = $car->orders()
+            ->where('user_id', $user->id)
+            ->whereIn('status', [OrderStatus::PendingPayment, OrderStatus::PaymentUploaded])
+            ->first();
+
+        if ($existing) {
+            return $existing;
         }
 
         $order = Order::create([
@@ -43,8 +58,6 @@ class OrderService
             'shipping_cost_usd_cents' => $car->shipping_cost_usd_cents,
         ]);
 
-        $car->update(['status' => CarStatus::Reserved]);
-
         $this->logHistory($order, OrderStatus::PendingPayment);
 
         OrderPlaced::dispatch($order);
@@ -54,7 +67,8 @@ class OrderService
 
     /**
      * Confirms a customer's uploaded payment proof — moves the order to
-     * Payment Confirmed and reserves the car.
+     * Payment Confirmed, reserves the car, and cancels every other open
+     * order on the same car since the race for it is now over.
      */
     public function confirmPayment(Order $order): void
     {
@@ -68,6 +82,25 @@ class OrderService
         $this->logHistory($order, OrderStatus::PaymentConfirmed);
 
         PaymentConfirmed::dispatch($order);
+
+        $this->cancelCompetingOrders($order);
+    }
+
+    /**
+     * Cancels every other open order on the winning order's car — they lost
+     * the race the moment this customer's payment was confirmed.
+     */
+    private function cancelCompetingOrders(Order $winner): void
+    {
+        Order::where('car_id', $winner->car_id)
+            ->where('id', '!=', $winner->id)
+            ->whereIn('status', [OrderStatus::PendingPayment, OrderStatus::PaymentUploaded])
+            ->get()
+            ->each(function (Order $order) {
+                $order->update(['status' => OrderStatus::Cancelled]);
+                $this->logHistory($order, OrderStatus::Cancelled, 'Another buyer completed payment for this car first.');
+                ReservationLost::dispatch($order);
+            });
     }
 
     /**

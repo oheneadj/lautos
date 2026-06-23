@@ -229,6 +229,7 @@
                 $categoryCars = [];
                 foreach ($categoryMap as $tab => $models) {
                     $query = \App\Models\Car::with(['make', 'carModel', 'carTrim', 'images'])
+                        ->withCount('orders')
                         ->where('status', \App\Enums\CarStatus::Available)
                         ->latest();
 
@@ -299,6 +300,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 @php
                     $latestCars = \App\Models\Car::with(['make', 'carModel', 'carTrim', 'images'])
+                        ->withCount('orders')
                         ->where('status', \App\Enums\CarStatus::Available)
                         ->latest()
                         ->take(6)

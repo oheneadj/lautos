@@ -8,6 +8,7 @@ namespace App\Filament\Resources\Orders\Pages;
 
 use App\Enums\OrderStatus;
 use App\Filament\Resources\Orders\OrderResource;
+use App\Models\Order;
 use App\Services\OrderService;
 use Filament\Actions\Action;
 use Filament\Forms\Components\DatePicker;
@@ -64,6 +65,13 @@ class ViewOrder extends ViewRecord
                         TextEntry::make('payment_status')
                             ->label('Payment Status')
                             ->badge(),
+                        TextEntry::make('competing_orders')
+                            ->label('Heads Up')
+                            ->color('danger')
+                            ->visible(fn ($record) => $this->competingOrdersCount($record) > 0)
+                            ->state(fn ($record) => $this->competingOrdersCount($record) === 1
+                                ? '1 other customer also has an open order on this car. Confirming this payment will cancel theirs.'
+                                : $this->competingOrdersCount($record) . ' other customers also have an open order on this car. Confirming this payment will cancel all of theirs.'),
                     ])
                     ->columns(2),
 
@@ -89,6 +97,18 @@ class ViewOrder extends ViewRecord
                             ->viewData(['order' => $this->getRecord()]),
                     ]),
             ]);
+    }
+
+    /**
+     * Counts other open orders on the same car, so the admin sees — before
+     * clicking confirm — that approving this payment will auto-cancel them.
+     */
+    private function competingOrdersCount(Order $order): int
+    {
+        return Order::where('car_id', $order->car_id)
+            ->where('id', '!=', $order->id)
+            ->whereIn('status', [OrderStatus::PendingPayment, OrderStatus::PaymentUploaded])
+            ->count();
     }
 
     protected function getHeaderActions(): array

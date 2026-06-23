@@ -61,7 +61,7 @@
 | Admin Panel | FilamentPHP |
 | Roles & Permissions | FilamentShield + Spatie Laravel Permission |
 | Database | MySQL 8 |
-| File Storage | Laravel Storage / AWS S3 |
+| File Storage | Laravel Storage — local disk (client decision, not S3) |
 | Queue & Scheduler | Laravel Horizon + Redis |
 | Auth | Laravel Fortify (with 2FA for admin) |
 | SMS | Arkesel or Hubtel (Ghana) |
@@ -289,7 +289,7 @@ Sprint     → Suggested sprint assignment (2-week sprints)
 - [x] `T-05-5` Add drag-and-drop image reordering (Filament `SortableList` or custom)
 - [x] `T-05-6` Add GHS preview field (computed from price × exchange rate)
 - [x] `T-05-7` Add all form validations (required fields, min photos)
-- [ ] `T-05-8` Configure image storage to S3 public bucket (car photos are public)
+- [x] `T-05-8` Configure image storage — client decision: local `public` disk, not S3 (car photos are public)
 - [x] `T-05-9` Write `CarFactory` and seeders for demo data
 
 ---
@@ -1084,21 +1084,22 @@ Pending Payment
 
 **Acceptance Criteria:**
 - [x] Registration form accessible at `/register`
-- [ ] Fields: Full Name, Email, Phone Number, Password, Confirm Password
+- [x] Fields: Full Name, Email, Password, Confirm Password — client decision: Phone Number is not collected at signup (especially since Google sign-up doesn't provide one); the customer adds it later from their profile, same as any KYC gap
+- [x] Customer can also register/log in with Google (Socialite) — email is trusted as verified immediately since Google already verifies it
 - [x] After basic registration, customer is taken to a KYC completion step
 - [x] KYC step fields: Residential Address, Ghana Card Number (required if no TIN), TIN (required if no Ghana Card)
 - [x] System validates: at least one of Ghana Card Number or TIN is provided
 - [x] Customer can upload Ghana Card scan (image or PDF, max 5MB)
 - [x] Customer can upload TIN document (image or PDF, max 5MB, optional if Ghana Card uploaded)
-- [ ] KYC documents stored in private S3 storage (not publicly accessible by URL)
-- [ ] Email verification required before placing a first order
+- [x] KYC documents stored in private storage (client decision: local `private` disk, not S3 — not publicly accessible by URL)
+- [x] Email verification required before placing a first order — enforced in `CarDetail::confirmOrder()`, with an alert + resend link in the order modal
 - [x] KYC step can be skipped and completed later from the dashboard, but a banner reminds the customer
 
 **Tasks:**
-- [ ] `T-36-1` Build `Register` Livewire component (step 1: basic info)
+- [x] `T-36-1` Build registration form (Fortify + custom Blade view, not a dedicated Livewire component — functionally equivalent); add Google OAuth (Socialite) as an alternate path via `GoogleAuthController` + `SocialAuthService`
 - [x] `T-36-2` Build `CompleteKYC` Livewire component (step 2: KYC info + uploads)
 - [x] `T-36-3` Add GhanaCard + TIN validation rule (at least one required)
-- [ ] `T-36-4` Configure private S3 disk for KYC documents
+- [x] `T-36-4` Configure private storage disk for KYC documents — client decision: local `private` disk, not S3
 - [x] `T-36-5` Configure email verification (Laravel Fortify)
 - [x] `T-36-6` Build `KYCReminder` banner component for dashboard
 - [x] `T-36-7` Encrypt Ghana Card and TIN fields at rest (cast with encryption)
@@ -1232,16 +1233,16 @@ Pending Payment
 - [x] Customer can add a short note (e.g. transaction reference number)
 - [x] Multiple proofs can be uploaded for the same order
 - [x] After upload, order status changes to `Payment Uploaded`
-- [ ] Admin receives email + SMS notification that a proof has been uploaded
-- [ ] Uploaded proofs stored in private S3 storage
+- [x] Admin receives email notification that a proof has been uploaded (SMS half deferred to Epic 21, no Arkesel/Hubtel credentials)
+- [x] Uploaded proofs stored in private storage — client decision: local `private` disk, not S3
 - [x] Upload button is hidden once status moves past `Payment Uploaded`
 
 **Tasks:**
 - [x] `T-41-1` Build `UploadPaymentProof` Livewire component
 - [x] `T-41-2` Create `payment_proofs` table (order_id, file_path, note, uploaded_at)
-- [ ] `T-41-3` Store proofs in private S3 disk
+- [x] `T-41-3` Store proofs in private storage disk — client decision: local `private` disk, not S3
 - [x] `T-41-4` Update order status to `Payment Uploaded` on first successful upload
-- [ ] `T-41-5` Dispatch `PaymentProofUploaded` event → notify admin via email + SMS
+- [x] `T-41-5` Dispatch `PaymentProofUploaded` event → notify admin via email (SMS deferred to Epic 21)
 
 ---
 
@@ -1323,7 +1324,7 @@ Pending Payment
 **Tasks:**
 - [x] `T-44-1` Build `KYCDocuments` Livewire component
 - [x] `T-44-2` Show current KYC status and admin feedback if resubmission requested
-- [x] `T-44-3` Handle file replacement (delete old, store new in private S3)
+- [x] `T-44-3` Handle file replacement (delete old, store new in private storage — client decision: local `private` disk, not S3)
 - [x] `T-44-4` Reset `kyc_status` to `pending` on new upload
 - [x] `T-44-5` Notify admin of new KYC submission
 

@@ -25,7 +25,7 @@ class PaymentProofReceivedNotification extends Notification implements ShouldQue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -39,5 +39,21 @@ class PaymentProofReceivedNotification extends Notification implements ShouldQue
             ->line("We've received your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}.")
             ->line("We're reviewing it now and will confirm your order shortly.")
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid));
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        $car = $this->order->car;
+
+        return [
+            'title' => 'Payment Proof Received',
+            'message' => "We've received your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}. We're reviewing it now.",
+            'icon' => 'document',
+            'action_url' => route('dashboard.orders.show', $this->order->uuid),
+            'action_text' => 'View Order',
+        ];
     }
 }

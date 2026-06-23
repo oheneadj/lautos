@@ -30,6 +30,7 @@ class User extends Authenticatable implements FilamentUser
         'uuid',
         'name',
         'email',
+        'google_id',
         'password',
         'phone',
         'address',
@@ -104,7 +105,10 @@ class User extends Authenticatable implements FilamentUser
 
     public function savedCars(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
     {
-        return $this->belongsToMany(Car::class, 'car_user');
+        // I track timestamps on the pivot so the dashboard's "recently
+        // saved" ordering actually means something instead of sorting on
+        // permanently-null columns.
+        return $this->belongsToMany(Car::class, 'car_user')->withTimestamps();
     }
 
     public function supportTickets(): HasMany

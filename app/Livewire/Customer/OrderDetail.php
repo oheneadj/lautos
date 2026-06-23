@@ -102,7 +102,7 @@ class OrderDetail extends Component
     #[Computed]
     public function pipeline(): array
     {
-        $currentIndex = array_search($this->order->status, OrderStatus::cases());
+        $currentIndex = array_search($this->order->status, OrderStatus::pipeline());
         $histories = $this->order->statusHistories->keyBy('status');
 
         return collect(OrderStatus::pipeline())->map(function ($stage, $index) use ($currentIndex, $histories) {
@@ -153,6 +153,26 @@ class OrderDetail extends Component
         }
 
         return $latest->notes;
+    }
+
+    #[Computed]
+    public function isCancelled(): bool
+    {
+        return $this->order->status === OrderStatus::Cancelled;
+    }
+
+    /**
+     * Returns the reason this order was cancelled, so the customer sees why
+     * instead of just an unexplained "Cancelled" badge.
+     */
+    #[Computed]
+    public function cancellationReason(): ?string
+    {
+        if (! $this->isCancelled) {
+            return null;
+        }
+
+        return $this->order->statusHistories->first()?->notes;
     }
 
     public function render()

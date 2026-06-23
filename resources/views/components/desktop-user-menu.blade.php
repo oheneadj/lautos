@@ -7,7 +7,12 @@
         <span class="flex size-8 items-center justify-center rounded-full bg-zinc-200 text-xs font-medium text-zinc-700">
             {{ auth()->user()->initials() }}
         </span>
-        <span class="truncate text-sm font-medium text-zinc-700">{{ auth()->user()->name }}</span>
+        <div class="flex items-center gap-1.5 truncate">
+            <span class="truncate text-sm font-medium text-zinc-700">{{ auth()->user()->name }}</span>
+            @if (auth()->user()->kyc_status === \App\Enums\KycStatus::Verified)
+                <svg class="size-4 text-emerald-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" title="KYC Verified"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" /></svg>
+            @endif
+        </div>
         <svg class="size-4 text-zinc-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9" /></svg>
     </button>
 
@@ -22,7 +27,12 @@
                 {{ auth()->user()->initials() }}
             </span>
             <div class="grid flex-1 text-start text-sm leading-tight">
-                <span class="truncate font-semibold text-zinc-900">{{ auth()->user()->name }}</span>
+                <div class="flex items-center gap-1.5">
+                    <span class="truncate font-semibold text-zinc-900">{{ auth()->user()->name }}</span>
+                    @if (auth()->user()->kyc_status === \App\Enums\KycStatus::Verified)
+                        <svg class="size-4 text-emerald-500 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" title="KYC Verified"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" /></svg>
+                    @endif
+                </div>
                 <span class="truncate text-xs text-zinc-500">{{ auth()->user()->email }}</span>
             </div>
         </div>

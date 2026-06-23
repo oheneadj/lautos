@@ -26,7 +26,7 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -58,5 +58,22 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
         return $mail
             ->action('Track Your Order', route('dashboard.orders.show', $this->order->uuid))
             ->line('Thank you for choosing Livingston Autos.');
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    public function toArray(object $notifiable): array
+    {
+        $car = $this->order->car;
+        $stage = $this->order->status->label();
+
+        return [
+            'title' => "Order Update — {$stage}",
+            'message' => "Your order for the {$car->year} {$car->make->name} {$car->carModel->name} has moved to: {$stage}.",
+            'icon' => 'truck',
+            'action_url' => route('dashboard.orders.show', $this->order->uuid),
+            'action_text' => 'Track Order',
+        ];
     }
 }

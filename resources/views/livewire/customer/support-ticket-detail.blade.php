@@ -19,7 +19,7 @@
         </div>
     </div>
 
-    <div class="bg-white border border-base-content/5 shadow-sm rounded-xl overflow-hidden flex flex-col h-[600px]">
+    <x-ui.card class="overflow-hidden flex flex-col h-[600px]">
         {{-- Messages Area --}}
         <div class="flex-1 overflow-y-auto p-6 space-y-6 bg-base-200/30">
             @foreach ($messages as $msg)
@@ -86,5 +86,5 @@
                 <p class="text-[14px] text-base-content/50 font-medium">{{ __('This ticket is closed. If you need further assistance, please open a new ticket.') }}</p>
             </div>
         @endif
-    </div>
+    </x-ui.card>
 </div>

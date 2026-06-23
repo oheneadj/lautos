@@ -11,7 +11,6 @@ use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
-use App\Models\SupportTicket;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -144,22 +143,6 @@ class DashboardTest extends TestCase
         $response->assertOk();
         $response->assertSee('Toyota');
         $response->assertDontSee('Hyundai');
-    }
-
-    #[Test]
-    public function it_only_shows_the_authenticated_customers_own_support_tickets(): void
-    {
-        $user = User::factory()->create();
-        $otherUser = User::factory()->create();
-
-        SupportTicket::create(['user_id' => $user->id, 'subject' => 'My shipment is delayed', 'status' => 'Open']);
-        SupportTicket::create(['user_id' => $otherUser->id, 'subject' => 'Someone elses ticket', 'status' => 'Open']);
-
-        $response = $this->actingAs($user)->get(route('dashboard.index'));
-
-        $response->assertOk();
-        $response->assertSee('My shipment is delayed');
-        $response->assertDontSee('Someone elses ticket');
     }
 
     #[Test]

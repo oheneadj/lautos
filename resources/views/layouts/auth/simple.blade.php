@@ -28,8 +28,8 @@
                 </a>
             </div>
 
-            {{-- Card --}}
-            <div class="bg-base-100 rounded-lg border border-base-content/10 shadow-lg overflow-hidden">
+            {{-- Card — same shell as the dashboard's cards (x-ui.card): rounded-xl, hairline border, no shadow --}}
+            <div class="bg-base-100 rounded-xl border border-base-content/5 overflow-hidden">
                 <div class="p-6 sm:p-10">
                     {{ $slot }}
                 </div>

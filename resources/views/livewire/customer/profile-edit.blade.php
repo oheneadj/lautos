@@ -28,7 +28,7 @@
         @endif
 
         {{-- Phone Number Card --}}
-        <div class="bg-white border border-base-content/5 shadow-sm rounded-xl overflow-hidden">
+        <x-ui.card class="overflow-hidden">
             <form wire:submit="updatePhone">
                 <div class="p-6 md:p-8 space-y-6">
                     <div class="flex items-center justify-between border-b border-base-content/5 pb-2.5">
@@ -65,10 +65,10 @@
                     </div>
                 </div>
             </form>
-        </div>
+        </x-ui.card>
 
         {{-- Profile Form Card --}}
-        <div class="bg-white border border-base-content/5 shadow-sm rounded-xl overflow-hidden">
+        <x-ui.card class="overflow-hidden">
             <form wire:submit="updateProfile">
                 <div class="p-6 md:p-8 space-y-8">
                     {{-- Basic Info Section --}}
@@ -116,41 +116,95 @@
 
                     {{-- Identification Section --}}
                     <div>
-                        <h2 class="text-[11px] font-bold uppercase tracking-widest text-base-content/60 border-b border-base-content/5 pb-2.5 mb-4">
-                            {{ __('Identification (KYC)') }}
-                        </h2>
-                        <p class="text-[11px] text-base-content/40 mb-6">{{ __('Provide either a Ghana Card or TIN.') }}</p>
+                        @php
+                            $kycStatus = $this->user->kyc_status;
+                            $isVerified = $kycStatus === \App\Enums\KycStatus::Verified;
+                            $isPending = $kycStatus === \App\Enums\KycStatus::Pending && ($this->hasGhanaCardDoc || $this->hasTinDoc);
+                            $isRejected = $kycStatus === \App\Enums\KycStatus::NeedsResubmission;
+                            $fieldsLocked = $isVerified || $isPending;
+                        @endphp
+
+                        <div class="flex items-center justify-between border-b border-base-content/5 pb-2.5 mb-4">
+                            <h2 class="text-[11px] font-bold uppercase tracking-widest text-base-content/60">
+                                {{ __('Identification (KYC)') }}
+                            </h2>
+                            @if ($isVerified)
+                                <span class="inline-flex items-center gap-1 rounded-full bg-success/10 px-2.5 py-1 text-[11px] font-bold text-success border border-success/20 uppercase tracking-wide">
+                                    <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M8.603 3.799A4.49 4.49 0 0 1 12 2.25c1.357 0 2.573.6 3.397 1.549a4.49 4.49 0 0 1 3.498 1.307 4.491 4.491 0 0 1 1.307 3.497A4.49 4.49 0 0 1 21.75 12a4.49 4.49 0 0 1-1.549 3.397 4.491 4.491 0 0 1-1.307 3.497 4.491 4.491 0 0 1-3.497 1.307A4.49 4.49 0 0 1 12 21.75a4.49 4.49 0 0 1-3.397-1.549 4.49 4.49 0 0 1-3.498-1.306 4.491 4.491 0 0 1-1.307-3.498A4.49 4.49 0 0 1 2.25 12c0-1.357.6-2.573 1.549-3.397a4.49 4.49 0 0 1 1.307-3.497 4.49 4.49 0 0 1 3.497-1.307Zm7.007 6.387a.75.75 0 1 0-1.22-.872l-3.236 4.53L9.53 12.22a.75.75 0 0 0-1.06 1.06l2.25 2.25a.75.75 0 0 0 1.14-.094l3.75-5.25Z" clip-rule="evenodd" /></svg>
+                                    Verified
+                                </span>
+                            @elseif ($isPending)
+                                <span class="inline-flex items-center gap-1 rounded-full bg-info/10 px-2.5 py-1 text-[11px] font-bold text-info border border-info/20 uppercase tracking-wide">
+                                    <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" /></svg>
+                                    Pending Review
+                                </span>
+                            @elseif ($isRejected)
+                                <span class="inline-flex items-center gap-1 rounded-full bg-error/10 px-2.5 py-1 text-[11px] font-bold text-error border border-error/20 uppercase tracking-wide">
+                                    <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m-9.303 3.376c-.866 1.5.217 3.374 1.948 3.374h14.71c1.73 0 2.813-1.874 1.948-3.374L13.949 3.378c-.866-1.5-3.032-1.5-3.898 0L2.697 16.126ZM12 15.75h.007v.008H12v-.008Z" /></svg>
+                                    Rejected — Re-upload Required
+                                </span>
+                            @endif
+                        </div>
+
+                        @if ($fieldsLocked)
+                            <div class="flex items-center gap-2 mb-6 px-3 py-2 rounded-lg bg-base-200 border border-base-content/5">
+                                <svg class="w-4 h-4 text-base-content/40 flex-shrink-0" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M16.5 10.5V6.75a4.5 4.5 0 1 0-9 0v3.75m-.75 11.25h10.5a2.25 2.25 0 0 0 2.25-2.25v-6.75a2.25 2.25 0 0 0-2.25-2.25H6.75a2.25 2.25 0 0 0-2.25 2.25v6.75a2.25 2.25 0 0 0 2.25 2.25Z" /></svg>
+                                <p class="text-[12px] text-base-content/50">
+                                    @if ($isVerified)
+                                        {{ __('Your identity has been verified. These fields are locked.') }}
+                                    @else
+                                        {{ __('Your documents are under review. Fields are locked until review is complete.') }}
+                                    @endif
+                                </p>
+                            </div>
+                        @else
+                            <p class="text-[11px] text-base-content/40 mb-6">{{ __('Provide either a Ghana Card or TIN.') }}</p>
+                        @endif
 
                         <div class="space-y-6">
                             {{-- Ghana Card --}}
-                            <div class="grid gap-6 sm:grid-cols-2 items-start bg-base-200 p-6 rounded-xl border border-base-content/5">
-                                <div>
-                                    <x-ui.input
-                                        label="{{ __('Ghana Card Number') }}"
-                                        type="text"
-                                        id="ghana_card_number"
-                                        wire:model="ghana_card_number"
-                                        placeholder="GHA-XXXXXXXXX-X"
-                                        pattern="GHA-[0-9]{9}-[0-9]"
-                                        title="Format: GHA-123456789-1"
-                                        error="{{ $errors->first('ghana_card_number') }}"
-                                    />
-                                    @if ($this->hasGhanaCardDoc)
-                                        <p class="mt-2 text-[11px] font-bold text-success flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
-                                            {{ __('Document on file') }}
-                                        </p>
-                                    @endif
-                                </div>
-                                <div>
-                                    <label class="text-[13px] font-medium text-base-content block mb-1.5">{{ __('Upload Ghana Card') }}</label>
-                                    <x-ui.filepond
-                                        wire:model="ghana_card_file"
-                                        accepts="image/jpeg, image/png, application/pdf"
-                                        maxSize="5MB"
-                                    />
-                                    <p class="mt-2 text-[11px] text-base-content/40">{{ __('Max 5MB (JPG, PNG, PDF)') }}</p>
-                                    @error('ghana_card_file') <span class="text-[11px] text-error flex items-center gap-1 mt-1.5">⚠ {{ $message }}</span> @enderror
+                            <div class="bg-base-200 p-6 rounded-xl border border-base-content/5 {{ $fieldsLocked ? 'opacity-80' : '' }}">
+                                <div class="grid gap-6 sm:grid-cols-2 items-start">
+                                    <div>
+                                        <x-ui.input
+                                            label="{{ __('Ghana Card Number') }}"
+                                            type="text"
+                                            id="ghana_card_number"
+                                            wire:model="ghana_card_number"
+                                            placeholder="GHA-XXXXXXXXX-X"
+                                            pattern="GHA-[0-9]{9}-[0-9]"
+                                            title="Format: GHA-123456789-1"
+                                            error="{{ $errors->first('ghana_card_number') }}"
+                                            :disabled="$fieldsLocked"
+                                        />
+                                        @if ($this->hasGhanaCardDoc)
+                                            <div class="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-success/5 border border-success/10">
+                                                <svg class="w-4 h-4 text-success flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd" /></svg>
+                                                <span class="text-[12px] font-semibold text-success">{{ __('Document uploaded') }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        @if (!$fieldsLocked)
+                                            <label class="text-[13px] font-medium text-base-content block mb-1.5">{{ __('Upload Ghana Card') }}</label>
+                                            <x-ui.filepond
+                                                wire:model="ghana_card_file"
+                                                accepts="image/jpeg, image/png, application/pdf"
+                                                maxSize="5MB"
+                                            />
+                                            <p class="mt-2 text-[11px] text-base-content/40">{{ __('Max 5MB (JPG, PNG, PDF)') }}</p>
+                                            @error('ghana_card_file') <span class="text-[11px] text-error flex items-center gap-1 mt-1.5">⚠ {{ $message }}</span> @enderror
+                                        @else
+                                            <label class="text-[13px] font-medium text-base-content/40 block mb-1.5">{{ __('Ghana Card Document') }}</label>
+                                            <div class="flex items-center gap-3 px-4 py-3 bg-base-100 border border-base-content/5 rounded-lg">
+                                                <svg class="w-5 h-5 text-base-content/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                                                <div>
+                                                    <p class="text-[13px] font-medium text-base-content/60">{{ $this->hasGhanaCardDoc ? __('File on record') : __('No file uploaded') }}</p>
+                                                    <p class="text-[11px] text-base-content/30">{{ __('Locked during review') }}</p>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
 
@@ -162,32 +216,46 @@
                             </div>
 
                             {{-- TIN --}}
-                            <div class="grid gap-6 sm:grid-cols-2 items-start bg-base-200 p-6 rounded-xl border border-base-content/5">
-                                <div>
-                                    <x-ui.input
-                                        label="{{ __('Tax Identification Number (TIN)') }}"
-                                        type="text"
-                                        id="tin_number"
-                                        wire:model="tin_number"
-                                        placeholder="PXXXXXXXXXX"
-                                        error="{{ $errors->first('tin_number') }}"
-                                    />
-                                    @if ($this->hasTinDoc)
-                                        <p class="mt-2 text-[11px] font-bold text-success flex items-center gap-1">
-                                            <svg class="w-3.5 h-3.5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m4.5 12.75 6 6 9-13.5" /></svg>
-                                            {{ __('Document on file') }}
-                                        </p>
-                                    @endif
-                                </div>
-                                <div>
-                                    <label class="text-[13px] font-medium text-base-content block mb-1.5">{{ __('Upload TIN Document') }}</label>
-                                    <x-ui.filepond
-                                        wire:model="tin_file"
-                                        accepts="image/jpeg, image/png, application/pdf"
-                                        maxSize="5MB"
-                                    />
-                                    <p class="mt-2 text-[11px] text-base-content/40">{{ __('Max 5MB (JPG, PNG, PDF)') }}</p>
-                                    @error('tin_file') <span class="text-[11px] text-error flex items-center gap-1 mt-1.5">⚠ {{ $message }}</span> @enderror
+                            <div class="bg-base-200 p-6 rounded-xl border border-base-content/5 {{ $fieldsLocked ? 'opacity-80' : '' }}">
+                                <div class="grid gap-6 sm:grid-cols-2 items-start">
+                                    <div>
+                                        <x-ui.input
+                                            label="{{ __('Tax Identification Number (TIN)') }}"
+                                            type="text"
+                                            id="tin_number"
+                                            wire:model="tin_number"
+                                            placeholder="PXXXXXXXXXX"
+                                            error="{{ $errors->first('tin_number') }}"
+                                            :disabled="$fieldsLocked"
+                                        />
+                                        @if ($this->hasTinDoc)
+                                            <div class="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-success/5 border border-success/10">
+                                                <svg class="w-4 h-4 text-success flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd" /></svg>
+                                                <span class="text-[12px] font-semibold text-success">{{ __('Document uploaded') }}</span>
+                                            </div>
+                                        @endif
+                                    </div>
+                                    <div>
+                                        @if (!$fieldsLocked)
+                                            <label class="text-[13px] font-medium text-base-content block mb-1.5">{{ __('Upload TIN Document') }}</label>
+                                            <x-ui.filepond
+                                                wire:model="tin_file"
+                                                accepts="image/jpeg, image/png, application/pdf"
+                                                maxSize="5MB"
+                                            />
+                                            <p class="mt-2 text-[11px] text-base-content/40">{{ __('Max 5MB (JPG, PNG, PDF)') }}</p>
+                                            @error('tin_file') <span class="text-[11px] text-error flex items-center gap-1 mt-1.5">⚠ {{ $message }}</span> @enderror
+                                        @else
+                                            <label class="text-[13px] font-medium text-base-content/40 block mb-1.5">{{ __('TIN Document') }}</label>
+                                            <div class="flex items-center gap-3 px-4 py-3 bg-base-100 border border-base-content/5 rounded-lg">
+                                                <svg class="w-5 h-5 text-base-content/30" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 0 0-3.375-3.375h-1.5A1.125 1.125 0 0 1 13.5 7.125v-1.5a3.375 3.375 0 0 0-3.375-3.375H8.25m2.25 0H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 0 0-9-9Z" /></svg>
+                                                <div>
+                                                    <p class="text-[13px] font-medium text-base-content/60">{{ $this->hasTinDoc ? __('File on record') : __('No file uploaded') }}</p>
+                                                    <p class="text-[11px] text-base-content/30">{{ __('Locked during review') }}</p>
+                                                </div>
+                                            </div>
+                                        @endif
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -204,7 +272,7 @@
                     </x-ui.button>
                 </div>
             </form>
-        </div>
+        </x-ui.card>
 
         {{-- Phone Verification Modal --}}
         @if ($showPhoneVerificationModal)

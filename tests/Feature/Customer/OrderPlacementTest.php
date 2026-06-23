@@ -11,8 +11,10 @@ use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\User;
+use Illuminate\Auth\Notifications\VerifyEmail;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
@@ -63,7 +65,9 @@ class OrderPlacementTest extends TestCase
             'car_id' => $car->id,
             'status' => OrderStatus::PendingPayment->value,
         ]);
-        $this->assertSame(CarStatus::Reserved, $car->refresh()->status);
+        // Placing an order no longer locks the car — only a confirmed payment does,
+        // so other customers can still order it while this one is unpaid.
+        $this->assertSame(CarStatus::Available, $car->refresh()->status);
         Event::assertDispatched(OrderPlaced::class);
     }
 
@@ -106,6 +110,37 @@ class OrderPlacementTest extends TestCase
             ->assertHasErrors('order');
 
         $this->assertDatabaseMissing('orders', ['user_id' => $user->id, 'car_id' => $car->id]);
+    }
+
+    #[Test]
+    public function a_customer_with_an_unverified_email_cannot_place_an_order(): void
+    {
+        $car = $this->makeCar();
+        $user = User::factory()->unverified()->create(['kyc_status' => KycStatus::Verified]);
+
+        Livewire::actingAs($user)
+            ->test(CarDetail::class, ['car' => $car])
+            ->set('showOrderModal', true)
+            ->assertSee('verify your email address')
+            ->call('confirmOrder')
+            ->assertHasErrors('order');
+
+        $this->assertDatabaseMissing('orders', ['user_id' => $user->id, 'car_id' => $car->id]);
+    }
+
+    #[Test]
+    public function resending_verification_from_the_order_modal_sends_a_new_email(): void
+    {
+        Notification::fake();
+
+        $car = $this->makeCar();
+        $user = User::factory()->unverified()->create();
+
+        Livewire::actingAs($user)
+            ->test(CarDetail::class, ['car' => $car])
+            ->call('resendVerification');
+
+        Notification::assertSentTo($user, VerifyEmail::class);
     }
 
     #[Test]

@@ -58,6 +58,7 @@ class OrdersTable
                         'Pending' => 'warning',
                         'Uploaded' => 'info',
                         'Confirmed' => 'success',
+                        'Cancelled' => 'danger',
                     }),
                 TextColumn::make('price_usd_cents')
                     ->label('Total')
@@ -96,6 +97,7 @@ class OrdersTable
                         'Pending' => 'Pending',
                         'Uploaded' => 'Uploaded',
                         'Confirmed' => 'Confirmed',
+                        'Cancelled' => 'Cancelled',
                     ])
                     ->query(function (Builder $query, array $data) {
                         $value = $data['value'] ?? null;
@@ -103,7 +105,8 @@ class OrdersTable
                         return match ($value) {
                             'Pending' => $query->where('status', OrderStatus::PendingPayment),
                             'Uploaded' => $query->where('status', OrderStatus::PaymentUploaded),
-                            'Confirmed' => $query->whereNotIn('status', [OrderStatus::PendingPayment, OrderStatus::PaymentUploaded]),
+                            'Cancelled' => $query->where('status', OrderStatus::Cancelled),
+                            'Confirmed' => $query->whereNotIn('status', [OrderStatus::PendingPayment, OrderStatus::PaymentUploaded, OrderStatus::Cancelled]),
                             default => $query,
                         };
                     }),

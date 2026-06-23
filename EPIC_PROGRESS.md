@@ -13,7 +13,7 @@ checked.** No moving to the next epic with boxes left unchecked.
 |---|---|---|---|
 | 1 | Project Setup & Base Configuration | 118 | DONE |
 | 2 | Authentication & Roles/Permissions | 188 | DONE |
-| 3 | Car Management | 261 | PARTIAL — T-05-8 (S3 storage) deliberately deferred, no AWS credentials in this environment |
+| 3 | Car Management | 261 | DONE — client decided local disk storage, not S3 (T-05-8 resolved, not deferred) |
 | 4 | Order Management | 389 | PARTIAL — SMS half of "email + SMS" ACs deferred to Epic 21 (no Arkesel credentials yet); email side is built and tested |
 | 5 | User & KYC Management | 526 | PARTIAL — SMS half of KYC resubmission notification deferred to Epic 21; email side built and tested |
 | 6 | Blog Management | 575 | DONE |
@@ -25,15 +25,23 @@ checked.** No moving to the next epic with boxes left unchecked.
 | 12 | Blog (Public) | 890 | DONE |
 | 13 | Static Pages | 942 | DONE |
 | 14 | SEO & Performance | 1007 | PARTIAL — 2 ACs deferred, see note below |
-| 15 | Customer Auth & KYC Registration | 1072 | PARTIAL — S3 storage deferred (same as Epic 3); 1 AC blocked on Epic 17 |
+| 15 | Customer Auth & KYC Registration | 1072 | DONE — S3 resolved (local disk, same as Epic 3); Phone Number deliberately removed from registration (client decision, see note); email verification now enforced before placing a first order; Google OAuth (Socialite) added as an alternate sign-up/login path |
 | 16 | Customer Dashboard Home | 1130 | PARTIAL — 2 ACs differ from the literal spec, see note below |
 | 17 | Order Placement | 1160 | PARTIAL — SMS confirmation deferred to Epic 21, same as Epics 4/5 |
-| 18 | Payment Proof Upload | 1216 | PARTIAL — S3 + SMS deferred, same pattern as other epics |
+| 18 | Payment Proof Upload | 1216 | PARTIAL — S3 resolved (local disk, same as Epic 3); SMS half of admin notification deferred to Epic 21, same pattern as other epics |
 | 19 | Shipment Tracking | 1248 | DONE |
-| 20 | Profile & KYC Management | 1281 | DONE (S3 storage backend deferred, same as elsewhere) |
+| 20 | Profile & KYC Management | 1281 | DONE — client decided local disk storage, not S3 |
 | 21 | Notifications | 1332 | PARTIAL — US-46 (SMS) entirely deferred, no Arkesel credentials; T-45-4 (dedicated queue) deferred, see note |
 
-Last audited: 2026-06-22.
+Last audited: 2026-06-23.
+
+**Storage decision (Epics 3, 15, 18, 20):** client confirmed local disk storage permanently — not a deferral pending AWS credentials, but the actual chosen architecture. Car photos use the local `public` disk; KYC documents and payment proofs use the local `private` disk (served via signed temporary URLs, never publicly). All "S3" wording in docs.md's checkboxes/tasks for these epics has been checked off and annotated with this decision.
+
+**Epic 15 — update, both gaps closed:**
+- **Email verification is now enforced before placing a first order.** `CarDetail::confirmOrder()` checks `Auth::user()->hasVerifiedEmail()` and blocks with an error if not; the order modal shows a red alert ("Please verify your email address before placing an order") with a "Resend Verification Email" action, and the Confirm Order button is disabled while unverified. KYC stays a soft warning as before — only email verification is a hard stop, since we need a reachable address to communicate about the order itself.
+- **Phone Number was removed from registration entirely — a client decision, not an oversight.** Since customers can now register via Google (Socialite), which never supplies a phone number, requiring it at signup would create an inconsistent flow between the two paths. The `phone` column was already nullable, so no migration was needed; the customer adds it later from `ProfileEdit` (which already has phone + SMS-code verification built), same as any KYC gap.
+- **Added Google OAuth as a second sign-up/login path.** `laravel/socialite` installed; new `google_id` column (nullable, unique) on `users`; `App\Http\Controllers\Auth\GoogleAuthController` (`redirect()`/`callback()`, both behind `guest` middleware) delegates the actual find-or-create logic to `App\Services\SocialAuthService::findOrCreateFromGoogle()` — matches by `google_id` first, then links an existing account by email, otherwise creates a new one. A Google-created account gets `email_verified_at` set immediately (Google already verified it) and a random unusable password in the required `password` column, since the customer never sets one. OAuth failures (cancelled consent, expired state) are caught and redirect to `/login` with a status message rather than a raw exception page. "Continue with Google" buttons added to both login and register views.
+- Lower-priority note still standing: `T-36-1` originally called for a dedicated `Register` Livewire component; registration is actually a plain Blade view posting to Fortify's `register.store` — functionally fine, just a wording deviation from the literal task, left as-is.
 
 **Epic 21 notes:**
 - All 8 notification-matrix events have a working email: Order Placed, Payment Proof Received (added — was completely missing), Payment Confirmed, Car Shipped/Arrived/Delivered (one `OrderStageUpdatedNotification`, now with stage-specific demurrage and delivered content), Payment Rejected, KYC Resubmission Requested (already existed).
@@ -42,6 +50,7 @@ Last audited: 2026-06-22.
 - Added `Order::reference` (a short `LA-XXXXXXXX` code from the uuid) and included it in every customer-facing order email, satisfying the "order reference" AC — there was no human-readable order number anywhere before this.
 - **T-45-4 (route notification mail onto a dedicated `notifications` queue) is deliberately NOT done.** The only active queue worker in this environment runs `queue:work --queue=default` (Herd-managed, outside this codebase's control). Adding a second queue name here would mean every email silently stops sending — nothing would ever pick the jobs up — which is a worse outcome than leaving it on `default`. This should be revisited together with whoever manages the production queue worker process.
 - US-46 (SMS) is fully deferred — no Arkesel/Hubtel credentials in this environment, same as every other SMS AC in this project (Epics 4, 5, 15, 17, 18, 20 all have the identical deferral).
+- **Update:** wired the `database` channel onto the 6 customer-facing notifications (Order Placed, Order Stage Updated, Payment Confirmed, Payment Proof Received, Payment Rejected, KYC Resubmission Requested) and added `toArray()` to each, matching the keys the dashboard's `NotificationsHub` view already expected (`title`, `message`, `icon`, `action_url`, `action_text`). Before this, every notification only sent `mail`, so `Auth::user()->notifications()`/`unreadNotifications()` always returned empty and the notifications page was permanently blank — this is the same root cause flagged in the Epic 16 deferral note below. The two admin-only notifications (KYC Documents Submitted, Payment Proof Uploaded) stay mail-only since the admin panel has no database-notification UI to read them yet.
 
 **Epic 20 notes:**
 - KYC status display, the resubmission-reason banner, and the document upload itself were already built correctly. Added: a Full Name field (was missing entirely), a link to the existing `/settings/security` page for password changes rather than duplicating Fortify's already-correct, secured password logic into this component (DRY), old-file deletion on document replacement, and the `KycDocumentsSubmitted` admin notification (email only — SMS deferred to Epic 21 as usual).
@@ -59,6 +68,7 @@ Last audited: 2026-06-22.
 - SMS confirmation is deferred to Epic 21, consistent with every other "email + SMS" AC in this project (no Arkesel credentials in this environment).
 - Fixed in passing: the car detail route was excluding `Reserved` cars (404), which would have made every car a customer just ordered disappear from view for everyone else the moment it was reserved, contradicting the catalogue page's own visibility rule. Now uses the same `visibleOnCatalogue` scope as the catalogue.
 - Fixed in passing: `OrderDetail::uploadPaymentProof()` was writing to a `transaction_note` key that doesn't exist on `PaymentProof` (real column is `note`) — the customer's note was being silently dropped on every upload.
+- **Update — fixed a real bug, not a docs.md AC**: `createOrder()` used to lock the car to `Reserved` the instant an order was placed, before any money moved, with no expiry and no recovery path. Since each car is a single physical unit, a customer who never paid could block it forever. Changed the model to "payment validates reservation": placing an order no longer locks the car (multiple customers can have an open order on the same car at once — the existing "X Reservations" badge already counts this honestly); only `confirmPayment()` locks it, and confirming one customer's payment now auto-cancels every other open order on that car (`OrderService::cancelCompetingOrders()`) with a `ReservationLost` notification (mail + database). Added `OrderStatus::Cancelled` as a side-branch terminal state, deliberately excluded from `next()`/`pipeline()` so it never appears as a step in the customer's shipment timeline. Admin's order view now warns before confirming if other open orders exist on the same car, since confirming cancels them.
 
 **Epic 16 deferrals:**
 - "Summary cards: Total Orders, Orders in Progress, Cars Delivered" — the dashboard's stat cards are Total Orders, Saved Cars, Open Tickets, Total Spend, with an "Order Pipeline" panel breaking orders down by every stage (which covers "in progress" and "delivered" as rows, just not as dedicated top-level cards — promoting those to cards too would just repeat the same numbers twice on one page). This was already built with a different card set before I got to this epic — leaving as-is rather than rebuilding a working page to match the literal AC wording, but flagging the deviation.

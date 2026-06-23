@@ -128,6 +128,12 @@ Route::view('/terms-and-conditions', 'pages.terms')->name('pages.terms');
 Route::view('/privacy-policy', 'pages.privacy')->name('pages.privacy');
 Route::view('/fraud-awareness', 'pages.fraud-awareness')->name('pages.fraud-awareness');
 
+// Google OAuth — "Continue with Google" on login/register
+Route::middleware(['guest'])->group(function () {
+    Route::get('/auth/google/redirect', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'redirect'])->name('auth.google.redirect');
+    Route::get('/auth/google/callback', [\App\Http\Controllers\Auth\GoogleAuthController::class, 'callback'])->name('auth.google.callback');
+});
+
 // Authenticated customer area
 Route::middleware(['auth'])->group(function () {
     // We don't force 'verified' on the whole dashboard because we want

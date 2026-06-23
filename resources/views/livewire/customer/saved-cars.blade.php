@@ -14,15 +14,15 @@
     </div>
 
     @if ($savedCars->isEmpty())
-        <div class="bg-base-100 border border-base-content/5 rounded-xl p-14 text-center shadow-sm">
+        <x-ui.card class="p-14 text-center">
             <svg class="mx-auto w-12 h-12 text-base-content/20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" /></svg>
             <p class="mt-3 text-[15px] font-bold text-base-content">{{ __('No saved cars') }}</p>
             <p class="mt-1 text-[13px] text-base-content/40">{{ __('You haven\'t bookmarked any cars yet. Start browsing to save your favorites!') }}</p>
-        </div>
+        </x-ui.card>
     @else
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($savedCars as $car)
-                <div class="bg-white border border-base-content/5 rounded-xl shadow-sm overflow-hidden flex flex-col group relative">
+                <x-ui.card class="overflow-hidden flex flex-col group relative">
                     <button wire:click="removeSavedCar('{{ $car->uuid }}')" wire:confirm="Remove this car from your saved list?" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 shadow-sm text-base-content hover:text-error hover:bg-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100">
                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
                     </button>
@@ -56,7 +56,7 @@
                             <a href="{{ route('cars.show', $car->slug) }}" class="text-[12px] font-bold text-primary hover:underline">{{ __('View Details') }}</a>
                         </div>
                     </div>
-                </div>
+                </x-ui.card>
             @endforeach
         </div>
     @endif

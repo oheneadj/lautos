@@ -8,6 +8,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Models\Setting;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -33,7 +34,13 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
-            ->brandName('Livingston Autos')
+            // I resolve these as closures (not plain strings) so they're evaluated
+            // per-request and always reflect the current Setting, not whatever was
+            // true when the panel was registered.
+            ->brandName(fn () => config('app.name'))
+            ->brandLogo(fn () => Setting::get('site_logo_path')
+                ? \Illuminate\Support\Facades\Storage::url(Setting::get('site_logo_path'))
+                : null)
             ->login()
             ->profile()
             // TODO T-03-6: wire up 2FA via filament/two-factor-authentication once

@@ -50,7 +50,6 @@ class Settings extends Page implements HasForms
                     ->schema([
                         TextInput::make('site_name')
                             ->label('Business Name')
-                            ->required()
                             ->columnSpanFull(),
 
                         FileUpload::make('site_logo_path')

@@ -17,15 +17,20 @@
         class="fixed inset-y-0 left-0 z-50 w-64 bg-neutral flex flex-col transition-transform duration-300 -translate-x-full lg:translate-x-0"
         :class="mobileMenuOpen ? '!translate-x-0' : '-translate-x-full'">
         {{-- Logo Area --}}
+        @php $sidebarLogoPath = \App\Models\Setting::get('site_logo_path'); @endphp
         <div class="p-5 border-b border-white/[0.06] flex items-center justify-between">
             <a href="{{ route('dashboard.index') }}" wire:navigate class="flex items-center gap-3 min-w-0">
-                <div
-                    class="size-10 rounded-xl bg-primary/20 border border-primary/30 flex items-center justify-center shrink-0 overflow-hidden text-primary">
-                    <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-                        stroke-width="2.5" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.129-1.125V11.25M12 9h4.875c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125H9.75M9 9h3M9 12h3m1.5 0h3.75M3 12h2.25" />
-                    </svg>
+                <div class="size-10 flex items-center justify-center shrink-0 overflow-hidden text-primary">
+                    @if ($sidebarLogoPath)
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($sidebarLogoPath) }}"
+                            alt="{{ config('app.name') }}" class="w-full h-full object-cover">
+                    @else
+                        <svg class="size-6" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+                            stroke-width="2.5" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round"
+                                d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.129-1.125V11.25M12 9h4.875c.621 0 1.125-.504 1.125-1.125V5.625c0-.621-.504-1.125-1.125-1.125H3.375c-.621 0-1.125.504-1.125 1.125v1.5c0 .621.504 1.125 1.125 1.125H9.75M9 9h3M9 12h3m1.5 0h3.75M3 12h2.25" />
+                        </svg>
+                    @endif
                 </div>
                 <div class="flex flex-col leading-none min-w-0">
                     <span
@@ -383,7 +388,8 @@
                                 <div class="min-w-0">
                                     <div class="flex items-center gap-1">
                                         <p class="text-[13px] font-semibold text-base-content truncate">
-                                            {{ auth()->user()->name }}</p>
+                                            {{ auth()->user()->name }}
+                                        </p>
                                         @if (auth()->user()->kyc_status === \App\Enums\KycStatus::Verified)
                                             <svg class="size-3.5 text-emerald-500 flex-shrink-0"
                                                 xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor">

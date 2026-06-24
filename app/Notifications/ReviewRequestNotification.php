@@ -40,12 +40,12 @@ class ReviewRequestNotification extends Notification implements ShouldQueue
         $car = $this->order->car;
 
         return (new MailMessage)
-            ->subject('How was your experience with Livingston Autos?')
+            ->subject('How was your experience with ' . config('app.name') . '?')
             ->greeting("Hi {$notifiable->name},")
             ->line("Your {$car->year} {$car->make->name} {$car->carModel->name} has been delivered — we hope you're enjoying it.")
             ->line("We'd love to hear about your experience. It only takes a minute and helps other buyers make their decision.")
             ->action('Leave a Review', route('dashboard.reviews'))
-            ->line('Thank you for choosing Livingston Autos.');
+            ->line('Thank you for choosing ' . config('app.name') . '.');
     }
 
     public function toGiantSms(object $notifiable): GiantSmsMessage

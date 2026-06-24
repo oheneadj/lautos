@@ -79,4 +79,56 @@ class SettingsTest extends TestCase
         Livewire::test(Settings::class)
             ->assertFormFieldIsDisabled('exchange_rate_usd_to_ghs');
     }
+
+    #[Test]
+    public function admin_can_update_business_info(): void
+    {
+        $this->seedRoles();
+        $admin = User::factory()->create(['is_admin' => true]);
+        $admin->assignRole(Role::findOrCreate('super_admin', 'web'));
+        $this->actingAs($admin);
+
+        Livewire::test(Settings::class)
+            ->fillForm([
+                'site_name' => 'New Business Name',
+                'contact_email' => 'hello@newbusiness.com',
+                'contact_phone' => '+233 50 123 4567',
+                'whatsapp_number' => '+233 50 123 4567',
+                'contact_address' => 'Tema, Ghana',
+                'facebook_url' => 'https://facebook.com/newbusiness',
+                'instagram_url' => 'https://instagram.com/newbusiness',
+                'twitter_url' => 'https://x.com/newbusiness',
+                'exchange_rate_usd_to_ghs' => '15',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertSame('New Business Name', Setting::get('site_name'));
+        $this->assertSame('hello@newbusiness.com', Setting::get('contact_email'));
+        $this->assertSame('https://facebook.com/newbusiness', Setting::get('facebook_url'));
+        $this->assertSame('https://instagram.com/newbusiness', Setting::get('instagram_url'));
+        $this->assertSame('https://x.com/newbusiness', Setting::get('twitter_url'));
+    }
+
+    #[Test]
+    public function admin_can_upload_a_site_logo(): void
+    {
+        $this->seedRoles();
+        $admin = User::factory()->create(['is_admin' => true]);
+        $admin->assignRole(Role::findOrCreate('super_admin', 'web'));
+        $this->actingAs($admin);
+
+        \Illuminate\Support\Facades\Storage::fake('public');
+        $logo = \Illuminate\Http\UploadedFile::fake()->image('logo.png');
+
+        Livewire::test(Settings::class)
+            ->fillForm([
+                'site_logo_path' => $logo,
+                'exchange_rate_usd_to_ghs' => '15',
+            ])
+            ->call('save')
+            ->assertHasNoFormErrors();
+
+        $this->assertNotNull(Setting::get('site_logo_path'));
+    }
 }

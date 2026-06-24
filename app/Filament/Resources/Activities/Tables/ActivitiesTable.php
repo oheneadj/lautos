@@ -16,9 +16,6 @@ class ActivitiesTable
                 TextColumn::make('causer.name')
                     ->label('User')
                     ->description(fn (Model $record) => $record->causer?->email)
-                    ->url(fn (Model $record) => $record->causer_type === \App\Models\User::class && $record->causer_id 
-                        ? route('filament.admin.resources.users.view', $record->causer_id) 
-                        : null)
                     ->searchable()
                     ->sortable()
                     ->default('System'),

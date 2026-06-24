@@ -51,7 +51,7 @@ class ReservationLostNotification extends Notification implements ShouldQueue
 
         return $mail
             ->action('Browse Other Cars', route('cars.index'))
-            ->line('Thank you for your interest in Livingston Autos.');
+            ->line('Thank you for your interest in ' . config('app.name') . '.');
     }
 
     public function toGiantSms(object $notifiable): GiantSmsMessage

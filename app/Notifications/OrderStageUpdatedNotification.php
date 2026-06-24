@@ -59,12 +59,12 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
         }
 
         if ($this->order->status === OrderStatus::Delivered) {
-            $mail->line('Your car has been delivered. Thank you for choosing Livingston Autos!');
+            $mail->line('Your car has been delivered. Thank you for choosing ' . config('app.name') . '!');
         }
 
         return $mail
             ->action('Track Your Order', route('dashboard.orders.show', $this->order->uuid))
-            ->line('Thank you for choosing Livingston Autos.');
+            ->line('Thank you for choosing ' . config('app.name') . '.');
     }
 
     public function toGiantSms(object $notifiable): GiantSmsMessage

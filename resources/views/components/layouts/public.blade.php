@@ -23,8 +23,13 @@
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8 h-[60px] flex items-center justify-between gap-6">
 
             {{-- Logo --}}
+            @php $headerLogoPath = \App\Models\Setting::get('site_logo_path'); @endphp
             <a wire:navigate href="{{ route('home') }}" class="flex items-center gap-1.5 hover:opacity-80 transition-opacity duration-200 flex-shrink-0">
-                <span class="font-black text-[22px] tracking-tight text-primary">Livingston<span class="text-gray-900">Autos</span></span>
+                @if ($headerLogoPath)
+                    <img src="{{ \Illuminate\Support\Facades\Storage::url($headerLogoPath) }}" alt="{{ config('app.name') }}" class="h-7 w-auto">
+                @else
+                    <span class="font-black text-[22px] tracking-tight text-primary">{{ config('app.name') }}</span>
+                @endif
             </a>
 
             {{-- Desktop Nav --}}
@@ -123,6 +128,13 @@
 
         {{-- Mobile menu --}}
         <div class="lg:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1 shadow-lg absolute w-full" x-show="mobileOpen" x-transition:enter="transition duration-150 ease-out" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak>
+            <a wire:navigate href="{{ route('home') }}" class="flex items-center gap-1.5 px-3 py-2.5 mb-1">
+                @if ($headerLogoPath)
+                    <img src="{{ \Illuminate\Support\Facades\Storage::url($headerLogoPath) }}" alt="{{ config('app.name') }}" class="h-6 w-auto">
+                @else
+                    <span class="font-black text-[18px] tracking-tight text-primary">{{ config('app.name') }}</span>
+                @endif
+            </a>
             <a wire:navigate href="{{ route('home') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Home') }}</a>
             <a wire:navigate href="{{ route('cars.index') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Search Cars') }}</a>
             <a wire:navigate href="{{ route('pages.shipping') }}" class="block px-3 py-2.5 text-[14px] font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Shipping') }}</a>
@@ -212,7 +224,7 @@
             <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
                 <div class="flex flex-col md:flex-row items-center justify-between gap-4">
                     <div class="text-center md:text-left text-[12px] text-gray-400 font-medium">
-                        &copy; {{ date('Y') }} Livingston Autos. All rights reserved.
+                        &copy; {{ date('Y') }} {{ config('app.name') }}. All rights reserved.
                     </div>
                     <div class="flex items-center gap-6 text-[12px] text-gray-400 font-medium">
                         <a wire:navigate href="{{ route('pages.terms') }}" class="hover:text-white transition-colors">Terms</a>

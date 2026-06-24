@@ -36,6 +36,7 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->viteTheme('resources/css/filament/admin/theme.css')
             // I resolve these as closures (not plain strings) so they're evaluated
             // per-request and always reflect the current Setting, not whatever was
             // true when the panel was registered.

@@ -1,0 +1,10 @@
+@import '../../../../vendor/filament/filament/resources/css/theme.css';
+
+@source '../../../../app/Filament/**/*';
+@source '../../../../resources/views/filament/**/*';
+
+/* I add Breezy's views so its My Profile / 2FA / password components keep
+   their Tailwind classes — without this they render unstyled. */
+@source '../../../../vendor/jeffgreco13/filament-breezy/resources/**/*';
+@source '../../../../app/Livewire/Admin/**/*';
+@source '../../../../resources/views/livewire/admin/**/*';

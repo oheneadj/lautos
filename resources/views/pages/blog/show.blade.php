@@ -15,7 +15,7 @@
             </nav>
 
             <div class="max-w-4xl">
-                <h1 class="text-3xl md:text-4xl lg:text-5xl font-black tracking-tight mb-6 leading-tight">
+                <h1 class="text-3xl md:text-4xl lg:text-5xl font-bold tracking-tight mb-6 leading-tight">
                     {{ $post->title }}
                 </h1>
                 

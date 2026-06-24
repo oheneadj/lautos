@@ -204,45 +204,5 @@
         </div>
     </section>
 
-    {{-- CTA SECTION --}}
-    <section class="border-t border-gray-100 py-16 lg:py-20">
-        <div class="max-w-[90rem] mx-auto px-4 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">Experience the difference</h2>
-            <p class="text-gray-500 mb-8 max-w-2xl mx-auto">Browse our inventory of fully inspected, high-quality
-                Japanese and Korean imports.</p>
-            <a href="{{ route('cars.index') }}"
-                class="inline-flex items-center justify-center bg-gray-900 text-white text-base font-bold py-4 px-10 rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg shadow-gray-900/20">
-                Browse Assured Cars
-            </a>
-        </div>
-    </section>
-
-
-    {{-- CTA BANNER --}}
-    <section class="py-20 bg-[#1a1c23] relative overflow-hidden border-t border-gray-800">
-        <div
-            class="absolute top-0 right-0 w-96 h-96 bg-primary/20 blur-[100px] rounded-full translate-x-1/2 -translate-y-1/2">
-        </div>
-        <div
-            class="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2">
-        </div>
-
-        <div class="relative z-10 max-w-4xl mx-auto px-4 lg:px-8 text-center">
-            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to find your perfect car?
-            </h2>
-            <p class="text-lg text-gray-400 mb-10 max-w-2xl mx-auto font-medium">Browse our curated inventory of
-                high-quality Japanese and Korean imports, or contact our expert team for a custom order.</p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a wire:navigate href="{{ route('cars.index') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-base font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
-                    Browse Inventory
-                </a>
-                <a wire:navigate href="{{ route('contact') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-base font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
-                    Contact Support
-                </a>
-            </div>
-        </div>
-    </section>
 
 </x-layouts.public>

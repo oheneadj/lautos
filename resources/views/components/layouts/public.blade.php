@@ -25,15 +25,15 @@
 
     {{-- Nav --}}
     <header class="bg-white/80 backdrop-blur-xl sticky top-0 z-50 border-b border-gray-100" x-data="{ mobileOpen: false }">
-        <div class="max-w-[90rem] mx-auto px-4 lg:px-8 h-[60px] flex items-center justify-between gap-6">
+        <div class="max-w-[90rem] mx-auto px-4 lg:px-8 h-20 flex items-center justify-between gap-6">
 
             {{-- Logo --}}
             @php $headerLogoPath = \App\Models\Setting::get('site_logo_path'); @endphp
             <a wire:navigate href="{{ route('home') }}" class="flex items-center gap-1.5 hover:opacity-80 transition-opacity duration-200 flex-shrink-0">
                 @if ($headerLogoPath)
-                    <img src="{{ \Illuminate\Support\Facades\Storage::url($headerLogoPath) }}" alt="{{ config('app.name') }}" class="h-7 w-auto">
+                    <img src="{{ \Illuminate\Support\Facades\Storage::url($headerLogoPath) }}" alt="{{ config('app.name') }}" class="h-9 w-auto">
                 @else
-                    <span class="font-black text-[22px] tracking-tight text-primary">{{ config('app.name') }}</span>
+                    <span class="font-black text-2xl tracking-tight text-primary">{{ config('app.name') }}</span>
                 @endif
             </a>
 
@@ -43,22 +43,22 @@
                     {{ __('Home') }}
                 </a>
                 <a wire:navigate href="{{ route('cars.index') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 {{ request()->routeIs('cars.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
-                    {{ __('Search') }}
+                    {{ __('Browse All Cars') }}
                 </a>
                 <a wire:navigate href="{{ route('pages.shipping') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 {{ request()->routeIs('pages.shipping') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
-                    {{ __('Shipping') }}
+                    {{ __('Shipping & Delivery') }}
                 </a>
                 <a wire:navigate href="{{ route('pages.how-it-works') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 {{ request()->routeIs('pages.how-it-works') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
-                    {{ __('How to Buy') }}
+                    {{ __('How It Works') }}
                 </a>
                 <a wire:navigate href="{{ route('about') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 {{ request()->routeIs('about') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
                     {{ __('About Us') }}
                 </a>
                 <a wire:navigate href="{{ route('blog.index') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 {{ request()->routeIs('blog.*') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
-                    {{ __('News & Guides') }}
+                    {{ __('Blog') }}
                 </a>
                 <a wire:navigate href="{{ route('contact') }}" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium transition-all duration-150 {{ request()->routeIs('contact') ? 'bg-gray-100 text-gray-900' : 'text-gray-500 hover:text-gray-900 hover:bg-gray-50' }}">
-                    {{ __('Help') }}
+                    {{ __('Contact Us') }}
                 </a>
             </nav>
 
@@ -141,11 +141,11 @@
                 @endif
             </a>
             <a wire:navigate href="{{ route('home') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Home') }}</a>
-            <a wire:navigate href="{{ route('cars.index') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Search Cars') }}</a>
-            <a wire:navigate href="{{ route('pages.shipping') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Shipping') }}</a>
-            <a wire:navigate href="{{ route('pages.how-it-works') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('How to Buy') }}</a>
+            <a wire:navigate href="{{ route('cars.index') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Browse All Cars') }}</a>
+            <a wire:navigate href="{{ route('pages.shipping') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Shipping & Delivery') }}</a>
+            <a wire:navigate href="{{ route('pages.how-it-works') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('How It Works') }}</a>
             <a wire:navigate href="{{ route('about') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('About Us') }}</a>
-            <a wire:navigate href="{{ route('contact') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Help') }}</a>
+            <a wire:navigate href="{{ route('contact') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Contact Us') }}</a>
             <a wire:navigate href="{{ route('blog.index') }}" class="block px-3 py-2.5 text-sm font-medium text-gray-700 rounded-lg hover:bg-gray-50 hover:text-primary">{{ __('Blog') }}</a>
         </div>
     </header>
@@ -153,19 +153,51 @@
     <main class="page-transition">{{ $slot }}</main>
 
     {{-- Footer --}}
-    <footer class="bg-[#1e2327] text-white font-sans border-t-4 border-primary">
-        {{-- Top Section: Main Links --}}
+    <footer class="bg-[#1a1c23] text-white font-sans">
+
+        {{-- CTA Banner — this is now the single, site-wide call to action.
+             I pulled this out of the individual pages (about, how-it-works, shipping,
+             customs-clearance, quality-guarantee all had their own near-identical copy
+             of this) so there's exactly one of these instead of five. --}}
+        <div class="max-w-[90rem] mx-auto px-4 lg:px-8 py-16 border-b border-gray-700/60">
+            <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-8">
+                <h2 class="text-3xl md:text-4xl font-bold tracking-tight leading-tight">
+                    Found the car you've been<br class="hidden lg:block"> looking for? <span class="text-primary">Let's get it to you.</span>
+                </h2>
+                <a wire:navigate href="{{ route('cars.index') }}"
+                    class="inline-flex items-center justify-center bg-primary text-white text-sm font-bold uppercase tracking-wide py-4 px-8 rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg shadow-primary/30 whitespace-nowrap">
+                    Browse Inventory
+                </a>
+            </div>
+        </div>
+
+        {{-- Top Section: Brand + Main Links --}}
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8 pt-16 pb-12">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-x-8 gap-y-12">
-                
-                {{-- Column 1: Inventory & Brand --}}
-                <div>
-                    <h4 class="font-bold text-base mb-6">Inventory</h4>
-                    <ul class="space-y-4">
-                        <li><a wire:navigate href="{{ route('cars.index') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Browse All Cars</a></li>
-                        <li><a wire:navigate href="{{ route('cars.index') }}?status=Available" class="text-sm text-gray-300 hover:text-white transition-colors">Newly Added</a></li>
-                        <li><a wire:navigate href="{{ route('cars.index') }}?status=InTransit" class="text-sm text-gray-300 hover:text-white transition-colors">Coming Soon (In-Transit)</a></li>
-                    </ul>
+            <div class="grid grid-cols-2 lg:grid-cols-5 gap-x-8 gap-y-12">
+
+                {{-- Brand Column --}}
+                <div class="col-span-2">
+                    @if ($headerLogoPath)
+                        <img src="{{ \Illuminate\Support\Facades\Storage::url($headerLogoPath) }}" alt="{{ config('app.name') }}" class="h-7 w-auto mb-4">
+                    @else
+                        <span class="font-black text-[22px] tracking-tight text-white block mb-4">{{ config('app.name') }}</span>
+                    @endif
+                    <p class="text-sm text-gray-400 leading-relaxed mb-6 max-w-xs">
+                        We import quality, inspected used cars from Japan and South Korea, and handle shipping and customs clearance all the way to Tema Port.
+                    </p>
+
+                    @if (\App\Models\Setting::get('contact_address'))
+                        <div class="flex items-start gap-2 text-sm text-gray-400 mb-2">
+                            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                            <span>{{ \App\Models\Setting::get('contact_address') }}</span>
+                        </div>
+                    @endif
+                    @if (\App\Models\Setting::get('contact_email'))
+                        <div class="flex items-start gap-2 text-sm text-gray-400 mb-6">
+                            <svg class="w-4 h-4 mt-0.5 flex-shrink-0 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                            <a href="mailto:{{ \App\Models\Setting::get('contact_email') }}" class="hover:text-white transition-colors">{{ \App\Models\Setting::get('contact_email') }}</a>
+                        </div>
+                    @endif
 
                     @php
                         $footerFacebook = \App\Models\Setting::get('facebook_url');
@@ -173,22 +205,33 @@
                         $footerTwitter = \App\Models\Setting::get('twitter_url');
                     @endphp
                     @if ($footerFacebook || $footerInstagram || $footerTwitter)
-                        <h4 class="font-bold text-base mt-8 mb-4">Connect With Us</h4>
-                        <div class="flex items-center gap-4 text-gray-300">
+                        <div class="flex items-center gap-3">
                             @if ($footerFacebook)
-                                <a href="{{ $footerFacebook }}" target="_blank" class="hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
+                                <a href="{{ $footerFacebook }}" target="_blank" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-colors"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg></a>
                             @endif
                             @if ($footerInstagram)
-                                <a href="{{ $footerInstagram }}" target="_blank" class="hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
+                                <a href="{{ $footerInstagram }}" target="_blank" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-colors"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg></a>
                             @endif
                             @if ($footerTwitter)
-                                <a href="{{ $footerTwitter }}" target="_blank" class="hover:text-white transition-colors"><svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
+                                <a href="{{ $footerTwitter }}" target="_blank" class="w-9 h-9 rounded-full bg-white/10 flex items-center justify-center text-gray-300 hover:bg-primary hover:text-white transition-colors"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M23.953 4.57a10 10 0 01-2.825.775 4.958 4.958 0 002.163-2.723 10.054 10.054 0 01-3.127 1.184 4.92 4.92 0 00-8.384 4.482C7.69 8.095 4.067 6.13 1.64 3.162a4.822 4.822 0 00-.666 2.475c0 1.71.87 3.213 2.188 4.096a4.904 4.904 0 01-2.228-.616v.06a4.923 4.923 0 003.946 4.827 4.996 4.996 0 01-2.212.085 4.936 4.936 0 004.604 3.417 9.867 9.867 0 01-6.102 2.105c-.39 0-.779-.023-1.17-.067a13.995 13.995 0 007.557 2.209c9.053 0 13.998-7.496 13.998-13.985 0-.21 0-.42-.015-.63A9.935 9.935 0 0024 4.59z"/></svg></a>
                             @endif
                         </div>
                     @endif
                 </div>
 
-                {{-- Column 2: Import Process --}}
+                {{-- Column: Quick Links --}}
+                <div>
+                    <h4 class="font-bold text-base mb-6">Quick Links</h4>
+                    <ul class="space-y-4">
+                        <li><a wire:navigate href="{{ route('home') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Home</a></li>
+                        <li><a wire:navigate href="{{ route('cars.index') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Browse All Cars</a></li>
+                        <li><a wire:navigate href="{{ route('about') }}" class="text-sm text-gray-300 hover:text-white transition-colors">About Us</a></li>
+                        <li><a wire:navigate href="{{ route('blog.index') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Blog</a></li>
+                        <li><a wire:navigate href="{{ route('contact') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Contact Us</a></li>
+                    </ul>
+                </div>
+
+                {{-- Column: Import Process --}}
                 <div>
                     <h4 class="font-bold text-base mb-6">Import Process</h4>
                     <ul class="space-y-4">
@@ -199,25 +242,16 @@
                     </ul>
                 </div>
 
-                {{-- Column 3: Support & Trust --}}
+                {{-- Column: Support & Trust --}}
                 <div>
                     <h4 class="font-bold text-base mb-6">Support & Trust</h4>
                     <ul class="space-y-4">
-                        <li><a wire:navigate href="{{ route('contact') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Contact Us</a></li>
                         <li><a wire:navigate href="{{ route('pages.faqs') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Frequently Asked Questions</a></li>
                         <li><a wire:navigate href="{{ route('pages.quality-guarantee') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Vehicle Inspections</a></li>
                         <li><a wire:navigate href="{{ route('pages.fraud-awareness') }}" class="text-sm text-error hover:text-red-400 font-bold transition-colors">Fraud Awareness</a></li>
-                    </ul>
-                </div>
-
-                {{-- Column 4: Legal & Policies --}}
-                <div>
-                    <h4 class="font-bold text-base mb-6">Legal</h4>
-                    <ul class="space-y-4">
                         <li><a wire:navigate href="{{ route('pages.terms') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Terms & Conditions</a></li>
                         <li><a wire:navigate href="{{ route('pages.privacy') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Privacy Policy</a></li>
                         <li><a wire:navigate href="{{ route('pages.refund-policy') }}" class="text-sm text-gray-300 hover:text-white transition-colors">Refund & Cancellation Policy</a></li>
-                        <li><a wire:navigate href="{{ route('about') }}" class="text-sm text-gray-300 hover:text-white transition-colors">About Livingston Autos</a></li>
                     </ul>
                 </div>
 

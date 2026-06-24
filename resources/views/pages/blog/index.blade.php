@@ -11,7 +11,7 @@
                 <span class="text-gray-500">News & Guides</span>
             </nav>
             
-            <h1 class="text-4xl md:text-5xl font-black tracking-tight mb-6">
+            <h1 class="text-4xl md:text-5xl font-bold tracking-tight mb-6">
                 News & Guides
             </h1>
             <p class="text-base text-gray-500 font-medium max-w-3xl mb-8">

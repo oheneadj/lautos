@@ -9,7 +9,8 @@
     @endphp
 
     {{-- MAIN CONTACT CONTENT --}}
-    <section class="max-w-[90rem] mx-auto px-4 lg:px-8 py-16 lg:py-24">
+    <section class="bg-gray-50 py-16 lg:py-24">
+        <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16">
 
             {{-- LEFT SIDE: Info Cards --}}
@@ -172,7 +173,7 @@
     </section>
 
     {{-- LOCATION MAP --}}
-    <section class="border-t border-gray-100 bg-gray-50 py-16 lg:py-24">
+    <section class="border-t border-gray-200 py-16 lg:py-24">
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-12">
                 <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Visit Our Office</h2>

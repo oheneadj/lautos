@@ -277,7 +277,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z" />
                         </svg>
-                        {{ __('Search') }}
+                        {{ __('Browse All Cars') }}
                     </a>
                     <a href="{{ route('pages.shipping') }}" wire:navigate
                         class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-base-content/60 hover:text-base-content hover:bg-base-200/60 transition-all duration-150">
@@ -286,7 +286,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M8.25 18.75a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h6m-9 0H3.375a1.125 1.125 0 0 1-1.125-1.125V14.25m17.25 4.5a1.5 1.5 0 0 1-3 0m3 0a1.5 1.5 0 0 0-3 0m3 0h1.125c.621 0 1.129-.504 1.09-1.124a17.902 17.902 0 0 0-3.213-9.193 2.056 2.056 0 0 0-1.58-.86H14.25M16.5 18.75h-2.25m0-11.177v-.958c0-.568-.422-1.048-.987-1.106a48.554 48.554 0 0 0-10.026 0 1.106 1.106 0 0 0-.987 1.106v7.635m12-6.677v6.677m0 4.5v-4.5m0 0h-12" />
                         </svg>
-                        {{ __('Shipping') }}
+                        {{ __('Shipping & Delivery') }}
                     </a>
                     <a href="{{ route('pages.how-it-works') }}" wire:navigate
                         class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-base-content/60 hover:text-base-content hover:bg-base-200/60 transition-all duration-150">
@@ -295,7 +295,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M9.879 7.519c1.171-1.025 3.071-1.025 4.242 0 1.172 1.025 1.172 2.687 0 3.712-.203.179-.43.326-.67.442-.745.361-1.45.999-1.45 1.827v.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 5.25h.008v.008H12v-.008Z" />
                         </svg>
-                        {{ __('How to Buy') }}
+                        {{ __('How It Works') }}
                     </a>
                     <a href="{{ route('about') }}" wire:navigate
                         class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-[13px] font-medium text-base-content/60 hover:text-base-content hover:bg-base-200/60 transition-all duration-150">
@@ -313,7 +313,7 @@
                             <path stroke-linecap="round" stroke-linejoin="round"
                                 d="M8.625 12a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H8.25m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0H12m4.125 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Zm0 0h-.375M21 12c0 4.556-4.03 8.25-9 8.25a9.764 9.764 0 0 1-2.555-.337A5.972 5.972 0 0 1 5.41 20.97a5.969 5.969 0 0 1-.474-.065 4.48 4.48 0 0 0 .978-2.025c.09-.457-.133-.901-.467-1.226C3.93 16.178 3 14.189 3 12c0-4.556 4.03-8.25 9-8.25s9 3.694 9 8.25Z" />
                         </svg>
-                        {{ __('Help') }}
+                        {{ __('Contact Us') }}
                     </a>
                 </nav>
 

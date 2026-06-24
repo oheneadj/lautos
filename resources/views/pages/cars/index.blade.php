@@ -9,7 +9,7 @@
         </div>
         
         <div class="max-w-[1600px] mx-auto relative z-10 text-center">
-            <h1 class="text-4xl md:text-5xl lg:text-6xl font-normal text-white leading-tight mb-2 tracking-wide">Find new & used cars for sale in Ghana</h1>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white leading-tight mb-2 tracking-wide">Find new & used cars for sale in Ghana</h1>
             <p class="text-base lg:text-lg text-white/90 max-w-2xl mx-auto font-light">The safest way to buy or sell your car in Ghana.</p>
         </div>
     </div>

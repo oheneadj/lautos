@@ -61,7 +61,7 @@
 
     @if ($showLoginPrompt)
         <x-ui.modal closeAction="$set('showLoginPrompt', false)" maxWidth="max-w-sm">
-            <h2 class="text-lg font-semibold text-base-content mb-2">{{ __('Login to Save') }}</h2>
+            <h2 class="text-lg font-bold text-base-content mb-2">{{ __('Login to Save') }}</h2>
             <p class="text-sm text-base-content/60 mb-6">{{ __('Log in to save cars and find them later in your dashboard.') }}</p>
             <div class="flex gap-3">
                 <x-ui.button type="button" variant="outline" wire:click="$set('showLoginPrompt', false)" class="w-full justify-center">{{ __('Cancel') }}</x-ui.button>

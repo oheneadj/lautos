@@ -1,6 +1,6 @@
 <x-layouts.public title="How It Works">
 
-    {{{-- HERO SECTION --}}}
+    {{-- HERO SECTION --}}
     <section class="relative min-h-[50vh] flex items-center overflow-visible bg-[#1a1c23] mb-32">
         <div class="absolute inset-0">
             <img src="https://images.unsplash.com/photo-1573074617613-bfc8efcb4ba4?auto=format&fit=crop&w=2000&q=80"
@@ -123,37 +123,6 @@
                 </div>
             </div>
 
-        </div>
-    </section>
-
-    {{-- CTA SECTION --}}
-    <section class="bg-gray-50 border-t border-gray-100 py-16 lg:py-20 mt-8">
-        <div class="max-w-[90rem] mx-auto px-4 lg:px-8 text-center">
-            <h2 class="text-3xl font-bold text-gray-900 mb-4">Ready to find your perfect car?</h2>
-            <p class="text-gray-500 mb-8 max-w-2xl mx-auto">Browse our full inventory of high-quality Japanese and Korean imports today.</p>
-            <a href="{{ route('cars.index') }}" class="inline-flex items-center justify-center bg-primary text-white text-base font-bold py-4 px-10 rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg shadow-primary/30">
-                Browse Inventory
-            </a>
-        </div>
-    </section>
-
-
-    {{-- CTA BANNER --}}
-    <section class="py-20 bg-[#1a1c23] relative overflow-hidden border-t border-gray-800">
-        <div class="absolute top-0 right-0 w-96 h-96 bg-primary/20 blur-[100px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
-        <div class="absolute bottom-0 left-0 w-96 h-96 bg-primary/10 blur-[100px] rounded-full -translate-x-1/2 translate-y-1/2"></div>
-        
-        <div class="relative z-10 max-w-4xl mx-auto px-4 lg:px-8 text-center">
-            <h2 class="text-3xl md:text-5xl font-bold text-white mb-6 tracking-tight">Ready to find your perfect car?</h2>
-            <p class="text-lg text-gray-400 mb-10 max-w-2xl mx-auto font-medium">Browse our curated inventory of high-quality Japanese and Korean imports, or contact our expert team for a custom order.</p>
-            <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a wire:navigate href="{{ route('cars.index') }}" class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-base font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
-                    Browse Inventory
-                </a>
-                <a wire:navigate href="{{ route('contact') }}" class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-base font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
-                    Contact Support
-                </a>
-            </div>
         </div>
     </section>
 

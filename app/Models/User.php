@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
+use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable as BreezyTwoFactorAuthenticatable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -27,7 +28,7 @@ use Spatie\Activitylog\Support\LogOptions;
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, SoftDeletes, LogsActivity;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, BreezyTwoFactorAuthenticatable, HasRoles, SoftDeletes, LogsActivity;
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -44,6 +45,8 @@ class User extends Authenticatable implements FilamentUser
         'google_id',
         'password',
         'phone',
+        'phone_verified_at',
+        'phone_verification_code',
         'address',
         'ghana_card_number',
         'tin_number',
@@ -65,6 +68,7 @@ class User extends Authenticatable implements FilamentUser
     {
         return [
             'email_verified_at'  => 'datetime',
+            'phone_verified_at'  => 'datetime',
             'password'           => 'hashed',
             // I encrypt KYC identifiers at rest — these never leave the DB unencrypted.
             'ghana_card_number'  => 'encrypted',

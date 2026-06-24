@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Channels\GiantSmsChannel;
+use App\Livewire\Admin\ProfilePhoneInfo;
 use App\Models\Setting;
 use Carbon\CarbonImmutable;
 use Illuminate\Support\Facades\Date;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Validation\Rules\Password;
 use Laravel\Fortify\Contracts\RegisterResponse;
+use Livewire\Livewire;
 use App\Listeners\AuthenticationActionSubscriber;
 
 class AppServiceProvider extends ServiceProvider
@@ -45,6 +47,11 @@ class AppServiceProvider extends ServiceProvider
         // I register 'giantsms' as a notification channel here — without this,
         // any notification returning it from via() would fail to resolve.
         Notification::extend('giantsms', fn () => new GiantSmsChannel());
+
+        // Breezy's My Profile page renders our custom component by class name
+        // alone, but Livewire's own test helpers need it registered by alias
+        // too, the same way Breezy registers its own built-in components.
+        Livewire::component('profile_phone_info', ProfilePhoneInfo::class);
 
         Event::subscribe(AuthenticationActionSubscriber::class);
     }

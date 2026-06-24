@@ -9,6 +9,7 @@
 namespace App\Providers\Filament;
 
 use App\Models\Setting;
+use App\Livewire\Admin\ProfilePhoneInfo;
 use BezhanSalleh\FilamentShield\FilamentShieldPlugin;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
@@ -25,6 +26,7 @@ use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
+use Jeffgreco13\FilamentBreezy\BreezyCore;
 
 class AdminPanelProvider extends PanelProvider
 {
@@ -42,9 +44,6 @@ class AdminPanelProvider extends PanelProvider
                 ? \Illuminate\Support\Facades\Storage::url(Setting::get('site_logo_path'))
                 : null)
             ->login()
-            ->profile()
-            // TODO T-03-6: wire up 2FA via filament/two-factor-authentication once
-            // the package stabilises for Filament v5 / Livewire 4.
             ->colors([
                 'primary' => Color::Blue,
             ])
@@ -69,6 +68,18 @@ class AdminPanelProvider extends PanelProvider
             ])
             ->plugins([
                 FilamentShieldPlugin::make(),
+                // I replace Filament's built-in ->profile() with Breezy's richer
+                // My Profile page so admins get password rules, 2FA, and our
+                // custom phone-verification component all in one place.
+                BreezyCore::make()
+                    ->myProfile(
+                        shouldRegisterUserMenu: true,
+                        shouldRegisterNavigation: false,
+                    )
+                    ->myProfileComponents([
+                        ProfilePhoneInfo::class,
+                    ])
+                    ->enableTwoFactorAuthentication(),
             ])
             ->middleware([
                 EncryptCookies::class,

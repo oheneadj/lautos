@@ -135,6 +135,10 @@
                     <x-ui.card title="{{ __('Payment Proofs Submitted') }}" headerBorder>
                         <div class="divide-y divide-base-content/5">
                             @foreach ($order->paymentProofs as $proof)
+                                {{-- paymentProofs is ordered latest-first, and a rejection always
+                                     moves the order back to Pending Payment — so when there's a
+                                     rejection reason, it's this most recent proof that was rejected. --}}
+                                @php $wasRejected = $loop->first && $this->rejectionReason; @endphp
                                 <div class="flex items-center justify-between px-6 py-3.5">
                                     <div>
                                         <p class="text-[13px] font-medium text-base-content">{{ basename($proof->file_path) }}</p>
@@ -143,7 +147,11 @@
                                             <p class="text-[11px] text-base-content/60 mt-1 italic">"{{ $proof->note }}"</p>
                                         @endif
                                     </div>
-                                    <x-ui.badge type="success">{{ __('Submitted') }}</x-ui.badge>
+                                    @if ($wasRejected)
+                                        <x-ui.badge type="danger">{{ __('Rejected') }}</x-ui.badge>
+                                    @else
+                                        <x-ui.badge type="success">{{ __('Submitted') }}</x-ui.badge>
+                                    @endif
                                 </div>
                             @endforeach
                         </div>

@@ -1,9 +1,18 @@
-<section class="w-full">
-    @include('partials.settings-heading')
+<div class="space-y-6 max-w-4xl">
+    {{-- Page Header --}}
+    <div>
+        <h1 class="text-[28px] font-semibold text-base-content leading-tight">{{ __('Security & 2FA') }}</h1>
+        <p class="text-[14px] text-base-content/50 mt-1">{{ __('Manage your password and two-factor authentication settings.') }}</p>
+    </div>
 
-    <h2 class="sr-only">{{ __('Security settings') }}</h2>
-
-    <x-settings.layout :heading="__('Update password')" :subheading="__('Ensure your account is using a long, random password to stay secure')">
+    {{-- Update Password Card --}}
+    <x-ui.card class="overflow-hidden">
+        <div class="p-6 md:p-8 space-y-6">
+            <div class="border-b border-base-content/5 pb-2.5">
+                <h2 class="text-[11px] font-bold uppercase tracking-widest text-base-content/60">
+                    {{ __('Update Password') }}
+                </h2>
+            </div>
         <form method="POST" wire:submit="updatePassword" class="mt-6 space-y-6">
             <x-ui.input
                 label="Current password"
@@ -37,16 +46,24 @@
             />
 
             <div class="flex items-center gap-4">
-                <x-ui.button type="submit" variant="primary" data-test="update-password-button">{{ __('Save') }}</x-ui.button>
+                <x-ui.button type="submit" variant="primary" data-test="update-password-button" wire:loading.attr="disabled">{{ __('Save Password') }}</x-ui.button>
+                <span wire:loading wire:target="updatePassword" class="text-[12px] text-base-content/40 font-medium">Saving...</span>
             </div>
         </form>
+        </div>
+    </x-ui.card>
 
-        @if ($canManageTwoFactor)
-            <section class="mt-12">
-                <h3 class="text-base font-semibold text-base-content">{{ __('Two-factor authentication') }}</h3>
-                <p class="text-sm text-base-content/50">{{ __('Manage your two-factor authentication settings') }}</p>
+    {{-- 2FA Card --}}
+    @if ($canManageTwoFactor)
+        <x-ui.card class="overflow-hidden">
+            <div class="p-6 md:p-8 space-y-6">
+                <div class="border-b border-base-content/5 pb-2.5">
+                    <h2 class="text-[11px] font-bold uppercase tracking-widest text-base-content/60">
+                        {{ __('Two-factor authentication') }}
+                    </h2>
+                </div>
 
-                <div class="flex flex-col w-full mx-auto space-y-6 text-sm mt-6" wire:cloak>
+                <div class="flex flex-col w-full mx-auto space-y-6 text-sm" wire:cloak>
                     @if ($twoFactorEnabled)
                         <div class="space-y-4">
                             <p class="text-sm text-base-content/60">
@@ -73,7 +90,8 @@
                         </div>
                     @endif
                 </div>
-            </section>
+            </div>
+        </x-ui.card>
 
             {{-- 2FA Setup Modal --}}
             <div
@@ -87,6 +105,9 @@
                 <div class="fixed inset-0 bg-black/40 backdrop-blur-[2px]" @click="show = false; @this.call('closeModal')"></div>
 
                 <div class="relative z-10 w-full max-w-md rounded-2xl bg-base-100 border border-base-300 p-6 shadow-2xl">
+                    <button @click="show = false; @this.call('closeModal')" class="absolute top-4 right-4 text-base-content/40 hover:text-base-content transition-colors outline-none">
+                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
+                    </button>
                     <div class="space-y-6">
                         <div class="flex flex-col items-center space-y-4">
                             <div class="p-0.5 w-auto rounded-full border border-base-300 bg-base-100 shadow-sm">
@@ -104,17 +125,19 @@
                         @if ($showVerificationStep)
                             <div class="space-y-6">
                                 <div class="flex flex-col items-center space-y-3 justify-center" x-data x-init="$nextTick(() => $el.querySelector('input')?.focus())">
-                                    <input
-                                        type="text"
-                                        name="code"
-                                        wire:model="code"
-                                        inputmode="numeric"
-                                        maxlength="6"
-                                        pattern="[0-9]*"
-                                        autocomplete="one-time-code"
-                                        placeholder="000000"
-                                        class="w-48 px-4 py-3 bg-base-100 border border-base-content/10 rounded-xl text-center text-2xl font-bold tracking-[0.4em] placeholder:tracking-[0.4em] placeholder:text-base-content/20 outline-none focus:border-primary focus:ring-3 focus:ring-primary/20 transition-all duration-150"
-                                    />
+                                    <div class="w-48">
+                                        <x-ui.input
+                                            type="text"
+                                            name="code"
+                                            wire:model="code"
+                                            inputmode="numeric"
+                                            maxlength="6"
+                                            pattern="[0-9]*"
+                                            autocomplete="one-time-code"
+                                            placeholder="000000"
+                                            class="text-center text-xl font-bold tracking-[0.3em] placeholder:tracking-[0.3em]"
+                                        />
+                                    </div>
                                 </div>
 
                                 <div class="flex items-center space-x-3">
@@ -193,6 +216,5 @@
                     </div>
                 </div>
             </div>
-        @endif
-    </x-settings.layout>
-</section>
+    @endif
+</div>

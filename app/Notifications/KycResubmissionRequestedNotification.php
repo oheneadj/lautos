@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\GiantSmsMessage;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -24,8 +25,13 @@ class KycResubmissionRequestedNotification extends Notification implements Shoul
      */
     public function via(object $notifiable): array
     {
-        // I only send SMS-less mail + database for now — SMS (Arkesel) is wired up in Epic 21.
-        return ['mail', 'database'];
+        $channels = ['mail', 'database'];
+
+        if (! empty($notifiable->phone)) {
+            $channels[] = 'giantsms';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -37,6 +43,15 @@ class KycResubmissionRequestedNotification extends Notification implements Shoul
             ->line("Reason: {$this->reason}")
             ->action('Update Your Documents', route('dashboard.profile'))
             ->line('Contact us if you have any questions.');
+    }
+
+    public function toGiantSms(object $notifiable): GiantSmsMessage
+    {
+        $url = route('dashboard.profile');
+
+        return new GiantSmsMessage(
+            "Hi {$notifiable->name}, please resubmit your KYC documents. Reason: {$this->reason}. Update at {$url}"
+        );
     }
 
     /**

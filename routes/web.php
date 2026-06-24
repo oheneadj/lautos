@@ -86,7 +86,19 @@ Route::get('/blog/{slug}', function (string $slug) {
         \Artesaos\SEOTools\Facades\OpenGraph::addImage(\Illuminate\Support\Facades\Storage::url($post->cover_image_path));
     }
 
-    return view('pages.blog.show', compact('post'));
+    $latestNews = BlogPost::published()
+        ->where('id', '!=', $post->id)
+        ->latest('published_at')
+        ->limit(3)
+        ->get();
+
+    $featuredStories = BlogPost::published()
+        ->where('id', '!=', $post->id)
+        ->inRandomOrder()
+        ->limit(3)
+        ->get();
+
+    return view('pages.blog.show', compact('post', 'latestNews', 'featuredStories'));
 })->name('blog.show');
 
 // Contact
@@ -155,6 +167,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/support', \App\Livewire\Customer\SupportTickets::class)->name('support');
         Route::get('/support/{uuid}', \App\Livewire\Customer\SupportTicketDetail::class)->name('support.show');
         Route::get('/notifications', \App\Livewire\Customer\NotificationsHub::class)->name('notifications');
+        Route::get('/reviews', \App\Livewire\Customer\Reviews::class)->name('reviews');
     });
 });
 

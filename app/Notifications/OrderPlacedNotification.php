@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\GiantSmsMessage;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Bus\Queueable;
@@ -26,8 +27,15 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        // I only send mail + database for now — SMS (Arkesel) is wired up in Epic 21.
-        return ['mail', 'database'];
+        $channels = ['mail', 'database'];
+
+        // I only add the SMS channel when there's actually a phone number to
+        // send to — otherwise Laravel still queues a no-op GiantSMS job.
+        if (! empty($notifiable->phone)) {
+            $channels[] = 'giantsms';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -44,6 +52,17 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
             ->line('Mobile Money: '.Setting::get('momo_number', '—').' ('.Setting::get('momo_name', '—').')')
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid))
             ->line('Once we receive your payment proof, we will confirm your order and begin processing your purchase.');
+    }
+
+    public function toGiantSms(object $notifiable): GiantSmsMessage
+    {
+        $car = $this->order->car;
+        $total = number_format($this->order->total_usd_cents / 100, 0);
+        $url = route('dashboard.orders.show', $this->order->uuid);
+
+        return new GiantSmsMessage(
+            "Hi {$notifiable->name}, your order {$this->order->reference} for the {$car->year} {$car->make->name} {$car->carModel->name} is confirmed. Total: \${$total}. Upload payment proof at {$url}"
+        );
     }
 
     /**

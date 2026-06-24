@@ -14,6 +14,7 @@ namespace App\Livewire\Customer;
 
 use App\Enums\KycStatus;
 use App\Events\KycDocumentsSubmitted;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
@@ -30,6 +31,7 @@ class ProfileEdit extends Component
     use WithFileUploads;
 
     public string $name = '';
+    public string $email = '';
     public string $phone = '';
     public string $address = '';
     public string $ghana_card_number = '';
@@ -48,6 +50,7 @@ class ProfileEdit extends Component
     {
         $user = Auth::user();
         $this->name = $user->name;
+        $this->email = $user->email;
         $this->phone = $user->phone ?? '';
         $this->address = $user->address ?? '';
         $this->ghana_card_number = $user->ghana_card_number ?? '';
@@ -58,6 +61,7 @@ class ProfileEdit extends Component
     {
         $this->validate([
             'name'               => ['required', 'string', 'max:255'],
+            'email'              => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.Auth::id()],
             'address'            => ['required', 'string', 'max:500'],
             'ghana_card_number'  => ['required_without:tin_number', 'nullable', 'string', 'max:50'],
             'tin_number'         => ['required_without:ghana_card_number', 'nullable', 'string', 'max:50'],
@@ -72,10 +76,15 @@ class ProfileEdit extends Component
 
         $data = [
             'name'              => $this->name,
+            'email'             => $this->email,
             'address'           => $this->address,
             'ghana_card_number' => $this->ghana_card_number ?: null,
             'tin_number'        => $this->tin_number ?: null,
         ];
+
+        if ($this->email !== $user->getOriginal('email')) {
+            $user->email_verified_at = null;
+        }
 
         $newDocumentUploaded = (bool) $this->ghana_card_file || (bool) $this->tin_file;
 
@@ -105,11 +114,15 @@ class ProfileEdit extends Component
         // Any new document upload puts KYC back in front of an admin for review,
         // regardless of whether it was previously rejected or never reviewed yet.
         if ($newDocumentUploaded) {
-            $data['kyc_status'] = KycStatus::Pending;
-            $data['kyc_notes'] = null;
+            $user->kyc_status = KycStatus::Pending;
+            $user->kyc_notes = null;
         }
 
-        $user->update($data);
+        // I fill once, here, after every key (including the file paths above)
+        // has been added to $data — filling earlier meant ghana_card_path and
+        // tin_path were computed but never actually assigned to the model.
+        $user->fill($data);
+        $user->save();
 
         if ($newDocumentUploaded) {
             KycDocumentsSubmitted::dispatch($user);
@@ -198,6 +211,33 @@ class ProfileEdit extends Component
     public function hasTinDoc(): bool
     {
         return filled(Auth::user()->tin_path);
+    }
+
+    public function resendVerificationNotification(): void
+    {
+        $user = Auth::user();
+
+        if ($user->hasVerifiedEmail()) {
+            $this->redirectIntended(default: route('dashboard.index', absolute: false));
+            return;
+        }
+
+        $user->sendEmailVerificationNotification();
+
+        $this->dispatch('toast', message: __('A new verification link has been sent to your email address.'));
+    }
+
+    #[Computed]
+    public function hasUnverifiedEmail(): bool
+    {
+        return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
+    }
+
+    #[Computed]
+    public function showDeleteUser(): bool
+    {
+        return ! Auth::user() instanceof MustVerifyEmail
+            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
     }
 
     public function render()

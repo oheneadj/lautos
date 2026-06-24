@@ -26,6 +26,19 @@ use Livewire\Component;
 class Dashboard extends Component
 {
     /**
+     * Fortify's email verification link redirects here with ?verified=1 —
+     * I surface that as a toast so the customer actually notices their
+     * email is now confirmed, instead of landing on a dashboard that looks
+     * no different than before they clicked the link.
+     */
+    public function mount(): void
+    {
+        if (request()->query('verified') === '1') {
+            $this->dispatch('toast', message: __('Your email address has been verified.'));
+        }
+    }
+
+    /**
      * Resend the email verification notification.
      */
     public function resendVerification(): void
@@ -138,7 +151,7 @@ class Dashboard extends Component
     {
         return BlogPost::published()
             ->latest('published_at')
-            ->take(2)
+            ->take(1)
             ->get();
     }
 

@@ -44,7 +44,11 @@ class UserForm
                             ->required(fn (string $operation) => $operation === 'create')
                             ->label(fn (string $operation) => $operation === 'create' ? 'Password' : 'New Password (leave blank to keep)'),
                         Toggle::make('is_admin')
-                            ->label('Admin Access'),
+                            ->label('Admin Access')
+                            // I default this on since this resource is exclusively for staff
+                            // accounts now — leaving it off would create a user that
+                            // immediately disappears from this scoped list.
+                            ->default(true),
                         // I let a Super Admin assign which staff role this user has —
                         // canAccessPanel() requires both is_admin and at least one role.
                         Select::make('roles')

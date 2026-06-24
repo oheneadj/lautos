@@ -28,7 +28,9 @@
                 <h2 class="text-2xl font-bold text-gray-900 mb-10 text-center">Browse by make</h2>
                 <div class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-y-8 gap-x-4 justify-items-center">
                     @foreach ($browseMakes as $make)
-                        <a href="{{ route('cars.index', ['make' => $make->slug]) }}" class="flex flex-col items-center gap-3 group w-full">
+                        {{-- makeFilter is a multi-select array, so this needs ['make' => [$make->slug]]
+                             (producing make[0]=slug) rather than a plain scalar make=slug. --}}
+                        <a href="{{ route('cars.index', ['make' => [$make->slug]]) }}" class="flex flex-col items-center gap-3 group w-full">
                             <div class="w-20 h-20 flex items-center justify-center transition-transform group-hover:scale-110">
                                 @if ($make->icon_path)
                                     <img src="{{ Storage::url($make->icon_path) }}" class="w-full h-full object-contain grayscale opacity-80 group-hover:grayscale-0 group-hover:opacity-100 transition-all" alt="{{ $make->name }} Logo" loading="lazy">

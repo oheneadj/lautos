@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\GiantSmsMessage;
 use App\Enums\OrderStatus;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
@@ -26,7 +27,13 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        $channels = ['mail', 'database'];
+
+        if (! empty($notifiable->phone)) {
+            $channels[] = 'giantsms';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -58,6 +65,16 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
         return $mail
             ->action('Track Your Order', route('dashboard.orders.show', $this->order->uuid))
             ->line('Thank you for choosing Livingston Autos.');
+    }
+
+    public function toGiantSms(object $notifiable): GiantSmsMessage
+    {
+        $stage = $this->order->status->label();
+        $url = route('dashboard.orders.show', $this->order->uuid);
+
+        return new GiantSmsMessage(
+            "Hi {$notifiable->name}, order {$this->order->reference} update: {$stage}. Track at {$url}"
+        );
     }
 
     /**

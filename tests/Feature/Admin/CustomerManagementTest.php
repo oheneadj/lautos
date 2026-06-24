@@ -131,4 +131,18 @@ class CustomerManagementTest extends TestCase
         $this->assertSame(KycStatus::NeedsResubmission, $customer->kyc_status);
         $this->assertSame('Ghana Card photo is blurry.', $customer->kyc_notes);
     }
+
+    #[Test]
+    public function kyc_status_tabs_filter_the_table_to_just_that_status(): void
+    {
+        $this->actingAsAdmin();
+
+        $verified = User::factory()->create(['kyc_status' => KycStatus::Verified]);
+        $pending = User::factory()->create(['kyc_status' => KycStatus::Pending]);
+
+        Livewire::test(ListCustomers::class)
+            ->set('activeTab', KycStatus::Verified->value)
+            ->assertCanSeeTableRecords([$verified])
+            ->assertCanNotSeeTableRecords([$pending]);
+    }
 }

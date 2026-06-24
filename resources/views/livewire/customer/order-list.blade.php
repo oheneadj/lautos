@@ -13,19 +13,21 @@
             </div>
         </div>
 
-        {{-- Status Filter Tabs (DPC Tab Switcher pattern) --}}
-        <div class="flex p-1 bg-base-200 rounded-lg border border-base-content/5 flex-wrap md:flex-nowrap">
-            <button
-                wire:click="$set('statusFilter', '')"
-                class="flex-1 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap px-4 {{ $statusFilter === '' ? 'bg-base-100 shadow-sm text-base-content border border-base-content/10' : 'text-base-content/40 hover:text-base-content/60 border border-transparent' }}"
-            >{{ __('All') }}</button>
+        {{-- Filter Bar --}}
+        <div class="bg-base-100 border border-base-content/5 rounded-xl p-4">
+            <div class="flex items-center gap-1 bg-base-200/50 rounded-lg p-1 flex-wrap">
+                <button wire:click="$set('statusFilter', '')"
+                    class="px-4 py-2 text-[12px] font-bold rounded-md transition-all duration-150 cursor-pointer {{ $statusFilter === '' ? 'bg-base-100 text-base-content shadow-sm' : 'text-base-content/50 hover:text-base-content' }}">
+                    {{ __('All') }}
+                </button>
 
-            @foreach (\App\Enums\OrderStatus::cases() as $status)
-                <button
-                    wire:click="$set('statusFilter', '{{ $status->value }}')"
-                    class="flex-1 py-2 text-[13px] font-medium rounded-md transition-all duration-200 whitespace-nowrap px-4 {{ $statusFilter === $status->value ? 'bg-base-100 shadow-sm text-base-content border border-base-content/10' : 'text-base-content/40 hover:text-base-content/60 border border-transparent' }}"
-                >{{ $status->label() }}</button>
-            @endforeach
+                @foreach (\App\Enums\OrderStatus::cases() as $status)
+                    <button wire:click="$set('statusFilter', '{{ $status->value }}')"
+                        class="px-4 py-2 text-[12px] font-bold rounded-md transition-all duration-150 cursor-pointer {{ $statusFilter === $status->value ? 'bg-base-100 text-base-content shadow-sm' : 'text-base-content/50 hover:text-base-content' }}">
+                        {{ $status->label() }}
+                    </button>
+                @endforeach
+            </div>
         </div>
 
         {{-- Orders Table --}}

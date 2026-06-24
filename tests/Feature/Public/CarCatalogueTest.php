@@ -66,7 +66,7 @@ class CarCatalogueTest extends TestCase
         $honda = $this->makeCar(['make' => 'Honda', 'model' => 'Civic']);
 
         Livewire::test(CarCatalogue::class)
-            ->set('makeFilter', $toyota->make->slug)
+            ->set('makeFilter', [$toyota->make->slug])
             ->assertSee($toyota->slug)
             ->assertDontSee($honda->slug);
     }
@@ -142,5 +142,163 @@ class CarCatalogueTest extends TestCase
 
         $this->assertTrue($cars->first()->is($cheap));
         $this->assertTrue($cars->last()->is($expensive));
+    }
+
+    #[Test]
+    public function the_mobile_filter_drawer_starts_closed_and_opens_on_demand(): void
+    {
+        Livewire::test(CarCatalogue::class)
+            ->assertSet('showMobileFilters', false)
+            ->set('showMobileFilters', true)
+            ->assertSet('showMobileFilters', true)
+            ->assertSeeHtml('wire:click="$set(\'showMobileFilters\', false)"');
+    }
+
+    #[Test]
+    public function it_filters_by_multiple_makes_at_once(): void
+    {
+        $toyota = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla']);
+        $honda = $this->makeCar(['make' => 'Honda', 'model' => 'Civic']);
+        $kia = $this->makeCar(['make' => 'Kia', 'model' => 'Sportage']);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('makeFilter', [$toyota->make->slug, $honda->make->slug])
+            ->assertSee($toyota->slug)
+            ->assertSee($honda->slug)
+            ->assertDontSee($kia->slug);
+    }
+
+    #[Test]
+    public function it_filters_by_body_type(): void
+    {
+        $suv = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Suv]);
+        $sedan = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Sedan]);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('bodyTypeFilter', [\App\Enums\CarBodyType::Suv->value])
+            ->assertSee($suv->slug)
+            ->assertDontSee($sedan->slug);
+    }
+
+    #[Test]
+    public function removing_a_body_type_chip_clears_just_that_body_type(): void
+    {
+        $suv = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Suv]);
+        $sedan = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Sedan]);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('bodyTypeFilter', [\App\Enums\CarBodyType::Suv->value, \App\Enums\CarBodyType::Sedan->value])
+            ->call('removeBodyType', \App\Enums\CarBodyType::Suv->value)
+            ->assertSet('bodyTypeFilter', [\App\Enums\CarBodyType::Sedan->value])
+            ->assertDontSee($suv->slug)
+            ->assertSee($sedan->slug);
+    }
+
+    #[Test]
+    public function selecting_a_make_reveals_only_that_makes_models(): void
+    {
+        $corolla = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla']);
+        $civic = $this->makeCar(['make' => 'Honda', 'model' => 'Civic']);
+
+        $component = Livewire::test(CarCatalogue::class)
+            ->set('makeFilter', [$corolla->make->slug]);
+
+        $models = $component->viewData('models');
+
+        $this->assertTrue($models->contains('name', 'Corolla'));
+        $this->assertFalse($models->contains('name', 'Civic'));
+    }
+
+    #[Test]
+    public function changing_the_make_filter_clears_the_model_filter(): void
+    {
+        $corolla = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla']);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('makeFilter', [$corolla->make->slug])
+            ->set('modelFilter', ['Corolla'])
+            ->set('makeFilter', [])
+            ->assertSet('modelFilter', []);
+    }
+
+    #[Test]
+    public function it_filters_by_model_name(): void
+    {
+        $corolla = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla']);
+        $camry = $this->makeCar(['make' => 'Toyota', 'model' => 'Camry']);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('makeFilter', [$corolla->make->slug])
+            ->set('modelFilter', ['Corolla'])
+            ->assertSee($corolla->slug)
+            ->assertDontSee($camry->slug);
+    }
+
+    #[Test]
+    public function it_filters_by_mileage_range(): void
+    {
+        $lowMileage = $this->makeCar(['mileage' => 20000]);
+        $highMileage = $this->makeCar(['mileage' => 180000]);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('maxMileage', 50000)
+            ->assertSee($lowMileage->slug)
+            ->assertDontSee($highMileage->slug);
+    }
+
+    #[Test]
+    public function pushing_the_mileage_slider_to_its_cap_clears_the_filter(): void
+    {
+        $highMileage = $this->makeCar(['mileage' => 280000]);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('maxMileage', CarCatalogue::MAX_MILEAGE_CAP)
+            ->assertSet('maxMileage', '')
+            ->assertSee($highMileage->slug);
+    }
+
+    #[Test]
+    public function removing_a_make_chip_clears_just_that_make(): void
+    {
+        $toyota = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla']);
+        $honda = $this->makeCar(['make' => 'Honda', 'model' => 'Civic']);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('makeFilter', [$toyota->make->slug, $honda->make->slug])
+            ->call('removeMake', $toyota->make->slug)
+            ->assertSet('makeFilter', [$honda->make->slug])
+            ->assertDontSee($toyota->slug)
+            ->assertSee($honda->slug);
+    }
+
+    #[Test]
+    public function the_make_checkbox_count_reflects_other_active_filters(): void
+    {
+        $toyotaPetrol = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla', 'fuel_type' => 'Petrol']);
+        $toyotaDiesel = $this->makeCar(['make' => 'Toyota', 'model' => 'Camry', 'fuel_type' => 'Diesel']);
+
+        $component = Livewire::test(CarCatalogue::class)
+            ->set('fuelFilter', 'Petrol');
+
+        $makeCounts = $component->viewData('makeCounts');
+
+        $this->assertSame(1, $makeCounts[$toyotaPetrol->make_id]);
+    }
+
+    #[Test]
+    public function clear_all_resets_every_filter_including_the_new_ones(): void
+    {
+        $corolla = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla']);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('makeFilter', [$corolla->make->slug])
+            ->set('modelFilter', ['Corolla'])
+            ->set('bodyTypeFilter', [\App\Enums\CarBodyType::Suv->value])
+            ->set('maxMileage', 50000)
+            ->call('clearFilters')
+            ->assertSet('makeFilter', [])
+            ->assertSet('modelFilter', [])
+            ->assertSet('bodyTypeFilter', [])
+            ->assertSet('maxMileage', '');
     }
 }

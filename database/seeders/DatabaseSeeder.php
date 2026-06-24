@@ -20,7 +20,9 @@ class DatabaseSeeder extends Seeder
             MakesSeeder::class,
             CarModelsSeeder::class,
             CarSeeder::class,
+            OrderSeeder::class,
             BlogPostSeeder::class,
+            FaqSeeder::class,
         ]);
     }
 }

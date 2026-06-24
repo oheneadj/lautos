@@ -13,51 +13,59 @@
         </div>
     </div>
 
+    {{-- Filter Bar --}}
+    @if (! $savedCars->isEmpty() || $search)
+        <div class="bg-base-100 border border-base-content/5 rounded-xl p-4">
+            <div class="flex flex-col sm:flex-row items-center justify-between gap-4">
+                {{-- Search --}}
+                <div class="w-full sm:max-w-xs relative">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <svg class="h-4 w-4 text-base-content/40" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                    </div>
+                    <input type="text" wire:model.live.debounce.300ms="search" placeholder="{{ __('Search saved cars...') }}" class="block w-full pl-10 pr-3 py-2 border-none rounded-lg bg-base-200/50 text-[13px] text-base-content focus:ring-2 focus:ring-primary focus:bg-base-100 transition-colors">
+                </div>
+
+                {{-- Sort --}}
+                <div class="flex items-center gap-2 flex-shrink-0 w-full sm:w-auto">
+                    <span class="text-[13px] font-medium text-base-content/50">{{ __('Sort by:') }}</span>
+                    <select wire:model.live="sort" class="block w-full sm:w-auto py-2 pl-3 pr-10 border-none rounded-lg bg-base-200/50 text-[13px] font-bold text-base-content focus:ring-2 focus:ring-primary focus:bg-base-100 transition-colors cursor-pointer">
+                        <option value="latest">{{ __('Recently Saved') }}</option>
+                        <option value="price_asc">{{ __('Price: Low to High') }}</option>
+                        <option value="price_desc">{{ __('Price: High to Low') }}</option>
+                        <option value="year_desc">{{ __('Year: Newest') }}</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+    @endif
+
     @if ($savedCars->isEmpty())
-        <x-ui.card class="p-14 text-center">
-            <svg class="mx-auto w-12 h-12 text-base-content/20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M17.593 3.322c1.1.128 1.907 1.077 1.907 2.185V21L12 17.25 4.5 21V5.507c0-1.108.806-2.057 1.907-2.185a48.507 48.507 0 0 1 11.186 0Z" /></svg>
-            <p class="mt-3 text-[15px] font-bold text-base-content">{{ __('No saved cars') }}</p>
-            <p class="mt-1 text-[13px] text-base-content/40">{{ __('You haven\'t bookmarked any cars yet. Start browsing to save your favorites!') }}</p>
-        </x-ui.card>
+        <div class="bg-base-100 border border-base-content/5 rounded-xl p-14 text-center">
+            <div class="w-16 h-16 rounded-full bg-base-200 flex items-center justify-center mx-auto mb-4">
+                <svg class="w-8 h-8 text-base-content/20" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" /></svg>
+            </div>
+            @if ($search)
+                <p class="text-[16px] font-bold text-base-content">{{ __('No cars match your search') }}</p>
+                <p class="mt-1 text-[13px] text-base-content/40">{{ __('Try adjusting your search query.') }}</p>
+                <button wire:click="$set('search', '')" class="mt-4 text-[12px] font-bold text-primary hover:underline cursor-pointer">
+                    {{ __('Clear search') }}
+                </button>
+            @else
+                <p class="text-[16px] font-bold text-base-content">{{ __('No saved cars') }}</p>
+                <p class="mt-1 text-[13px] text-base-content/40">{{ __('You haven\'t bookmarked any cars yet. Start browsing to save your favorites!') }}</p>
+            @endif
+        </div>
     @else
         <div class="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
             @foreach ($savedCars as $car)
-                <x-ui.card class="overflow-hidden flex flex-col group relative">
-                    <button wire:click="removeSavedCar('{{ $car->uuid }}')" wire:confirm="Remove this car from your saved list?" class="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white/90 shadow-sm text-base-content hover:text-error hover:bg-white flex items-center justify-center transition-all opacity-0 group-hover:opacity-100 focus:opacity-100">
-                        <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18 18 6M6 6l12 12" /></svg>
-                    </button>
-                    
-                    <a href="{{ route('cars.show', $car->slug) }}" class="block aspect-[4/3] bg-base-200 overflow-hidden relative">
-                        @if($car->images->first())
-                            <img src="{{ Storage::url($car->images->first()->path) }}" alt="{{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
-                        @else
-                            <div class="w-full h-full flex items-center justify-center text-base-content/20 bg-base-200">
-                                <svg class="w-10 h-10" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909m-18 3.75h16.5a1.5 1.5 0 0 0 1.5-1.5V6a1.5 1.5 0 0 0-1.5-1.5H3.75A1.5 1.5 0 0 0 2.25 6v12a1.5 1.5 0 0 0 1.5 1.5Zm10.5-11.25h.008v.008h-.008V8.25Zm.375 0a.375.375 0 1 1-.75 0 .375.375 0 0 1 .75 0Z" /></svg>
-                            </div>
-                        @endif
-                        <div class="absolute bottom-3 left-3 flex gap-2">
-                            <x-ui.badge :type="$car->status->colour()">{{ $car->status->label() }}</x-ui.badge>
-                        </div>
-                    </a>
-                    
-                    <div class="p-4 flex flex-col flex-1">
-                        <div class="mb-3">
-                            <h3 class="text-base font-bold text-base-content leading-tight line-clamp-1 group-hover:text-primary transition-colors">
-                                <a href="{{ route('cars.show', $car->slug) }}">{{ $car->year }} {{ $car->make->name }} {{ $car->carModel->name }}</a>
-                            </h3>
-                            <p class="text-[12px] text-base-content/60 mt-1">{{ $car->mileage ? number_format($car->mileage) . ' km' : 'Mileage N/A' }} • {{ $car->transmission }}</p>
-                        </div>
-                        
-                        <div class="mt-auto pt-4 border-t border-base-content/5 flex items-end justify-between">
-                            <div>
-                                <span class="block text-[10px] font-bold uppercase tracking-widest text-base-content/40 mb-0.5">{{ __('Total Price') }}</span>
-                                <span class="text-lg font-bold text-base-content">${{ number_format($car->total_usd_cents / 100, 0) }}</span>
-                            </div>
-                            <a href="{{ route('cars.show', $car->slug) }}" class="text-[12px] font-bold text-primary hover:underline">{{ __('View Details') }}</a>
-                        </div>
-                    </div>
-                </x-ui.card>
+                @include('partials.car-card', ['car' => $car])
             @endforeach
         </div>
+
+        @if ($savedCars->hasPages())
+            <div class="mt-6">
+                {{ $savedCars->links() }}
+            </div>
+        @endif
     @endif
 </div>

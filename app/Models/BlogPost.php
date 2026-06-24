@@ -11,11 +11,23 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Str;
+
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
 
 class BlogPost extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
     protected $fillable = [
         'uuid',
@@ -82,6 +94,26 @@ class BlogPost extends Model
         }
 
         return $slug;
+    }
+
+    /**
+     * Estimated reading time in whole minutes, based on a 200 words-per-minute
+     * pace — I strip tags first so HTML markup doesn't inflate the word count.
+     */
+    public function getReadTimeAttribute(): int
+    {
+        $wordCount = str_word_count(strip_tags((string) $this->body));
+
+        return max(1, (int) ceil($wordCount / 200));
+    }
+
+    /**
+     * The full public URL for the cover image — cover_image_path only stores
+     * the relative disk path, so every view needs this instead of the raw column.
+     */
+    public function getCoverImageUrlAttribute(): ?string
+    {
+        return $this->cover_image_path ? Storage::url($this->cover_image_path) : null;
     }
 
     // ── Scopes ───────────────────────────────────────────────────────────────

@@ -6,6 +6,7 @@
 
 namespace App\Filament\Resources\Cars\Schemas;
 
+use App\Enums\CarBodyType;
 use App\Enums\CarStatus;
 use App\Models\Car;
 use Filament\Forms\Components\FileUpload;
@@ -138,6 +139,11 @@ class CarForm
                             ->required()
                             ->placeholder('Select country')
                             ->options(array_combine(Car::COUNTRIES_OF_ORIGIN, Car::COUNTRIES_OF_ORIGIN)),
+                        Select::make('body_type')
+                            ->label('Body Type')
+                            ->required()
+                            ->placeholder('Select body type')
+                            ->options(CarBodyType::class),
                         Select::make('status')
                             ->required()
                             ->options(CarStatus::class)

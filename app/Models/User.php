@@ -21,10 +21,21 @@ use Spatie\Permission\Traits\HasRoles;
 // I implement FilamentUser so canAccessPanel() is actually consulted — without it,
 // Filament's Authenticate middleware ignores the method entirely and falls back to
 // allowing access only when app.env is 'local', which silently 403s everywhere else.
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
+
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, SoftDeletes;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, SoftDeletes, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
 
     protected $fillable = [
         'uuid',
@@ -98,6 +109,14 @@ class User extends Authenticatable implements FilamentUser
         return $this->is_admin && $this->roles()->exists();
     }
 
+    /**
+     * I route SMS to the user's phone number for the GiantSMS channel.
+     */
+    public function routeNotificationForGiantsms(): ?string
+    {
+        return $this->phone;
+    }
+
     public function orders(): HasMany
     {
         return $this->hasMany(Order::class);
@@ -114,5 +133,10 @@ class User extends Authenticatable implements FilamentUser
     public function supportTickets(): HasMany
     {
         return $this->hasMany(SupportTicket::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
     }
 }

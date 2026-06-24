@@ -6,7 +6,7 @@
             <p class="text-[14px] text-base-content/50 mt-1">{{ __('Contact our support team regarding your orders or account') }}</p>
         </div>
         <div class="flex items-center gap-3">
-            <button wire:click="$set('showCreateModal', true)" class="inline-flex items-center gap-2 rounded-xl bg-primary px-[18px] py-[10px] text-[13px] font-medium text-white hover:brightness-110 transition-all duration-150 shadow-sm">
+            <button wire:click="$dispatch('open-support-chat')" class="inline-flex items-center gap-2 rounded-xl bg-primary px-[18px] py-[10px] text-[13px] font-medium text-white hover:brightness-110 transition-all duration-150 shadow-sm">
                 <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" /></svg>
                 {{ __('New Ticket') }}
             </button>
@@ -68,48 +68,6 @@
 
         <div class="pt-4">
             {{ $tickets->links() }}
-        </div>
-    @endif
-
-    {{-- Create Ticket Modal --}}
-    @if ($showCreateModal)
-        <div class="fixed inset-0 z-50 flex items-center justify-center">
-            <div class="fixed inset-0 bg-black/40 backdrop-blur-[2px]" wire:click="$set('showCreateModal', false)"></div>
-            <div class="relative z-10 w-full max-w-lg rounded-2xl bg-base-100 p-6 shadow-2xl border border-base-content/10">
-                <div class="flex items-center justify-between mb-6">
-                    <h2 class="text-lg font-semibold text-base-content">{{ __('Open New Ticket') }}</h2>
-                    <button wire:click="$set('showCreateModal', false)" class="text-base-content/40 hover:text-base-content">
-                        <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" /></svg>
-                    </button>
-                </div>
-                
-                <form wire:submit="createTicket" class="space-y-4">
-                    <x-ui.input
-                        label="{{ __('Subject') }}"
-                        id="subject"
-                        wire:model="subject"
-                        placeholder="{{ __('Brief description of the issue') }}"
-                        required
-                    />
-                    
-                    <x-ui.textarea
-                        label="{{ __('Message') }}"
-                        id="message"
-                        wire:model="message"
-                        placeholder="{{ __('Please describe your issue in detail...') }}"
-                        rows="5"
-                        required
-                    />
-
-                    <div class="flex justify-end gap-3 mt-6">
-                        <x-ui.button type="button" variant="outline" wire:click="$set('showCreateModal', false)">{{ __('Cancel') }}</x-ui.button>
-                        <x-ui.button type="submit" variant="primary" wire:loading.attr="disabled">
-                            <span wire:loading.remove wire:target="createTicket">{{ __('Submit Ticket') }}</span>
-                            <span wire:loading wire:target="createTicket">{{ __('Submitting...') }}</span>
-                        </x-ui.button>
-                    </div>
-                </form>
-            </div>
         </div>
     @endif
 </div>

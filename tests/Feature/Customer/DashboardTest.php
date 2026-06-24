@@ -38,6 +38,26 @@ class DashboardTest extends TestCase
     }
 
     #[Test]
+    public function landing_on_the_dashboard_after_verifying_email_shows_a_confirmation_toast(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('dashboard.index', ['verified' => '1']))
+            ->assertSee('Your email address has been verified.');
+    }
+
+    #[Test]
+    public function visiting_the_dashboard_without_the_verified_flag_shows_no_confirmation_toast(): void
+    {
+        $user = User::factory()->create();
+
+        $this->actingAs($user)
+            ->get(route('dashboard.index'))
+            ->assertDontSee('Your email address has been verified.');
+    }
+
+    #[Test]
     public function it_greets_the_customer_by_name_and_shows_a_browse_cars_cta(): void
     {
         $user = User::factory()->create(['name' => 'Ama Boateng']);
@@ -63,6 +83,33 @@ class DashboardTest extends TestCase
         $this->actingAs($user)
             ->get(route('dashboard.index'))
             ->assertDontSee('KYC Incomplete');
+    }
+
+    #[Test]
+    public function the_sidebar_shows_a_verified_badge_once_kyc_is_verified(): void
+    {
+        $user = User::factory()->create(['kyc_status' => KycStatus::Verified]);
+
+        $this->actingAs($user)
+            ->get(route('dashboard.index'))
+            ->assertSee('Verified')
+            ->assertDontSee('Unverified');
+    }
+
+    #[Test]
+    public function the_sidebar_shows_an_unverified_badge_for_pending_and_resubmission_kyc(): void
+    {
+        $pending = User::factory()->create(['kyc_status' => KycStatus::Pending]);
+
+        $this->actingAs($pending)
+            ->get(route('dashboard.index'))
+            ->assertSee('Unverified');
+
+        $needsResubmission = User::factory()->create(['kyc_status' => KycStatus::NeedsResubmission]);
+
+        $this->actingAs($needsResubmission)
+            ->get(route('dashboard.index'))
+            ->assertSee('Unverified');
     }
 
     #[Test]
@@ -186,5 +233,37 @@ class DashboardTest extends TestCase
         $this->actingAs($user)
             ->get(route('dashboard.index'))
             ->assertDontSee('All Recent Orders');
+    }
+
+    #[Test]
+    public function the_support_card_links_to_open_a_ticket_and_uses_real_settings(): void
+    {
+        \App\Models\Setting::set('contact_email', 'help@livingstonautos.com');
+        \App\Models\Setting::set('whatsapp_number', '+233 55 999 8888');
+
+        $user = User::factory()->create();
+
+        $response = $this->actingAs($user)->get(route('dashboard.index'));
+
+        $response->assertOk()
+            ->assertSee(route('dashboard.support'), escape: false)
+            ->assertSee('Open a Support Ticket')
+            ->assertSee('mailto:help@livingstonautos.com', escape: false)
+            ->assertSee('wa.me/233559998888', escape: false)
+            ->assertDontSee('Alexander Davis');
+    }
+
+    #[Test]
+    public function the_support_card_shows_the_open_ticket_count_when_the_customer_has_one(): void
+    {
+        $user = User::factory()->create();
+        $user->supportTickets()->create([
+            'subject' => 'Where is my car?',
+            'status' => 'Open',
+        ]);
+
+        $response = $this->actingAs($user)->get(route('dashboard.index'));
+
+        $response->assertOk()->assertSee('View Support Tickets (1 open)');
     }
 }

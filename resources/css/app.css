@@ -1,34 +1,11 @@
 @import "tailwindcss";
 
-
-
+@plugin "@tailwindcss/forms";
 @source '../views';
 @source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
 
-/* I self-host Outfit so --font-sans actually renders it instead of silently falling back to system-ui. */
-@font-face {
-    font-family: 'Outfit';
-    src: url('/fonts/outfit/Outfit-Regular.ttf') format('truetype');
-    font-weight: 400;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Outfit';
-    src: url('/fonts/outfit/Outfit-SemiBold.ttf') format('truetype');
-    font-weight: 600;
-    font-display: swap;
-}
-
-@font-face {
-    font-family: 'Outfit';
-    src: url('/fonts/outfit/Outfit-Bold.ttf') format('truetype');
-    font-weight: 700;
-    font-display: swap;
-}
-
 @theme {
-    --font-sans: 'Outfit', ui-sans-serif, system-ui, sans-serif;
+    --font-sans: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif;
 
     /* Custom tokens */
     --color-primary: #D52518;
@@ -74,4 +51,32 @@
     --color-base-300: #27272a;
     --color-base-content: #f4f4f5;
     --color-neutral: #fafafa;
+}
+
+
+html {
+    scroll-behavior: smooth;
+}
+
+@keyframes pageFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.page-transition {
+    /* I don't use animation-fill-mode: forwards here — it would leave a
+       computed `transform: translateY(0)` on <main> permanently after the
+       animation ends, which creates a new containing block for any
+       position: fixed descendant (e.g. our modals) and breaks their
+       viewport-relative centering. Without forwards, the element just
+       returns to its normal (transform: none) cascade once the one-shot
+       animation finishes, with no visual difference since the end state
+       already matches the default. */
+    animation: pageFadeIn 0.5s ease-out;
 }

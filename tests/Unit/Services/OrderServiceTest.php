@@ -199,6 +199,61 @@ class OrderServiceTest extends TestCase
     }
 
     #[Test]
+    public function cancelling_a_confirmed_order_releases_the_reserved_car(): void
+    {
+        Event::fake([\App\Events\OrderCancelledByAdmin::class]);
+
+        $car = $this->makeAvailableCar();
+        $order = Order::factory()->create(['car_id' => $car->id, 'status' => OrderStatus::PaymentConfirmed]);
+        $car->update(['status' => CarStatus::Reserved]);
+
+        (new OrderService())->cancelOrder($order, 'Customer requested a refund.');
+
+        $this->assertSame(OrderStatus::Cancelled, $order->refresh()->status);
+        $this->assertSame(CarStatus::Available, $car->refresh()->status);
+        $this->assertDatabaseHas('order_status_histories', [
+            'order_id' => $order->id,
+            'status' => OrderStatus::Cancelled->value,
+            'notes' => 'Customer requested a refund.',
+        ]);
+        Event::assertDispatched(\App\Events\OrderCancelledByAdmin::class, fn ($event) => $event->order->id === $order->id);
+    }
+
+    #[Test]
+    public function cancelling_an_order_whose_car_is_not_reserved_does_not_touch_the_car(): void
+    {
+        Event::fake([\App\Events\OrderCancelledByAdmin::class]);
+
+        $order = $this->makeOrder(['status' => OrderStatus::PendingPayment]);
+        $order->car->update(['status' => CarStatus::Available]);
+
+        (new OrderService())->cancelOrder($order, 'Customer changed their mind.');
+
+        $this->assertSame(OrderStatus::Cancelled, $order->refresh()->status);
+        $this->assertSame(CarStatus::Available, $order->car->refresh()->status);
+    }
+
+    #[Test]
+    public function an_already_cancelled_order_cannot_be_cancelled_again(): void
+    {
+        $order = $this->makeOrder(['status' => OrderStatus::Cancelled]);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        (new OrderService())->cancelOrder($order, 'Already cancelled.');
+    }
+
+    #[Test]
+    public function a_delivered_order_cannot_be_cancelled(): void
+    {
+        $order = $this->makeOrder(['status' => OrderStatus::Delivered]);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        (new OrderService())->cancelOrder($order, 'Too late.');
+    }
+
+    #[Test]
     public function advancing_a_stage_out_of_sequence_is_rejected(): void
     {
         $order = $this->makeOrder(['status' => OrderStatus::PendingPayment]);

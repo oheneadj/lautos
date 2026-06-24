@@ -86,6 +86,24 @@
                                     required
                                 />
                             </div>
+                            <div>
+                                <x-ui.input
+                                    label="{{ __('Email Address') }}"
+                                    type="email"
+                                    id="email"
+                                    wire:model="email"
+                                    error="{{ $errors->first('email') }}"
+                                    required
+                                />
+                                @if ($this->hasUnverifiedEmail)
+                                    <p class="mt-3 text-[12px] text-base-content/60">
+                                        {{ __('Your email address is unverified.') }}
+                                        <button class="font-semibold cursor-pointer underline text-primary hover:no-underline" wire:click.prevent="resendVerificationNotification">
+                                            {{ __('Click here to re-send the verification email.') }}
+                                        </button>
+                                    </p>
+                                @endif
+                            </div>
                             <p class="text-[12px] text-base-content/40">
                                 {{ __('To change your password, visit') }}
                                 <a href="{{ route('security.edit') }}" wire:navigate class="font-semibold text-primary hover:underline">{{ __('Security Settings') }}</a>.
@@ -305,6 +323,13 @@
                         </div>
                     </form>
                 </div>
+            </div>
+        @endif
+
+        {{-- Delete Account Section --}}
+        @if ($this->showDeleteUser)
+            <div class="mt-8">
+                <livewire:settings.delete-user-form />
             </div>
         @endif
     </div>

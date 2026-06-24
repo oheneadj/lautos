@@ -12,6 +12,7 @@ namespace App\Services;
 
 use App\Enums\CarStatus;
 use App\Enums\OrderStatus;
+use App\Events\OrderCancelledByAdmin;
 use App\Events\OrderPlaced;
 use App\Events\OrderStageUpdated;
 use App\Events\PaymentConfirmed;
@@ -118,6 +119,33 @@ class OrderService
         $this->logHistory($order, OrderStatus::PendingPayment, $reason);
 
         PaymentRejected::dispatch($order, $reason);
+    }
+
+    /**
+     * Cancels an order at any point before delivery — e.g. the customer
+     * backed out after paying, or a refund was issued. A confirmed payment
+     * reserves the car (see confirmPayment()), and nothing else releases
+     * it back to Available, so without this a cancelled-after-confirmation
+     * order would leave the car permanently locked for every other buyer.
+     */
+    public function cancelOrder(Order $order, string $reason): void
+    {
+        if (in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Delivered], true)) {
+            throw new InvalidArgumentException('This order can no longer be cancelled.');
+        }
+
+        $order->update(['status' => OrderStatus::Cancelled]);
+
+        // Only release the car if it was reserved for THIS order — a car is
+        // only ever Reserved on behalf of whichever order's payment was
+        // confirmed, so if that's this one, cancelling it frees the car up again.
+        if ($order->car->status === CarStatus::Reserved) {
+            $order->car->update(['status' => CarStatus::Available]);
+        }
+
+        $this->logHistory($order, OrderStatus::Cancelled, $reason);
+
+        OrderCancelledByAdmin::dispatch($order, $reason);
     }
 
     /**

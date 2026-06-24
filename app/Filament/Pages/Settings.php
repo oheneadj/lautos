@@ -8,6 +8,7 @@ namespace App\Filament\Pages;
 
 use App\Models\Setting;
 use App\Services\SettingsService;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Concerns\InteractsWithForms;
@@ -43,6 +44,38 @@ class Settings extends Page implements HasForms
     {
         return $schema
             ->components([
+                Section::make('Business Info')
+                    ->description('Shown across the public site, customer dashboard, and emails.')
+                    ->columns(2)
+                    ->schema([
+                        TextInput::make('site_name')
+                            ->label('Business Name')
+                            ->required()
+                            ->columnSpanFull(),
+
+                        FileUpload::make('site_logo_path')
+                            ->label('Logo')
+                            ->image()
+                            ->imagePreviewHeight('80')
+                            ->disk('public')
+                            ->directory('branding')
+                            ->columnSpanFull(),
+
+                        TextInput::make('contact_email')->label('Contact Email')->email(),
+                        TextInput::make('contact_phone')->label('Contact Phone')->tel(),
+                        TextInput::make('whatsapp_number')->label('WhatsApp Number')->tel(),
+                        TextInput::make('contact_address')->label('Address'),
+
+                        TextInput::make('facebook_url')->label('Facebook URL')->url(),
+                        TextInput::make('instagram_url')->label('Instagram URL')->url(),
+                        TextInput::make('twitter_url')->label('Twitter / X URL')->url(),
+
+                        Textarea::make('about_us')
+                            ->label('About Us')
+                            ->rows(3)
+                            ->columnSpanFull(),
+                    ]),
+
                 Section::make('Exchange Rate')
                     ->description('Last updated: ' . (Setting::get('exchange_rate_usd_to_ghs_updated_at') ?? 'never'))
                     ->schema([

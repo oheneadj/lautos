@@ -29,9 +29,12 @@ class CustomerResource extends Resource
 
     protected static ?string $navigationLabel = 'Customers';
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Users';
+    // I keep this in its own "Customers" group with Support Tickets and Reviews —
+    // everything about the customer relationship lives together, separate from
+    // the "Administration" group which is about staff accounts and roles.
+    protected static string|\UnitEnum|null $navigationGroup = 'Customers';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 1;
 
     protected static ?string $recordRouteKeyName = 'uuid';
 

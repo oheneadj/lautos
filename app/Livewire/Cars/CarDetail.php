@@ -6,6 +6,7 @@
 
 namespace App\Livewire\Cars;
 
+use App\Concerns\BuildsLoginRedirectUrl;
 use App\Enums\CarStatus;
 use App\Enums\KycStatus;
 use App\Enums\OrderStatus;
@@ -13,13 +14,49 @@ use App\Models\Car;
 use App\Services\OrderService;
 use Illuminate\Support\Facades\Auth;
 use Livewire\Attributes\Computed;
+use Livewire\Attributes\Url;
 use Livewire\Component;
 
 class CarDetail extends Component
 {
+    use BuildsLoginRedirectUrl;
+
     public Car $car;
     public int $activeImageIndex = 0;
     public bool $showOrderModal = false;
+
+    // Flips to true once resendVerification() succeeds, so the modal can
+    // show a confirmation in place of the button instead of relying on a
+    // toast event that nothing on the public layout listens for.
+    public bool $verificationJustSent = false;
+
+    /**
+     * Set when a guest is sent to login from the "Login to Order" button —
+     * lets us reopen the order modal automatically once they're back here
+     * signed in, instead of making them click Order again from scratch.
+     */
+    #[Url]
+    public ?string $intent = null;
+
+    /**
+     * The page URL the "Login to Order" link should send a guest back to. I
+     * capture this once at mount time rather than calling request() from
+     * the Blade view — after the first wire:click (e.g. swapping the photo
+     * gallery image), every later render happens inside Livewire's own AJAX
+     * update request, where request() would resolve to that internal
+     * endpoint instead of the actual page.
+     */
+    public string $loginRedirectUrl = '';
+
+    public function mount(Car $car): void
+    {
+        $this->car = $car;
+        $this->loginRedirectUrl = $this->buildLoginRedirectUrl(['intent' => 'order']);
+
+        if ($this->intent === 'order' && Auth::check()) {
+            $this->showOrderModal = true;
+        }
+    }
 
     public function setActiveImage(int $index): void
     {
@@ -102,6 +139,7 @@ class CarDetail extends Component
 
         $user->sendEmailVerificationNotification();
 
+        $this->verificationJustSent = true;
         $this->dispatch('toast', message: __('Verification email sent.'));
     }
 

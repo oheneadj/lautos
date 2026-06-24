@@ -45,7 +45,19 @@ class FortifyServiceProvider extends ServiceProvider
      */
     private function configureViews(): void
     {
-        Fortify::loginView(fn () => view('livewire.auth.login'));
+        Fortify::loginView(function () {
+            $redirectTo = request()->query('redirect_to');
+
+            // I only accept a same-site relative path here — never a full URL —
+            // or a guest could be phished into a login that redirects them off-site.
+            // Storing it as url.intended means Fortify's own LoginResponse (and our
+            // Google OAuth callback) resume there automatically — no custom response needed.
+            if (is_string($redirectTo) && Str::startsWith($redirectTo, '/') && ! Str::startsWith($redirectTo, '//') && ! str_contains($redirectTo, '://')) {
+                session(['url.intended' => $redirectTo]);
+            }
+
+            return view('livewire.auth.login');
+        });
         Fortify::verifyEmailView(fn () => view('livewire.auth.verify-email'));
         Fortify::twoFactorChallengeView(fn () => view('livewire.auth.two-factor-challenge'));
         Fortify::confirmPasswordView(fn () => view('livewire.auth.confirm-password'));

@@ -25,7 +25,8 @@ class KycDocumentsSubmittedNotification extends Notification implements ShouldQu
      */
     public function via(object $notifiable): array
     {
-        // I only send mail for now — SMS (Arkesel) is wired up in Epic 21.
+        // This goes to the admin's business email, not a customer with a
+        // phone number, so there's no SMS channel to add here.
         return ['mail'];
     }
 

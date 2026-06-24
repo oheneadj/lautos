@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\CarBodyType;
 use App\Enums\CarStatus;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -28,10 +29,7 @@ class Car extends Model
     public function getActivitylogOptions(): LogOptions
     {
         return LogOptions::defaults()
-            ->logOnly([
-                'status', 'price_usd_cents', 'shipping_cost_usd_cents',
-                'mileage', 'colour', 'transmission', 'fuel_type', 'country_of_origin',
-            ])
+            ->logFillable()
             ->logOnlyDirty()
             ->dontLogEmptyChanges();
     }
@@ -55,6 +53,7 @@ class Car extends Model
         'mileage',
         'colour',
         'country_of_origin',
+        'body_type',
         'price_usd_cents',
         'shipping_cost_usd_cents',
         'special_features',
@@ -67,6 +66,7 @@ class Car extends Model
         return [
             'special_features' => 'array',
             'status'           => CarStatus::class,
+            'body_type'        => CarBodyType::class,
             'sold_at'          => 'datetime',
             'year'             => 'integer',
         ];

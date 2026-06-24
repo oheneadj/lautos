@@ -22,7 +22,7 @@ class ContactEnquiryResource extends Resource
 
     protected static string|\UnitEnum|null $navigationGroup = 'Content';
 
-    protected static ?int $navigationSort = 2;
+    protected static ?int $navigationSort = 4;
 
     // I disable create — enquiries come in via the public contact form, never created by admin.
     public static function canCreate(): bool

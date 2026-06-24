@@ -1,10 +1,16 @@
 <?php
 
+/**
+ * Lists the customer's support tickets. Starting a new one happens through
+ * the global support chat bubble/slide-over, not a page-level form here —
+ * one place to create a ticket, not two.
+ *
+ * @author Ohene Adjei
+ */
+
 namespace App\Livewire\Customer;
 
-use App\Models\SupportTicket;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Str;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Component;
@@ -15,36 +21,6 @@ use Livewire\WithPagination;
 class SupportTickets extends Component
 {
     use WithPagination;
-
-    public $showCreateModal = false;
-    public $subject = '';
-    public $message = '';
-
-    protected $rules = [
-        'subject' => 'required|string|max:255',
-        'message' => 'required|string',
-    ];
-
-    public function createTicket()
-    {
-        $this->validate();
-
-        $ticket = SupportTicket::create([
-            'uuid' => (string) Str::uuid(),
-            'user_id' => Auth::id(),
-            'subject' => $this->subject,
-            'status' => 'Open',
-        ]);
-
-        $ticket->messages()->create([
-            'user_id' => Auth::id(),
-            'message' => $this->message,
-            'is_admin' => false,
-        ]);
-
-        $this->reset(['subject', 'message', 'showCreateModal']);
-        $this->dispatch('toast', message: __('Ticket created successfully.'));
-    }
 
     public function render()
     {

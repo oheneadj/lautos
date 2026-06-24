@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\GiantSmsMessage;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,7 +26,13 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        $channels = ['mail', 'database'];
+
+        if (! empty($notifiable->phone)) {
+            $channels[] = 'giantsms';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -41,6 +48,15 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
             ->line('Please upload a new payment proof from your dashboard.')
             ->action('Upload New Proof', route('dashboard.orders.show', $this->order->uuid))
             ->line('Contact us if you have any questions.');
+    }
+
+    public function toGiantSms(object $notifiable): GiantSmsMessage
+    {
+        $url = route('dashboard.orders.show', $this->order->uuid);
+
+        return new GiantSmsMessage(
+            "Hi {$notifiable->name}, your payment proof for order {$this->order->reference} was rejected. Reason: {$this->reason}. Please reupload at {$url}"
+        );
     }
 
     /**

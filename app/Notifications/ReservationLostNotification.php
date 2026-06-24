@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\GiantSmsMessage;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,7 +26,13 @@ class ReservationLostNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        $channels = ['mail', 'database'];
+
+        if (! empty($notifiable->phone)) {
+            $channels[] = 'giantsms';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -45,6 +52,15 @@ class ReservationLostNotification extends Notification implements ShouldQueue
         return $mail
             ->action('Browse Other Cars', route('cars.index'))
             ->line('Thank you for your interest in Livingston Autos.');
+    }
+
+    public function toGiantSms(object $notifiable): GiantSmsMessage
+    {
+        $car = $this->order->car;
+
+        return new GiantSmsMessage(
+            "Hi {$notifiable->name}, the {$car->year} {$car->make->name} {$car->carModel->name} from order {$this->order->reference} is no longer available — another buyer completed payment first."
+        );
     }
 
     /**

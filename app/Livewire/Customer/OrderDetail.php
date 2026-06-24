@@ -62,6 +62,15 @@ class OrderDetail extends Component
      */
     public function uploadPaymentProof(): void
     {
+        // The UI already hides this form once a proof is under review, but
+        // I guard it here too — wire:click reaches the component directly,
+        // so a stale page (or a deliberately replayed request) shouldn't be
+        // able to sneak in a second proof while the first is still pending
+        // review. I check the raw status rather than the canUploadProof
+        // computed property — calling it here would memoize "true" for the
+        // rest of this request, even after the status update below changes it.
+        abort_unless($this->order->status === OrderStatus::PendingPayment, 403);
+
         $this->validate([
             'paymentProofFile' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
             'transactionNote'  => ['nullable', 'string', 'max:500'],
@@ -90,13 +99,16 @@ class OrderDetail extends Component
         $this->dispatch('toast', message: __('Payment proof uploaded successfully.'));
     }
 
+    /**
+     * Only Pending Payment allows an upload — once a proof is in for
+     * review (Payment Uploaded), I don't let the customer swap it out
+     * from under the admin reviewing it. A rejection moves the order back
+     * to Pending Payment, which naturally reopens this.
+     */
     #[Computed]
     public function canUploadProof(): bool
     {
-        return in_array($this->order->status, [
-            OrderStatus::PendingPayment,
-            OrderStatus::PaymentUploaded,
-        ]);
+        return $this->order->status === OrderStatus::PendingPayment;
     }
 
     #[Computed]

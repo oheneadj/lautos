@@ -39,12 +39,12 @@ class OrderPlacementTest extends TestCase
     }
 
     #[Test]
-    public function a_guest_sees_a_create_account_prompt_instead_of_an_order_button(): void
+    public function a_guest_sees_a_login_prompt_instead_of_an_order_button(): void
     {
         $car = $this->makeCar();
 
         $this->get(route('cars.show', $car->slug))
-            ->assertSee('Create Account to Order')
+            ->assertSee('Login to Order')
             ->assertDontSee('wire:click="openOrderModal"', false);
     }
 
@@ -138,9 +138,69 @@ class OrderPlacementTest extends TestCase
 
         Livewire::actingAs($user)
             ->test(CarDetail::class, ['car' => $car])
-            ->call('resendVerification');
+            ->call('openOrderModal')
+            ->call('resendVerification')
+            ->assertSet('verificationJustSent', true)
+            ->assertSee('Email sent — check your inbox');
 
         Notification::assertSentTo($user, VerifyEmail::class);
+    }
+
+    #[Test]
+    public function resuming_an_order_intent_after_login_reopens_the_modal(): void
+    {
+        $car = $this->makeCar();
+        $user = User::factory()->create(['kyc_status' => KycStatus::Verified]);
+
+        Livewire::actingAs($user)
+            ->test(CarDetail::class, ['car' => $car, 'intent' => 'order'])
+            ->assertSet('showOrderModal', true);
+    }
+
+    #[Test]
+    public function an_order_intent_does_not_auto_open_the_modal_for_a_guest(): void
+    {
+        $car = $this->makeCar();
+
+        Livewire::test(CarDetail::class, ['car' => $car, 'intent' => 'order'])
+            ->assertSet('showOrderModal', false);
+    }
+
+    #[Test]
+    public function the_full_login_to_order_round_trip_resumes_at_the_car_page_with_the_modal_open(): void
+    {
+        // I deliberately don't hand-type the redirect_to value here — the whole point
+        // of this test is to catch a mismatch between what CarDetail actually generates
+        // and what FortifyServiceProvider actually accepts, which a hand-typed relative
+        // path in a unit test would hide (and did, the first time this was built).
+        $car = $this->makeCar();
+        $user = User::factory()->create(['kyc_status' => KycStatus::Verified]);
+
+        $page = $this->get(route('cars.show', $car->slug))->getContent();
+        preg_match('/href="([^"]*\/login\?redirect_to=[^"]*)"/', $page, $matches);
+        $this->assertNotEmpty($matches, 'Could not find the "Login to Order" link on the car page.');
+
+        $loginUrl = html_entity_decode($matches[1]);
+
+        $this->get($loginUrl);
+        $this->assertNotNull(session('url.intended'), 'redirect_to was rejected as an open-redirect risk — it must be a relative path.');
+
+        $response = $this->post(route('login.store'), [
+            'email' => $user->email,
+            'password' => 'password',
+        ]);
+
+        $response->assertRedirect(route('cars.show', $car->slug).'?intent=order');
+    }
+
+    #[Test]
+    public function the_login_link_carries_the_order_intent_so_it_can_resume_after_login(): void
+    {
+        $car = $this->makeCar();
+
+        $this->get(route('cars.show', $car->slug))
+            ->assertSeeText('Login to Order')
+            ->assertSee('intent%3Dorder', false);
     }
 
     #[Test]

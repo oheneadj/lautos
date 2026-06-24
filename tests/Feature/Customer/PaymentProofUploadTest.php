@@ -62,7 +62,7 @@ class PaymentProofUploadTest extends TestCase
     }
 
     #[Test]
-    public function multiple_proofs_can_be_uploaded_for_the_same_order(): void
+    public function a_second_proof_can_be_uploaded_after_the_first_is_rejected(): void
     {
         Storage::fake('private');
 
@@ -72,9 +72,58 @@ class PaymentProofUploadTest extends TestCase
         $component = Livewire::actingAs($user)->test(OrderDetail::class, ['order' => $order]);
 
         $component->set('paymentProofFile', UploadedFile::fake()->image('first.jpg'))->call('uploadPaymentProof');
+
+        // A rejection sends the order back to Pending Payment, which is the
+        // only thing that reopens the upload form for a resubmission.
+        app(\App\Services\OrderService::class)->rejectPayment($order->refresh(), 'Receipt image is unreadable.');
+
         $component->set('paymentProofFile', UploadedFile::fake()->image('second.jpg'))->call('uploadPaymentProof');
 
         $this->assertCount(2, $order->refresh()->paymentProofs);
+    }
+
+    #[Test]
+    public function the_upload_form_is_hidden_and_blocked_while_a_proof_is_under_review(): void
+    {
+        Storage::fake('private');
+
+        $order = $this->makeOrder();
+        $user = User::find($order->user_id);
+
+        $component = Livewire::actingAs($user)->test(OrderDetail::class, ['order' => $order]);
+        $component->set('paymentProofFile', UploadedFile::fake()->image('first.jpg'))->call('uploadPaymentProof');
+
+        $this->assertSame(OrderStatus::PaymentUploaded, $order->refresh()->status);
+
+        $component->assertSet('canUploadProof', false)
+            ->assertDontSeeHtml('wire:submit="uploadPaymentProof"');
+
+        // Even a direct call to the component method (bypassing the hidden
+        // UI) must not slip a second proof in while the first is pending review.
+        $component->set('paymentProofFile', UploadedFile::fake()->image('sneaky.jpg'))
+            ->call('uploadPaymentProof')
+            ->assertForbidden();
+
+        $this->assertCount(1, $order->refresh()->paymentProofs);
+    }
+
+    #[Test]
+    public function the_most_recent_proof_is_badged_as_rejected_after_a_rejection(): void
+    {
+        Storage::fake('private');
+
+        $order = $this->makeOrder();
+        $user = User::find($order->user_id);
+
+        $component = Livewire::actingAs($user)->test(OrderDetail::class, ['order' => $order]);
+        $component->set('paymentProofFile', UploadedFile::fake()->image('first.jpg'))->call('uploadPaymentProof');
+
+        app(\App\Services\OrderService::class)->rejectPayment($order->refresh(), 'Receipt image is unreadable.');
+
+        Livewire::actingAs($user)
+            ->test(OrderDetail::class, ['order' => $order])
+            ->assertSee('Rejected')
+            ->assertSee('Receipt image is unreadable.');
     }
 
     #[Test]

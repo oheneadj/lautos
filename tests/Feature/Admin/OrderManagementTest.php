@@ -149,6 +149,23 @@ class OrderManagementTest extends TestCase
     }
 
     #[Test]
+    public function admin_can_cancel_a_confirmed_order_and_release_the_reserved_car(): void
+    {
+        Event::fake([\App\Events\OrderCancelledByAdmin::class]);
+        $this->actingAsAdmin();
+
+        $order = $this->makeOrder(['status' => OrderStatus::PaymentConfirmed]);
+        $order->car->update(['status' => CarStatus::Reserved]);
+
+        Livewire::test(ViewOrder::class, ['record' => $order->uuid])
+            ->callAction('cancelOrder', data: ['reason' => 'Customer requested a refund.']);
+
+        $this->assertSame(OrderStatus::Cancelled, $order->refresh()->status);
+        $this->assertSame(CarStatus::Available, $order->car->refresh()->status);
+        $this->assertDatabaseHas('order_status_histories', ['notes' => 'Customer requested a refund.']);
+    }
+
+    #[Test]
     public function admin_can_advance_the_order_to_the_next_stage(): void
     {
         Event::fake([\App\Events\OrderStageUpdated::class]);
@@ -177,5 +194,19 @@ class OrderManagementTest extends TestCase
             'admin_id' => $admin->id,
             'note' => 'Customer called about delayed shipment.',
         ]);
+    }
+
+    #[Test]
+    public function status_tabs_filter_the_table_to_just_that_status(): void
+    {
+        $this->actingAsAdmin();
+
+        $pending = $this->makeOrder(['status' => OrderStatus::PendingPayment]);
+        $delivered = $this->makeOrder(['status' => OrderStatus::Delivered]);
+
+        Livewire::test(ListOrders::class)
+            ->set('activeTab', OrderStatus::Delivered->value)
+            ->assertCanSeeTableRecords([$delivered])
+            ->assertCanNotSeeTableRecords([$pending]);
     }
 }

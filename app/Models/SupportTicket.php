@@ -8,9 +8,25 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
+use Spatie\Activitylog\Models\Concerns\LogsActivity;
+use Spatie\Activitylog\Support\LogOptions;
+
 class SupportTicket extends Model
 {
-    use HasFactory;
+    use HasFactory, LogsActivity;
+
+    public function getActivitylogOptions(): LogOptions
+    {
+        return LogOptions::defaults()
+            ->logFillable()
+            ->logOnlyDirty()
+            ->dontLogEmptyChanges();
+    }
+
+    // Single source of truth for the status options — the customer-facing
+    // views and the admin resource both read from this instead of duplicating
+    // the literal strings.
+    public const STATUSES = ['Open', 'In Progress', 'Closed'];
 
     protected $fillable = [
         'uuid',

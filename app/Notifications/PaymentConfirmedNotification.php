@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\GiantSmsMessage;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,8 +26,13 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        // I only send mail + database for now — SMS (Arkesel) is wired up in Epic 21.
-        return ['mail', 'database'];
+        $channels = ['mail', 'database'];
+
+        if (! empty($notifiable->phone)) {
+            $channels[] = 'giantsms';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -41,6 +47,16 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
             ->line('Your car is now reserved and we will begin processing your purchase.')
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid))
             ->line('Thank you for choosing Livingston Autos.');
+    }
+
+    public function toGiantSms(object $notifiable): GiantSmsMessage
+    {
+        $car = $this->order->car;
+        $url = route('dashboard.orders.show', $this->order->uuid);
+
+        return new GiantSmsMessage(
+            "Hi {$notifiable->name}, payment confirmed for order {$this->order->reference}. Your {$car->year} {$car->make->name} {$car->carModel->name} is reserved. Track at {$url}"
+        );
     }
 
     /**

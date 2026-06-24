@@ -48,11 +48,11 @@ class UsersTable
             ])
             ->defaultSort('created_at', 'desc')
             ->emptyStateIcon('heroicon-o-users')
-            ->emptyStateHeading('No customers yet')
-            ->emptyStateDescription('Customers will appear here once they register an account.')
+            ->emptyStateHeading('No admin accounts yet')
+            ->emptyStateDescription('Admin accounts will appear here once they\'re created.')
             ->emptyStateActions([
                 CreateAction::make()
-                    ->label('Create first user')
+                    ->label('Create first admin')
                     ->icon('heroicon-m-plus'),
             ])
             ->filters([

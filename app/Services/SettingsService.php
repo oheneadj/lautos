@@ -19,6 +19,16 @@ class SettingsService
      * @var array<int, string>
      */
     public const KEYS = [
+        'site_name',
+        'site_logo_path',
+        'contact_email',
+        'contact_phone',
+        'contact_address',
+        'whatsapp_number',
+        'facebook_url',
+        'instagram_url',
+        'twitter_url',
+        'about_us',
         'exchange_rate_usd_to_ghs',
         'bank_name',
         'bank_account_name',

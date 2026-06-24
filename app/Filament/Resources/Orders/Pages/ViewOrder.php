@@ -158,6 +158,23 @@ class ViewOrder extends ViewRecord
                     $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
                 }),
 
+            Action::make('cancelOrder')
+                ->label('Cancel Order')
+                ->icon('heroicon-m-no-symbol')
+                ->color('danger')
+                ->visible(fn () => ! in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Delivered], true))
+                ->requiresConfirmation()
+                ->modalDescription('This releases the car back to Available if it was reserved for this order, and notifies the customer.')
+                ->schema([
+                    Textarea::make('reason')
+                        ->label('Reason for cancellation')
+                        ->required(),
+                ])
+                ->action(function (array $data) use ($order) {
+                    app(OrderService::class)->cancelOrder($order, $data['reason']);
+                    $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
+                }),
+
             Action::make('addNote')
                 ->label('Add Note')
                 ->icon('heroicon-m-pencil')

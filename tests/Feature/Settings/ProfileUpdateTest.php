@@ -1,13 +1,13 @@
 <?php
 
-use App\Livewire\Settings\Profile;
+use App\Livewire\Customer\ProfileEdit;
 use App\Models\User;
 use Livewire\Livewire;
 
 test('profile page is displayed', function () {
     $this->actingAs($user = User::factory()->create());
 
-    $this->get('/settings/profile')->assertOk();
+    $this->get('/dashboard/profile')->assertOk();
 });
 
 test('profile information can be updated', function () {
@@ -15,10 +15,12 @@ test('profile information can be updated', function () {
 
     $this->actingAs($user);
 
-    $response = Livewire::test(Profile::class)
+    $response = Livewire::test(ProfileEdit::class)
         ->set('name', 'Test User')
         ->set('email', 'test@example.com')
-        ->call('updateProfileInformation');
+        ->set('address', '123 Test St')
+        ->set('ghana_card_number', 'GHA-123456789-1')
+        ->call('updateProfile');
 
     $response->assertHasNoErrors();
 
@@ -34,10 +36,12 @@ test('email verification status is unchanged when email address is unchanged', f
 
     $this->actingAs($user);
 
-    $response = Livewire::test(Profile::class)
+    $response = Livewire::test(ProfileEdit::class)
         ->set('name', 'Test User')
         ->set('email', $user->email)
-        ->call('updateProfileInformation');
+        ->set('address', '123 Test St')
+        ->set('ghana_card_number', 'GHA-123456789-1')
+        ->call('updateProfile');
 
     $response->assertHasNoErrors();
 

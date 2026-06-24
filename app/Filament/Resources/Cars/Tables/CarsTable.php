@@ -6,6 +6,7 @@
 
 namespace App\Filament\Resources\Cars\Tables;
 
+use App\Enums\CarBodyType;
 use App\Enums\CarStatus;
 use App\Models\Car;
 use Filament\Actions\Action;
@@ -18,6 +19,7 @@ use Filament\Actions\EditAction;
 use Filament\Actions\ForceDeleteBulkAction;
 use Filament\Actions\RestoreAction;
 use Filament\Actions\RestoreBulkAction;
+use Filament\Actions\ViewAction;
 use Filament\Forms\Components\Select;
 use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
@@ -72,6 +74,10 @@ class CarsTable
                 TextColumn::make('country_of_origin')
                     ->label('Origin')
                     ->toggleable(isToggledHiddenByDefault: true),
+                TextColumn::make('body_type')
+                    ->label('Body Type')
+                    ->formatStateUsing(fn (?CarBodyType $state): string => $state?->label() ?? '—')
+                    ->toggleable(),
                 TextColumn::make('created_at')
                     ->label('Date Added')
                     ->dateTime()
@@ -102,6 +108,9 @@ class CarsTable
                 SelectFilter::make('country_of_origin')
                     ->label('Country of Origin')
                     ->options(array_combine(Car::COUNTRIES_OF_ORIGIN, Car::COUNTRIES_OF_ORIGIN)),
+                SelectFilter::make('body_type')
+                    ->label('Body Type')
+                    ->options(CarBodyType::class),
                 // I don't use TrashedFilter here — the ListCars "Archived" tab covers this,
                 // and TrashedFilter's own default query would otherwise re-impose
                 // withoutTrashed() on top of the tab's onlyTrashed(), cancelling it out.
@@ -120,6 +129,10 @@ class CarsTable
                             ->required(),
                     ])
                     ->action(fn (Car $record, array $data) => $record->update(['status' => $data['status']])),
+                ViewAction::make()
+                    ->label('View')
+                    ->icon('heroicon-m-eye')
+                    ->button(),
                 EditAction::make()
                     ->label('Edit')
                     ->icon('heroicon-m-pencil-square')

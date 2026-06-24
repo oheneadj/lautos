@@ -6,6 +6,7 @@
 
 namespace App\Notifications;
 
+use App\Channels\GiantSmsMessage;
 use App\Models\Order;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
@@ -25,7 +26,13 @@ class PaymentProofReceivedNotification extends Notification implements ShouldQue
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        $channels = ['mail', 'database'];
+
+        if (! empty($notifiable->phone)) {
+            $channels[] = 'giantsms';
+        }
+
+        return $channels;
     }
 
     public function toMail(object $notifiable): MailMessage
@@ -39,6 +46,13 @@ class PaymentProofReceivedNotification extends Notification implements ShouldQue
             ->line("We've received your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}.")
             ->line("We're reviewing it now and will confirm your order shortly.")
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid));
+    }
+
+    public function toGiantSms(object $notifiable): GiantSmsMessage
+    {
+        return new GiantSmsMessage(
+            "Hi {$notifiable->name}, we've received your payment proof for order {$this->order->reference}. We're reviewing it now."
+        );
     }
 
     /**

@@ -41,4 +41,10 @@ return [
         ],
     ],
 
+    'giantsms' => [
+        'api_key'   => env('GIANTSMS_API_KEY'),
+        'sender_id' => env('GIANTSMS_SENDER_ID', 'LivingstonA'),
+        'base_url'  => env('GIANTSMS_BASE_URL', 'https://api.giantsms.com/api/v1'),
+    ],
+
 ];

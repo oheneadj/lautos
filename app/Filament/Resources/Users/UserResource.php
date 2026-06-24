@@ -22,7 +22,11 @@ class UserResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedUsers;
 
-    protected static string|\UnitEnum|null $navigationGroup = 'Users';
+    protected static ?string $navigationLabel = 'Admins';
+
+    // "Administration" keeps staff/role management together, separate from the
+    // "Customers" group — those two audiences should never look like one list.
+    protected static string|\UnitEnum|null $navigationGroup = 'Administration';
 
     protected static ?int $navigationSort = 1;
 
@@ -36,6 +40,16 @@ class UserResource extends Resource
     public static function table(Table $table): Table
     {
         return UsersTable::configure($table);
+    }
+
+    /**
+     * I scope this resource to staff/admin accounts only — customers have
+     * their own read-focused CustomerResource so KYC review never gets
+     * mixed up with staff permission management.
+     */
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->where('is_admin', true);
     }
 
     public static function getRelations(): array

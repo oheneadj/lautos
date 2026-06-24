@@ -4,7 +4,9 @@
     <div class="absolute top-0 left-0 w-full z-10 p-3 flex justify-between items-start pointer-events-none">
         {{-- Status Badge --}}
         <div class="pointer-events-auto">
-            <x-ui.badge :type="$car->status->colour()" dot>{{ $car->status->label() }}</x-ui.badge>
+            {{-- The badge's normal style uses a translucent tint background, which all but
+                 disappears sitting on top of a photo — I force a solid white backdrop here. --}}
+            <x-ui.badge :type="$car->status->colour()" dot class="!bg-white shadow-sm">{{ $car->status->label() }}</x-ui.badge>
         </div>
         {{-- Heart Icon --}}
         <div class="pointer-events-auto">

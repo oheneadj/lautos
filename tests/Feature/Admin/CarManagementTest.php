@@ -84,6 +84,69 @@ class CarManagementTest extends TestCase
     }
 
     #[Test]
+    public function it_filters_by_body_type(): void
+    {
+        $this->actingAsAdmin();
+
+        $suv = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Suv]);
+        $sedan = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Sedan]);
+
+        Livewire::test(ListCars::class)
+            ->filterTable('body_type', \App\Enums\CarBodyType::Suv->value)
+            ->assertCanSeeTableRecords([$suv])
+            ->assertCanNotSeeTableRecords([$sedan]);
+    }
+
+    #[Test]
+    public function admin_can_view_the_car_detail_page(): void
+    {
+        $this->actingAsAdmin();
+
+        $car = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Suv]);
+
+        Livewire::test(\App\Filament\Resources\Cars\Pages\ViewCar::class, ['record' => $car->uuid])
+            ->assertOk()
+            ->assertSee('SUV');
+    }
+
+    #[Test]
+    public function admin_can_set_the_body_type_when_creating_a_car(): void
+    {
+        $this->actingAsAdmin();
+
+        $make = Make::firstOrCreate(['name' => 'Toyota']);
+        $carModel = CarModel::firstOrCreate(['make_id' => $make->id, 'name' => 'Corolla']);
+
+        Livewire::test(\App\Filament\Resources\Cars\Pages\CreateCar::class)
+            ->fillForm([
+                'make_id' => $make->id,
+                'car_model_id' => $carModel->id,
+                'year' => 2022,
+                'engine_capacity' => '1800cc',
+                'transmission' => 'Automatic',
+                'fuel_type' => 'Petrol',
+                'mileage' => 30000,
+                'colour' => 'White',
+                'country_of_origin' => 'Japan',
+                'body_type' => \App\Enums\CarBodyType::Sedan->value,
+                'image_paths' => [
+                    \Illuminate\Http\UploadedFile::fake()->image('a.jpg'),
+                    \Illuminate\Http\UploadedFile::fake()->image('b.jpg'),
+                    \Illuminate\Http\UploadedFile::fake()->image('c.jpg'),
+                ],
+                'price_usd_cents' => 150,
+                'shipping_cost_usd_cents' => 20,
+            ])
+            ->call('create')
+            ->assertHasNoFormErrors();
+
+        $this->assertDatabaseHas('cars', [
+            'make_id' => $make->id,
+            'body_type' => \App\Enums\CarBodyType::Sedan->value,
+        ]);
+    }
+
+    #[Test]
     public function bulk_change_status_updates_every_selected_car(): void
     {
         $this->actingAsAdmin();
@@ -111,5 +174,19 @@ class CarManagementTest extends TestCase
             ->set('activeTab', 'archived')
             ->assertCanSeeTableRecords([$archived])
             ->assertCanNotSeeTableRecords([$active]);
+    }
+
+    #[Test]
+    public function status_tabs_filter_the_table_to_just_that_status(): void
+    {
+        $this->actingAsAdmin();
+
+        $available = $this->makeCar(['status' => CarStatus::Available]);
+        $sold = $this->makeCar(['make' => 'Honda', 'model' => 'Civic', 'status' => CarStatus::Sold]);
+
+        Livewire::test(ListCars::class)
+            ->set('activeTab', CarStatus::Sold->value)
+            ->assertCanSeeTableRecords([$sold])
+            ->assertCanNotSeeTableRecords([$available]);
     }
 }

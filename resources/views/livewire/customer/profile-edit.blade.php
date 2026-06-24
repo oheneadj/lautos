@@ -195,7 +195,7 @@
                                             error="{{ $errors->first('ghana_card_number') }}"
                                             :disabled="$fieldsLocked"
                                         />
-                                        @if ($this->hasGhanaCardDoc)
+                                        @if ($this->hasGhanaCardDoc && ! $isRejected)
                                             <div class="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-success/5 border border-success/10">
                                                 <svg class="w-4 h-4 text-success flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd" /></svg>
                                                 <span class="text-[12px] font-semibold text-success">{{ __('Document uploaded') }}</span>
@@ -246,7 +246,7 @@
                                             error="{{ $errors->first('tin_number') }}"
                                             :disabled="$fieldsLocked"
                                         />
-                                        @if ($this->hasTinDoc)
+                                        @if ($this->hasTinDoc && ! $isRejected)
                                             <div class="mt-3 flex items-center gap-2 px-3 py-2 rounded-lg bg-success/5 border border-success/10">
                                                 <svg class="w-4 h-4 text-success flex-shrink-0" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M19.916 4.626a.75.75 0 0 1 .208 1.04l-9 13.5a.75.75 0 0 1-1.154.114l-6-6a.75.75 0 0 1 1.06-1.06l5.353 5.353 8.493-12.74a.75.75 0 0 1 1.04-.207Z" clip-rule="evenodd" /></svg>
                                                 <span class="text-[12px] font-semibold text-success">{{ __('Document uploaded') }}</span>

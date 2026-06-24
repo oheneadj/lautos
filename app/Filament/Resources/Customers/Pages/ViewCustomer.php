@@ -27,7 +27,7 @@ class ViewCustomer extends ViewRecord
         return $schema
             ->record($this->getRecord())
             ->components([
-                Grid::make(2)
+                Grid::make(1)
                     ->schema([
                         Section::make('Profile')
                             ->schema([
@@ -35,8 +35,8 @@ class ViewCustomer extends ViewRecord
                                 TextEntry::make('email'),
                                 TextEntry::make('phone')->placeholder('Not provided'),
                                 TextEntry::make('address')->placeholder('Not provided'),
-                                TextEntry::make('created_at')->label('Registered')->dateTime(),
-                            ]),
+                                TextEntry::make('created_at')->label('Registered')->since(),
+                            ])->columns(2),
                         Section::make('KYC')
                             ->schema([
                                 TextEntry::make('kyc_status')
@@ -46,7 +46,7 @@ class ViewCustomer extends ViewRecord
                                 TextEntry::make('ghana_card_number')->label('Ghana Card #')->placeholder('Not provided'),
                                 TextEntry::make('tin_number')->label('TIN')->placeholder('Not provided'),
                                 TextEntry::make('kyc_notes')->label('Admin Notes')->placeholder('—'),
-                            ]),
+                            ])->columns(2),
                     ]),
 
                 Section::make('KYC Documents')
@@ -83,6 +83,7 @@ class ViewCustomer extends ViewRecord
                 ->schema([
                     Textarea::make('reason')
                         ->label('Reason')
+                        ->placeholder('e.g. The Ghana Card photo is blurry — please resubmit a clearer copy.')
                         ->required(),
                 ])
                 ->action(function (array $data) use ($customer) {

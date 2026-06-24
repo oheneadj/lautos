@@ -24,12 +24,12 @@
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
                             <label
-                                class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Make</label>
+                                class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Make</label>
                             {{-- I use make[] (array syntax), not make — CarCatalogue's makeFilter
                                  is now a multi-select array, and a plain scalar query value
                                  wouldn't hydrate into it. --}}
                             <select name="make[]"
-                                class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
+                                class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-sm text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
                                 <option value="">Any Make</option>
                                 @foreach ($heroMakes as $make)
                                     <option value="{{ $make->slug }}">{{ $make->name }}</option>
@@ -38,19 +38,19 @@
                         </div>
                         <div>
                             <label
-                                class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Transmission</label>
+                                class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Transmission</label>
                             <select name="transmission"
-                                class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
+                                class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-sm text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
                                 <option value="">Any Transmission</option>
                                 <option value="Automatic">Automatic</option>
                                 <option value="Manual">Manual</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Min
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Min
                                 Year</label>
                             <select name="min_year"
-                                class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
+                                class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-sm text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
                                 <option value="">Any Year</option>
                                 @foreach (range(now()->year, now()->year - 15) as $year)
                                     <option value="{{ $year }}">{{ $year }}+</option>
@@ -58,10 +58,10 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-gray-500 uppercase tracking-wider mb-1.5">Max
+                            <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Max
                                 Price (GHS)</label>
                             <select name="max_price"
-                                class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-[14px] text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
+                                class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-sm text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
                                 <option value="">Any Price</option>
                                 <option value="100000">Under GHS 100,000</option>
                                 <option value="200000">Under GHS 200,000</option>
@@ -71,7 +71,7 @@
                         </div>
                     </div>
                     <button type="submit"
-                        class="w-full bg-primary text-white font-bold py-3.5 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-[15px]">
+                        class="w-full bg-primary text-white font-bold py-3.5 rounded-lg hover:bg-red-700 transition-colors flex items-center justify-center gap-2 text-base">
                         <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
                                 d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
@@ -87,15 +87,15 @@
             class="absolute bottom-0 right-0 hidden lg:flex items-center gap-10 bg-white/10 backdrop-blur-md rounded-tl-2xl px-10 py-6 border-t border-l border-white/10">
             <div class="text-center">
                 <div class="text-3xl font-bold text-white">400+</div>
-                <div class="text-[12px] text-white/60 font-medium">Vehicles</div>
+                <div class="text-xs text-white/60 font-medium">Vehicles</div>
             </div>
             <div class="text-center">
                 <div class="text-3xl font-bold text-white">25+</div>
-                <div class="text-[12px] text-white/60 font-medium">Years</div>
+                <div class="text-xs text-white/60 font-medium">Years</div>
             </div>
             <div class="text-center">
                 <div class="text-3xl font-bold text-white">3990+</div>
-                <div class="text-[12px] text-white/60 font-medium">Happy Clients</div>
+                <div class="text-xs text-white/60 font-medium">Happy Clients</div>
             </div>
         </div>
     </section>
@@ -114,7 +114,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-900 mb-1">Search</h3>
-                        <p class="text-[13px] text-gray-500 leading-relaxed">Browse our curated inventory of
+                        <p class="text-sm text-gray-500 leading-relaxed">Browse our curated inventory of
                             auction-graded imports.</p>
                     </div>
                 </div>
@@ -128,7 +128,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-900 mb-1">Inspect</h3>
-                        <p class="text-[13px] text-gray-500 leading-relaxed">Every vehicle is inspected with full
+                        <p class="text-sm text-gray-500 leading-relaxed">Every vehicle is inspected with full
                             history reports.</p>
                     </div>
                 </div>
@@ -142,7 +142,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-900 mb-1">Pay</h3>
-                        <p class="text-[13px] text-gray-500 leading-relaxed">Transparent pricing. No hidden fees or
+                        <p class="text-sm text-gray-500 leading-relaxed">Transparent pricing. No hidden fees or
                             surprise costs.</p>
                     </div>
                 </div>
@@ -156,7 +156,7 @@
                     </div>
                     <div>
                         <h3 class="font-bold text-gray-900 mb-1">Deliver</h3>
-                        <p class="text-[13px] text-gray-500 leading-relaxed">Door-to-door delivery with customs
+                        <p class="text-sm text-gray-500 leading-relaxed">Door-to-door delivery with customs
                             clearance included.</p>
                     </div>
                 </div>
@@ -195,7 +195,7 @@
                             @endif
                         </div>
                         <span
-                            class="text-[13px] font-medium text-gray-500 group-hover:text-gray-900 transition-colors text-center">{{ $make->name }}</span>
+                            class="text-sm font-medium text-gray-500 group-hover:text-gray-900 transition-colors text-center">{{ $make->name }}</span>
                     </a>
                 @endforeach
             </div>
@@ -208,10 +208,10 @@
             <div class="flex items-center justify-between mb-8">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-900">Trending categories</h2>
-                    <p class="text-[14px] text-gray-500 mt-1">Browse top vehicles by body style and category</p>
+                    <p class="text-sm text-gray-500 mt-1">Browse top vehicles by body style and category</p>
                 </div>
                 <a href="{{ route('cars.index') }}"
-                    class="text-[14px] font-bold text-gray-900 underline decoration-2 underline-offset-4 hover:text-primary transition-colors hidden sm:inline-flex items-center gap-1">
+                    class="text-sm font-bold text-gray-900 underline decoration-2 underline-offset-4 hover:text-primary transition-colors hidden sm:inline-flex items-center gap-1">
                     View all inventory
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
@@ -257,7 +257,7 @@
                 @foreach($popularTabs as $tab)
                     <button @click="activeTab = '{{ $tab }}'"
                         :class="activeTab === '{{ $tab }}' ? 'bg-gray-900 text-white' : 'bg-white text-gray-600 border border-gray-200 hover:bg-gray-50'"
-                        class="px-6 py-2.5 rounded-full text-[14px] font-bold whitespace-nowrap transition-colors">
+                        class="px-6 py-2.5 rounded-full text-sm font-bold whitespace-nowrap transition-colors">
                         {{ $tab }}
                     </button>
                 @endforeach
@@ -269,7 +269,7 @@
                     x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
                     style="display: none;">
                     @if(isset($categoryCars[$tab]) && $categoryCars[$tab]->count() > 0)
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             @foreach($categoryCars[$tab] as $car)
                                 @include('partials.car-card', ['car' => $car])
                             @endforeach
@@ -293,10 +293,10 @@
             <div class="flex items-center justify-between mb-10">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-900">Latest arrivals</h2>
-                    <p class="text-[14px] text-gray-500 mt-1">Freshly added to our inventory</p>
+                    <p class="text-sm text-gray-500 mt-1">Freshly added to our inventory</p>
                 </div>
                 <a href="{{ route('cars.index') }}"
-                    class="inline-flex items-center gap-2 bg-gray-900 hover:bg-primary text-white font-bold py-3 px-6 rounded-lg transition-colors text-[14px]">
+                    class="inline-flex items-center gap-2 bg-gray-900 hover:bg-primary text-white font-bold py-3 px-6 rounded-lg transition-colors text-sm">
                     View All
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
@@ -370,7 +370,7 @@
             <div class="flex items-center justify-between mb-10">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-900">What our customers say</h2>
-                    <p class="text-[14px] text-gray-500 mt-1">Most recent reviews from verified buyers</p>
+                    <p class="text-sm text-gray-500 mt-1">Most recent reviews from verified buyers</p>
                 </div>
                 <div class="hidden sm:flex items-center gap-2">
                     <button @click="active = (active - 1 + total) % total" aria-label="Previous review"
@@ -398,10 +398,10 @@
                                 <div
                                     class="bg-white rounded-2xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden flex flex-col">
                                     <div class="flex justify-between items-start mb-1">
-                                        <div class="text-[13px] text-gray-800 font-medium">By {{ $review['author'] }}</div>
-                                        <div class="text-[13px] text-gray-500">{{ $review['date'] }}</div>
+                                        <div class="text-sm text-gray-800 font-medium">By {{ $review['author'] }}</div>
+                                        <div class="text-sm text-gray-500">{{ $review['date'] }}</div>
                                     </div>
-                                    <div class="text-[13px] text-gray-500 mb-4">{{ $review['subtitle'] }}</div>
+                                    <div class="text-sm text-gray-500 mb-4">{{ $review['subtitle'] }}</div>
                                     <div class="flex gap-1 text-secondary mb-4">
                                         @for($i = 1; $i <= 5; $i++)
                                             <svg class="w-4 h-4 {{ $i <= $review['rating'] ? '' : 'text-gray-200' }}"
@@ -411,9 +411,9 @@
                                             </svg>
                                         @endfor
                                     </div>
-                                    <h3 class="font-bold text-[15px] text-gray-900 mb-3 leading-snug">{{ $review['title'] }}
+                                    <h3 class="font-bold text-base text-gray-900 mb-3 leading-snug">{{ $review['title'] }}
                                     </h3>
-                                    <p class="text-[14px] text-gray-700 leading-relaxed">{{ $review['body'] }}</p>
+                                    <p class="text-sm text-gray-700 leading-relaxed">{{ $review['body'] }}</p>
                                 </div>
                             @endforeach
                         </div>
@@ -442,10 +442,10 @@
             <div class="flex items-center justify-between mb-10">
                 <div>
                     <h2 class="text-2xl font-bold text-gray-900">News & articles</h2>
-                    <p class="text-[14px] text-gray-500 mt-1">Tips, guides, and the latest from Livingston Autos</p>
+                    <p class="text-sm text-gray-500 mt-1">Tips, guides, and the latest from Livingston Autos</p>
                 </div>
                 <a href="{{ route('blog.index') }}"
-                    class="text-[14px] font-bold text-gray-900 underline decoration-2 underline-offset-4 hover:text-primary transition-colors hidden sm:inline-flex items-center gap-1">
+                    class="text-sm font-bold text-gray-900 underline decoration-2 underline-offset-4 hover:text-primary transition-colors hidden sm:inline-flex items-center gap-1">
                     View all articles
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
@@ -467,18 +467,18 @@
                             @if ($post->category)
                                 <div class="absolute top-3 left-3">
                                     <span
-                                        class="bg-primary text-white text-[11px] font-bold px-2.5 py-1 rounded-md">{{ $post->category->name }}</span>
+                                        class="bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-md">{{ $post->category->name }}</span>
                                 </div>
                             @endif
                         </div>
                         <div class="p-5 flex flex-col flex-1">
-                            <div class="text-[12px] text-gray-500 font-medium mb-2">{{ $post->published_at->format('M j, Y') }}</div>
+                            <div class="text-xs text-gray-500 font-medium mb-2">{{ $post->published_at->format('M j, Y') }}</div>
                             <h3
-                                class="font-bold text-[16px] text-gray-900 mb-2 leading-snug group-hover:text-primary transition-colors">
+                                class="font-bold text-base text-gray-900 mb-2 leading-snug group-hover:text-primary transition-colors">
                                 {{ $post->title }}
                             </h3>
-                            <p class="text-[14px] text-gray-600 leading-relaxed flex-1">{{ $post->excerpt }}</p>
-                            <div class="mt-4 inline-flex items-center gap-1 text-[13px] font-bold text-primary">
+                            <p class="text-sm text-gray-600 leading-relaxed flex-1">{{ $post->excerpt }}</p>
+                            <div class="mt-4 inline-flex items-center gap-1 text-sm font-bold text-primary">
                                 Read more
                                 <svg class="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"

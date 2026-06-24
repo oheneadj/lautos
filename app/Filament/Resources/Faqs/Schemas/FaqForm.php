@@ -24,6 +24,7 @@ class FaqForm
 
                 Textarea::make('answer')
                     ->required()
+                    ->placeholder('Write the answer customers will see...')
                     ->rows(4)
                     ->columnSpanFull(),
 
@@ -31,6 +32,7 @@ class FaqForm
                     ->label('Display Order')
                     ->helperText('Lower numbers show first on the public FAQ page.')
                     ->numeric()
+                    ->placeholder('e.g. 0')
                     ->default(0)
                     ->required(),
             ]);

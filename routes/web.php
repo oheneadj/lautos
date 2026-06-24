@@ -98,7 +98,12 @@ Route::get('/blog/{slug}', function (string $slug) {
         ->limit(3)
         ->get();
 
-    return view('pages.blog.show', compact('post', 'latestNews', 'featuredStories'));
+    $categories = \App\Models\BlogCategory::has('posts')
+        ->withCount(['posts' => fn ($q) => $q->published()])
+        ->orderBy('name')
+        ->get();
+
+    return view('pages.blog.show', compact('post', 'latestNews', 'featuredStories', 'categories'));
 })->name('blog.show');
 
 // Contact

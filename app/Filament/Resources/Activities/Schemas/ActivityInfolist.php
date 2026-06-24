@@ -33,10 +33,12 @@ class ActivityInfolist
 
                             TextEntry::make('subject_type')
                                 ->label('Subject Type')
-                                ->formatStateUsing(fn ($state) => class_basename($state)),
+                                ->placeholder('—')
+                                ->formatStateUsing(fn ($state) => $state ? class_basename($state) : null),
 
                             TextEntry::make('subject_id')
-                                ->label('Subject ID'),
+                                ->label('Subject ID')
+                                ->placeholder('—'),
 
                             TextEntry::make('created_at')
                                 ->label('Logged At')

@@ -19,7 +19,7 @@
                     <h1 class="text-3xl lg:text-4xl font-bold text-gray-900 leading-tight mb-4">
                         Get in Touch
                     </h1>
-                    <p class="text-[16px] text-gray-600 leading-relaxed font-medium">
+                    <p class="text-base text-gray-600 leading-relaxed font-medium">
                         Whether you want to order a specific car, have questions about the import process, or need help
                         tracking an existing order — we're here to help.
                     </p>
@@ -40,9 +40,9 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-1">Headquarters
+                                <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Headquarters
                                 </p>
-                                <p class="text-[15px] font-bold text-gray-900">
+                                <p class="text-base font-bold text-gray-900">
                                     {{ \App\Models\Setting::get('contact_address') }}
                                 </p>
                             </div>
@@ -62,10 +62,10 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-1">Direct Line
+                                <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Direct Line
                                 </p>
                                 <a href="tel:{{ preg_replace('/\D/', '', (string) \App\Models\Setting::get('contact_phone', '')) }}"
-                                    class="text-[15px] font-bold text-gray-900 hover:text-primary transition-colors">
+                                    class="text-base font-bold text-gray-900 hover:text-primary transition-colors">
                                     {{ \App\Models\Setting::get('contact_phone') }}
                                 </a>
                             </div>
@@ -85,10 +85,10 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-1">Email Support
+                                <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">Email Support
                                 </p>
                                 <a href="mailto:{{ \App\Models\Setting::get('contact_email') }}"
-                                    class="text-[15px] font-bold text-gray-900 hover:text-primary transition-colors">
+                                    class="text-base font-bold text-gray-900 hover:text-primary transition-colors">
                                     {{ \App\Models\Setting::get('contact_email') }}
                                 </a>
                             </div>
@@ -108,11 +108,11 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-1">WhatsApp Chat
+                                <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-1">WhatsApp Chat
                                 </p>
                                 <a href="https://wa.me/{{$whatsappNumber}}?text={{$whatsappMessage}}" target="_blank"
                                     rel="noopener"
-                                    class="text-[15px] font-bold text-gray-900 hover:text-primary transition-colors">
+                                    class="text-base font-bold text-gray-900 hover:text-primary transition-colors">
                                     Chat with us instantly
                                 </a>
                             </div>
@@ -122,7 +122,7 @@
 
                 {{-- Socials --}}
                 <div class="mt-8 pt-8 border-t border-gray-100">
-                    <p class="text-[12px] font-bold uppercase tracking-widest text-gray-400 mb-4">Follow Us</p>
+                    <p class="text-xs font-bold uppercase tracking-widest text-gray-400 mb-4">Follow Us</p>
                     <div class="flex gap-4">
                         <a href="{{ $facebook }}" target="_blank"
                             class="w-10 h-10 rounded-full bg-[#1877F2]/10 flex items-center justify-center text-[#1877F2] hover:bg-[#1877F2] hover:text-white transition-colors duration-300">
@@ -176,7 +176,7 @@
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-12">
                 <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Visit Our Office</h2>
-                <p class="text-[16px] text-gray-500 font-medium">We'd love to meet you in person. Drop by our office for
+                <p class="text-base text-gray-500 font-medium">We'd love to meet you in person. Drop by our office for
                     a consultation.</p>
             </div>
             <div

@@ -6,6 +6,7 @@
 
 namespace App\Models;
 
+use App\Enums\PaymentProofStatus;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -18,7 +19,15 @@ class PaymentProof extends Model
         'order_id',
         'file_path',
         'note',
+        'status',
     ];
+
+    protected function casts(): array
+    {
+        return [
+            'status' => PaymentProofStatus::class,
+        ];
+    }
 
     // ── Relations ────────────────────────────────────────────────────────────
 

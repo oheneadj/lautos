@@ -8,25 +8,25 @@
                     x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/30); if(count >= target) { count = target; clearInterval(i); } }, 30)">
                     <div class="text-4xl lg:text-5xl font-black text-white mb-2"><span x-text="count">0</span><span
                             class="text-white/80">+</span></div>
-                    <div class="text-[13px] font-bold text-white/90 uppercase tracking-wider">Vehicles Imported</div>
+                    <div class="text-sm font-bold text-white/90 uppercase tracking-wider">Vehicles Imported</div>
                 </div>
                 <div class="text-center py-10 px-4" x-data="{ count: 0, target: 10 }"
                     x-intersect.once="let i = setInterval(() => { count += 1; if(count >= target) { count = target; clearInterval(i); } }, 100)">
                     <div class="text-4xl lg:text-5xl font-black text-white mb-2"><span x-text="count">0</span><span
                             class="text-white/80">+</span></div>
-                    <div class="text-[13px] font-bold text-white/90 uppercase tracking-wider">Years Experience</div>
+                    <div class="text-sm font-bold text-white/90 uppercase tracking-wider">Years Experience</div>
                 </div>
                 <div class="text-center py-10 px-4" x-data="{ count: 0, target: 100 }"
                     x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/30); if(count >= target) { count = target; clearInterval(i); } }, 30)">
                     <div class="text-4xl lg:text-5xl font-black text-white mb-2"><span x-text="count">0</span><span
                             class="text-white/80">%</span></div>
-                    <div class="text-[13px] font-bold text-white/90 uppercase tracking-wider">Satisfied Clients</div>
+                    <div class="text-sm font-bold text-white/90 uppercase tracking-wider">Satisfied Clients</div>
                 </div>
                 <div class="text-center py-10 px-4" x-data="{ count: 0, target: 150 }"
                     x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/30); if(count >= target) { count = target; clearInterval(i); } }, 30)">
                     <div class="text-4xl lg:text-5xl font-black text-white mb-2"><span x-text="count">0</span><span
                             class="text-white/80">+</span></div>
-                    <div class="text-[13px] font-bold text-white/90 uppercase tracking-wider">Dealer Reviews</div>
+                    <div class="text-sm font-bold text-white/90 uppercase tracking-wider">Dealer Reviews</div>
                 </div>
             </div>
         </div>
@@ -65,13 +65,13 @@
                     Our Unbreakable <span class="text-primary block">Promise to You</span>
                 </h2>
 
-                <p class="text-[16px] text-gray-600 leading-relaxed mb-6 font-medium">
+                <p class="text-base text-gray-600 leading-relaxed mb-6 font-medium">
                     We partner directly with established auction houses and independent mechanics in Japan and South
                     Korea. By removing middlemen, we maintain absolute control over the quality of every vehicle we
                     source.
                 </p>
 
-                <p class="text-[15px] text-gray-500 leading-relaxed mb-10">
+                <p class="text-base text-gray-500 leading-relaxed mb-10">
                     Before any car is listed for sale on our platform or shipped to a customer, it must pass our
                     rigorous export standards. If a vehicle doesn't meet our criteria, it doesn't get onto our ships.
                     Period.
@@ -87,7 +87,7 @@
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <p class="font-bold text-gray-900 text-[14px]">Direct Auction Access</p>
+                        <p class="font-bold text-gray-900 text-sm">Direct Auction Access</p>
                     </div>
                     <div class="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
                         <div
@@ -97,7 +97,7 @@
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <p class="font-bold text-gray-900 text-[14px]">Independent Mechanics</p>
+                        <p class="font-bold text-gray-900 text-sm">Independent Mechanics</p>
                     </div>
                     <div class="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
                         <div
@@ -107,7 +107,7 @@
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <p class="font-bold text-gray-900 text-[14px]">Verified Mileage</p>
+                        <p class="font-bold text-gray-900 text-sm">Verified Mileage</p>
                     </div>
                     <div class="flex items-center gap-4 bg-gray-50 rounded-xl p-4 border border-gray-100">
                         <div
@@ -117,7 +117,7 @@
                                     d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                         </div>
-                        <p class="font-bold text-gray-900 text-[14px]">Full History Reports</p>
+                        <p class="font-bold text-gray-900 text-sm">Full History Reports</p>
                     </div>
                 </div>
 
@@ -130,7 +130,7 @@
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Multi-Point Inspection</h2>
-                <p class="text-[16px] text-gray-500 font-medium">Every vehicle undergoes a comprehensive point-by-point
+                <p class="text-base text-gray-500 font-medium">Every vehicle undergoes a comprehensive point-by-point
                     inspection verifying these crucial areas.</p>
             </div>
 
@@ -147,7 +147,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Engine & Transmission</h3>
-                    <p class="text-[14px] text-gray-600 leading-relaxed">
+                    <p class="text-sm text-gray-600 leading-relaxed">
                         We verify the health of the powertrain, checking for leaks, unusual noises, smooth shifting, and
                         testing the overall performance of the engine under load.
                     </p>
@@ -163,7 +163,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Chassis Integrity</h3>
-                    <p class="text-[14px] text-gray-600 leading-relaxed">
+                    <p class="text-sm text-gray-600 leading-relaxed">
                         We inspect the frame and undercarriage to ensure there is no hidden rust, flood damage, or
                         structural repairs from previous undisclosed accidents.
                     </p>
@@ -179,7 +179,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Interior Quality</h3>
-                    <p class="text-[14px] text-gray-600 leading-relaxed">
+                    <p class="text-sm text-gray-600 leading-relaxed">
                         The cabin is checked for excessive wear and tear on seats and panels, as well as confirming the
                         absence of smoke or mold odors.
                     </p>
@@ -194,7 +194,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Electrical Systems</h3>
-                    <p class="text-[14px] text-gray-600 leading-relaxed">
+                    <p class="text-sm text-gray-600 leading-relaxed">
                         We test all electrical components, from air conditioning and infotainment systems to modern
                         driver-assist sensors and warning lights.
                     </p>
@@ -211,7 +211,7 @@
             <p class="text-gray-500 mb-8 max-w-2xl mx-auto">Browse our inventory of fully inspected, high-quality
                 Japanese and Korean imports.</p>
             <a href="{{ route('cars.index') }}"
-                class="inline-flex items-center justify-center bg-gray-900 text-white text-[15px] font-bold py-4 px-10 rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg shadow-gray-900/20">
+                class="inline-flex items-center justify-center bg-gray-900 text-white text-base font-bold py-4 px-10 rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg shadow-gray-900/20">
                 Browse Assured Cars
             </a>
         </div>
@@ -234,11 +234,11 @@
                 high-quality Japanese and Korean imports, or contact our expert team for a custom order.</p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a wire:navigate href="{{ route('cars.index') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
+                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-base font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
                     Browse Inventory
                 </a>
                 <a wire:navigate href="{{ route('contact') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
+                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-base font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
                     Contact Support
                 </a>
             </div>

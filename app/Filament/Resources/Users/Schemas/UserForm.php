@@ -25,20 +25,25 @@ class UserForm
                     ->schema([
                         TextInput::make('name')
                             ->required()
+                            ->placeholder('e.g. Ama Boateng')
                             ->maxLength(255),
                         TextInput::make('email')
                             ->label('Email Address')
                             ->email()
                             ->unique(ignoreRecord: true)
                             ->required()
+                            ->placeholder('e.g. ama@livingstonautos.com')
                             ->maxLength(255),
                         TextInput::make('phone')
                             ->tel()
+                            ->placeholder('e.g. +233 24 000 0000')
                             ->maxLength(30),
                         TextInput::make('address')
+                            ->placeholder('e.g. Accra, Ghana')
                             ->maxLength(500),
                         TextInput::make('password')
                             ->password()
+                            ->placeholder('e.g. ••••••••')
                             ->dehydrateStateUsing(fn ($state) => filled($state) ? bcrypt($state) : null)
                             ->dehydrated(fn ($state) => filled($state))
                             ->required(fn (string $operation) => $operation === 'create')
@@ -55,6 +60,7 @@ class UserForm
                             ->relationship('roles', 'name')
                             ->multiple()
                             ->preload()
+                            ->placeholder('Select one or more roles')
                             ->columnSpanFull(),
                     ]),
 
@@ -64,6 +70,7 @@ class UserForm
                         Select::make('kyc_status')
                             ->options(KycStatus::class)
                             ->default(KycStatus::Pending)
+                            ->placeholder('Select a status')
                             ->required(),
                         // I show paths read-only — documents are uploaded by the customer, not admin.
                         TextInput::make('ghana_card_path')
@@ -76,6 +83,7 @@ class UserForm
                             ->dehydrated(false),
                         Textarea::make('kyc_notes')
                             ->label('KYC Notes (visible to customer)')
+                            ->placeholder('e.g. Please resubmit a clearer photo of your Ghana Card.')
                             ->columnSpanFull()
                             ->maxLength(1000),
                     ]),

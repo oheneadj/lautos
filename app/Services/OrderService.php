@@ -12,6 +12,7 @@ namespace App\Services;
 
 use App\Enums\CarStatus;
 use App\Enums\OrderStatus;
+use App\Enums\PaymentProofStatus;
 use App\Events\OrderCancelledByAdmin;
 use App\Events\OrderPlaced;
 use App\Events\OrderStageUpdated;
@@ -80,6 +81,10 @@ class OrderService
         $order->update(['status' => OrderStatus::PaymentConfirmed]);
         $order->car->update(['status' => CarStatus::Reserved]);
 
+        // The latest upload is the one the admin just reviewed — everything
+        // before it was already resolved (accepted or rejected) on a prior pass.
+        $order->paymentProofs()->first()?->update(['status' => PaymentProofStatus::Accepted]);
+
         $this->logHistory($order, OrderStatus::PaymentConfirmed);
 
         PaymentConfirmed::dispatch($order);
@@ -115,6 +120,8 @@ class OrderService
         }
 
         $order->update(['status' => OrderStatus::PendingPayment]);
+
+        $order->paymentProofs()->first()?->update(['status' => PaymentProofStatus::Rejected]);
 
         $this->logHistory($order, OrderStatus::PendingPayment, $reason);
 

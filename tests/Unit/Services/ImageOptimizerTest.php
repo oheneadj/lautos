@@ -67,4 +67,18 @@ class ImageOptimizerTest extends TestCase
         $this->assertSame(400, $size[0]);
         $this->assertSame(300, $size[1]);
     }
+
+    #[Test]
+    public function it_skips_already_optimized_webp_paths_instead_of_re_encoding_them(): void
+    {
+        // EditCar resubmits every existing photo path on every save, touched
+        // or not — without this skip, an untouched photo would get needlessly
+        // (and lossily) re-decoded and re-compressed on every single save.
+        Storage::fake('public');
+        Storage::disk('public')->put('cars/already-optimized.webp', 'not a real image, should never be read');
+
+        $newPath = (new ImageOptimizer())->optimize('public', 'cars/already-optimized.webp', maxWidth: 1200);
+
+        $this->assertSame('cars/already-optimized.webp', $newPath);
+    }
 }

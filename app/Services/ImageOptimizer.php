@@ -31,6 +31,14 @@ class ImageOptimizer
      */
     public function optimize(string $disk, string $path, int $maxWidth = 1200): string
     {
+        // A .webp path means this file already went through optimize() on a
+        // previous save — EditCar resubmits every existing path on every
+        // save, touched or not, so without this guard every untouched photo
+        // gets needlessly re-decoded and re-compressed (lossy) each time.
+        if (str_ends_with($path, '.webp')) {
+            return $path;
+        }
+
         $image = $this->manager->decode(Storage::disk($disk)->get($path));
         $image->scaleDown(width: $maxWidth);
 

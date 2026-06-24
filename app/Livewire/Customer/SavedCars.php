@@ -35,7 +35,9 @@ class SavedCars extends Component
 
     public function render()
     {
-        $query = Auth::user()->savedCars()->with(['make', 'carModel', 'carTrim', 'images' => fn ($q) => $q->orderBy('sort_order')->limit(1)]);
+        // I cap at 5 (not 1) so the card's image slider has photos to cycle through,
+        // while still avoiding loading a car's entire, possibly much larger, photo set.
+        $query = Auth::user()->savedCars()->with(['make', 'carModel', 'carTrim', 'images' => fn ($q) => $q->orderBy('sort_order')->limit(5)]);
 
         if ($this->search) {
             $query->where(function ($q) {

@@ -135,10 +135,6 @@
                     <x-ui.card title="{{ __('Payment Proofs Submitted') }}" headerBorder>
                         <div class="divide-y divide-base-content/5">
                             @foreach ($order->paymentProofs as $proof)
-                                {{-- paymentProofs is ordered latest-first, and a rejection always
-                                     moves the order back to Pending Payment — so when there's a
-                                     rejection reason, it's this most recent proof that was rejected. --}}
-                                @php $wasRejected = $loop->first && $this->rejectionReason; @endphp
                                 <div class="flex items-center justify-between px-6 py-3.5">
                                     <div>
                                         <p class="text-[13px] font-medium text-base-content">{{ basename($proof->file_path) }}</p>
@@ -147,11 +143,10 @@
                                             <p class="text-[11px] text-base-content/60 mt-1 italic">"{{ $proof->note }}"</p>
                                         @endif
                                     </div>
-                                    @if ($wasRejected)
-                                        <x-ui.badge type="danger">{{ __('Rejected') }}</x-ui.badge>
-                                    @else
-                                        <x-ui.badge type="success">{{ __('Submitted') }}</x-ui.badge>
-                                    @endif
+                                    @php $status = $proof->status ?? \App\Enums\PaymentProofStatus::Pending; @endphp
+                                    <x-ui.badge :type="$status->colour()">
+                                        {{ $status === \App\Enums\PaymentProofStatus::Pending ? __('Submitted') : $status->label() }}
+                                    </x-ui.badge>
                                 </div>
                             @endforeach
                         </div>
@@ -190,6 +185,23 @@
                             <div class="mt-3 rounded-lg bg-info/10 px-4 py-3 border border-info/20">
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-info">{{ __('Est. Arrival') }}</p>
                                 <p class="text-[13px] font-bold text-base-content mt-0.5">{{ $order->estimated_arrival_date->format('d F, Y') }}</p>
+                            </div>
+                        @endif
+
+                        @if ($order->tracking_number || $order->vessel_name)
+                            <div class="mt-3 rounded-lg bg-info/10 px-4 py-3 border border-info/20 space-y-1">
+                                @if ($order->vessel_name)
+                                    <div>
+                                        <p class="text-[10px] font-bold uppercase tracking-widest text-info">{{ __('Vessel') }}</p>
+                                        <p class="text-[13px] font-bold text-base-content mt-0.5">{{ $order->vessel_name }}</p>
+                                    </div>
+                                @endif
+                                @if ($order->tracking_number)
+                                    <div>
+                                        <p class="text-[10px] font-bold uppercase tracking-widest text-info">{{ __('Tracking Number') }}</p>
+                                        <p class="text-[13px] font-bold text-base-content mt-0.5">{{ $order->tracking_number }}</p>
+                                    </div>
+                                @endif
                             </div>
                         @endif
                     </div>

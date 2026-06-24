@@ -101,4 +101,20 @@ class ProfileEditTest extends TestCase
             ->test(ProfileEdit::class)
             ->assertSee('Ghana Card photo was blurry, please re-upload.');
     }
+
+    #[Test]
+    public function document_uploaded_does_not_show_for_a_rejected_document_still_on_file(): void
+    {
+        // The old file is still on disk until the customer replaces it, but it
+        // was the document that got rejected — so it shouldn't read as "uploaded".
+        $user = User::factory()->create([
+            'kyc_status' => KycStatus::NeedsResubmission,
+            'kyc_notes' => 'Photo was blurry.',
+            'ghana_card_path' => 'kyc/some-uuid/card.jpg',
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(ProfileEdit::class)
+            ->assertDontSee('Document uploaded');
+    }
 }

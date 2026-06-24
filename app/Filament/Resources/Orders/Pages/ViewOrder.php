@@ -11,8 +11,10 @@ use App\Filament\Resources\Orders\OrderResource;
 use App\Models\Order;
 use App\Services\OrderService;
 use Filament\Actions\Action;
+use Filament\Actions\EditAction;
 use Filament\Forms\Components\DatePicker;
 use Filament\Forms\Components\Textarea;
+use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
 use Filament\Resources\Pages\ViewRecord;
@@ -35,7 +37,7 @@ class ViewOrder extends ViewRecord
         return $schema
             ->record($this->getRecord())
             ->components([
-                Grid::make(2)
+                Grid::make(1)
                     ->schema([
                         Section::make('Customer')
                             ->schema([
@@ -44,7 +46,7 @@ class ViewOrder extends ViewRecord
                                 TextEntry::make('user.kyc_status')
                                     ->label('KYC Status')
                                     ->badge(),
-                            ]),
+                            ]) ->columns(2),
                         Section::make('Car')
                             ->schema([
                                 TextEntry::make('car.year')->label('Year'),
@@ -53,7 +55,13 @@ class ViewOrder extends ViewRecord
                                 TextEntry::make('total_usd_cents')
                                     ->label('Order Total')
                                     ->formatStateUsing(fn ($state) => '$' . number_format($state / 100, 2)),
-                            ]),
+                            ]) ->columns(3),
+                    ]),
+                     Section::make('Shipment Timeline')
+                    ->schema([
+                        ViewEntry::make('timeline')
+                            ->view('filament.infolists.order-timeline')
+                            ->viewData(['order' => $this->getRecord()]),
                     ]),
 
                 Section::make('Status')
@@ -72,21 +80,29 @@ class ViewOrder extends ViewRecord
                             ->state(fn ($record) => $this->competingOrdersCount($record) === 1
                                 ? '1 other customer also has an open order on this car. Confirming this payment will cancel theirs.'
                                 : $this->competingOrdersCount($record) . ' other customers also have an open order on this car. Confirming this payment will cancel all of theirs.'),
+                        TextEntry::make('vessel_name')
+                            ->label('Vessel')
+                            ->placeholder('Not yet provided')
+                            ->visible(fn ($record) => $this->hasReachedLogisticsStage($record)),
+                        TextEntry::make('tracking_number')
+                            ->label('Tracking Number')
+                            ->placeholder('Not yet provided')
+                            ->visible(fn ($record) => $this->hasReachedLogisticsStage($record)),
+                        TextEntry::make('estimated_arrival_date')
+                            ->label('Est. Arrival Date')
+                            ->date()
+                            ->placeholder('Not yet provided')
+                            ->visible(fn ($record) => $this->hasReachedLogisticsStage($record)),
                     ])
-                    ->columns(2),
+                    ->columns(3),
 
-                Section::make('Shipment Timeline')
-                    ->schema([
-                        ViewEntry::make('timeline')
-                            ->view('filament.infolists.order-timeline')
-                            ->viewData(['order' => $this->getRecord()]),
-                    ]),
+               
 
                 Section::make('Payment Proofs')
                     ->schema([
                         ViewEntry::make('proofs')
                             ->view('filament.infolists.payment-proofs')
-                            ->viewData(['order' => $this->getRecord()]),
+                            ->viewData(['order' => $this->getRecord()])->columnSpanFull(),
                     ]),
 
                 Section::make('Internal Notes')
@@ -111,11 +127,30 @@ class ViewOrder extends ViewRecord
             ->count();
     }
 
+    /**
+     * I gate the logistics fields/action on having reached In Transit to
+     * Port — that's the earliest point a vessel/tracking number actually
+     * exists, so showing this any earlier would just confuse the admin
+     * about what stage the order is really at.
+     */
+    private function hasReachedLogisticsStage(Order $order): bool
+    {
+        return in_array($order->status, [
+            OrderStatus::InTransitToPort,
+            OrderStatus::Shipped,
+            OrderStatus::ArrivedInGhana,
+            OrderStatus::Cleared,
+            OrderStatus::Delivered,
+        ], true);
+    }
+
     protected function getHeaderActions(): array
     {
         $order = $this->getRecord();
 
         return [
+            EditAction::make(),
+
             Action::make('confirmPayment')
                 ->label('Confirm Payment')
                 ->icon('heroicon-m-check-circle')
@@ -136,6 +171,7 @@ class ViewOrder extends ViewRecord
                 ->schema([
                     Textarea::make('reason')
                         ->label('Reason for rejection')
+                        ->placeholder('e.g. The uploaded receipt does not match the order total.')
                         ->required(),
                 ])
                 ->action(function (array $data) use ($order) {
@@ -151,10 +187,32 @@ class ViewOrder extends ViewRecord
                 ->schema(fn () => $order->status->next() === OrderStatus::Shipped ? [
                     DatePicker::make('estimated_arrival_date')
                         ->label('Estimated Arrival Date')
+                        ->placeholder('Select a date')
+                        ->minDate(now())
                         ->required(),
                 ] : [])
                 ->action(function (array $data) use ($order) {
                     app(OrderService::class)->advanceStage($order, $order->status->next(), $data);
+                    $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
+                }),
+
+            Action::make('fillLogistics')
+                ->label('Fill Logistics')
+                ->icon('heroicon-m-truck')
+                ->color('gray')
+                ->modalWidth('sm')
+                ->visible(fn () => $this->hasReachedLogisticsStage($order))
+                ->fillForm(fn () => $order->only(['vessel_name', 'tracking_number', 'estimated_arrival_date']))
+                ->schema([
+                    TextInput::make('vessel_name')
+                        ->placeholder('e.g. MSC Olympia')
+                        ->maxLength(100),
+                    TextInput::make('tracking_number')
+                        ->placeholder('e.g. MAEU123456789')
+                        ->maxLength(100),
+                ])
+                ->action(function (array $data) use ($order) {
+                    $order->update($data);
                     $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
                 }),
 
@@ -168,6 +226,7 @@ class ViewOrder extends ViewRecord
                 ->schema([
                     Textarea::make('reason')
                         ->label('Reason for cancellation')
+                        ->placeholder('e.g. Customer requested cancellation.')
                         ->required(),
                 ])
                 ->action(function (array $data) use ($order) {
@@ -181,6 +240,7 @@ class ViewOrder extends ViewRecord
                 ->schema([
                     Textarea::make('note')
                         ->label('Note')
+                        ->placeholder('e.g. Customer called to confirm delivery address.')
                         ->required(),
                 ])
                 ->action(function (array $data) use ($order) {

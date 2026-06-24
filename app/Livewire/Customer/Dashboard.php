@@ -111,7 +111,7 @@ class Dashboard extends Component
         return Auth::user()->orders()
             ->with(['car.make', 'car.carModel', 'car.images'])
             ->latest()
-            ->take(5)
+            ->take(4)
             ->get();
     }
 

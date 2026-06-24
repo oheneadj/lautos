@@ -9,8 +9,8 @@
         </div>
         
         <div class="max-w-[1600px] mx-auto relative z-10 text-center">
-            <h1 class="text-[32px] md:text-[42px] lg:text-[46px] font-normal text-white leading-tight mb-2 tracking-wide">Find new & used cars for sale in Ghana</h1>
-            <p class="text-[15px] lg:text-[18px] text-white/90 max-w-2xl mx-auto font-light">The safest way to buy or sell your car in Ghana.</p>
+            <h1 class="text-4xl md:text-5xl lg:text-6xl font-normal text-white leading-tight mb-2 tracking-wide">Find new & used cars for sale in Ghana</h1>
+            <p class="text-base lg:text-lg text-white/90 max-w-2xl mx-auto font-light">The safest way to buy or sell your car in Ghana.</p>
         </div>
     </div>
 
@@ -38,7 +38,7 @@
                                     <img src="https://ui-avatars.com/api/?name={{ urlencode($make->name) }}&background=transparent&color=374151&bold=true&format=svg" class="w-full h-full object-contain opacity-80 group-hover:opacity-100 transition-all" alt="{{ $make->name }} Logo" loading="lazy">
                                 @endif
                             </div>
-                            <span class="text-[13px] font-medium text-gray-500 group-hover:text-gray-900 transition-colors text-center">{{ $make->name }}</span>
+                            <span class="text-sm font-medium text-gray-500 group-hover:text-gray-900 transition-colors text-center">{{ $make->name }}</span>
                         </a>
                     @endforeach
                 </div>
@@ -55,7 +55,7 @@
             <div class="max-w-[1600px] mx-auto px-4 lg:px-8">
                 <div class="flex items-center justify-between mb-8">
                     <h2 class="text-2xl font-bold text-gray-900">Latest news</h2>
-                    <a href="{{ route('blog.index') }}" class="text-[14px] font-bold text-gray-900 underline decoration-2 underline-offset-4 hover:text-primary transition-colors">View more</a>
+                    <a href="{{ route('blog.index') }}" class="text-sm font-bold text-gray-900 underline decoration-2 underline-offset-4 hover:text-primary transition-colors">View more</a>
                 </div>
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     @foreach ($latestPosts as $post)
@@ -66,9 +66,9 @@
                                 </div>
                             @endif
                             <div class="p-5">
-                                <h3 class="text-[15px] font-bold text-gray-900 leading-snug group-hover:text-primary transition-colors">{{ $post->title }}</h3>
-                                <p class="text-[12px] text-gray-500 mt-2">{{ $post->published_at->format('M j, Y') }}</p>
-                                <p class="text-[13px] text-gray-600 mt-2 line-clamp-2">{{ $post->excerpt }}</p>
+                                <h3 class="text-base font-bold text-gray-900 leading-snug group-hover:text-primary transition-colors">{{ $post->title }}</h3>
+                                <p class="text-xs text-gray-500 mt-2">{{ $post->published_at->format('M j, Y') }}</p>
+                                <p class="text-sm text-gray-600 mt-2 line-clamp-2">{{ $post->excerpt }}</p>
                             </div>
                         </a>
                     @endforeach

@@ -74,6 +74,7 @@ class ViewSupportTicket extends ViewRecord
                 ->schema([
                     Textarea::make('message')
                         ->label('Message')
+                        ->placeholder('Write your reply to the customer...')
                         ->required(),
                     FileUpload::make('attachment_path')
                         ->label('Attachment (optional)')

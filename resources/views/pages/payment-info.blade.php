@@ -20,7 +20,7 @@
 
         <div class="relative z-10 max-w-[90rem] mx-auto px-4 lg:px-8 w-full py-20">
             <div class="max-w-2xl">
-                <span class="inline-block px-3 py-1 mb-6 rounded-full bg-primary/20 text-primary text-[12px] font-bold uppercase tracking-widest border border-primary/20">Import Process</span>
+                <span class="inline-block px-3 py-1 mb-6 rounded-full bg-primary/20 text-primary text-xs font-bold uppercase tracking-widest border border-primary/20">Import Process</span>
                 <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold text-white mb-6 leading-tight tracking-tight">
                     Payment Information <br><span class="text-primary">Secure Offline Transactions</span>
                 </h1>
@@ -43,7 +43,7 @@
             </div>
             <div>
                 <h3 class="text-lg font-bold text-gray-900 mb-1">Important Notice</h3>
-                <p class="text-[15px] text-gray-700 leading-relaxed font-medium">{{ $demurrageWarning }}</p>
+                <p class="text-base text-gray-700 leading-relaxed font-medium">{{ $demurrageWarning }}</p>
             </div>
         </div>
     </section>
@@ -53,7 +53,7 @@
     <section class="max-w-[90rem] mx-auto px-4 lg:px-8 py-12">
         <div class="text-center max-w-3xl mx-auto mb-16">
             <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Official Payment Details</h2>
-            <p class="text-[16px] text-gray-500 font-medium">Please only send funds to the verified accounts listed below to avoid fraud.</p>
+            <p class="text-base text-gray-500 font-medium">Please only send funds to the verified accounts listed below to avoid fraud.</p>
         </div>
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
@@ -68,21 +68,21 @@
                         </div>
                         <div>
                             <h3 class="text-2xl font-bold text-gray-900">Bank Transfer</h3>
-                            <p class="text-[13px] text-gray-500 font-medium uppercase tracking-wider">Direct Deposit</p>
+                            <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Direct Deposit</p>
                         </div>
                     </div>
 
                     <div class="space-y-6">
                         <div>
-                            <p class="text-[12px] text-gray-400 uppercase tracking-widest font-bold mb-1">Bank Name</p>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Bank Name</p>
                             <p class="text-lg font-bold text-gray-900">{{ $bankName ?: 'Not yet configured' }}</p>
                         </div>
                         <div>
-                            <p class="text-[12px] text-gray-400 uppercase tracking-widest font-bold mb-1">Account Name</p>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Account Name</p>
                             <p class="text-lg font-bold text-gray-900">{{ $accountName ?: 'Not yet configured' }}</p>
                         </div>
                         <div>
-                            <p class="text-[12px] text-gray-400 uppercase tracking-widest font-bold mb-1">Account Number</p>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Account Number</p>
                             <p class="text-2xl font-black text-primary tracking-wider">{{ $accountNumber ?: 'Not yet configured' }}</p>
                         </div>
                     </div>
@@ -99,17 +99,17 @@
                         </div>
                         <div>
                             <h3 class="text-2xl font-bold text-gray-900">Mobile Money</h3>
-                            <p class="text-[13px] text-gray-500 font-medium uppercase tracking-wider">Fast Transfer</p>
+                            <p class="text-sm text-gray-500 font-medium uppercase tracking-wider">Fast Transfer</p>
                         </div>
                     </div>
 
                     <div class="space-y-6">
                         <div>
-                            <p class="text-[12px] text-gray-400 uppercase tracking-widest font-bold mb-1">Registered Name</p>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">Registered Name</p>
                             <p class="text-lg font-bold text-gray-900">{{ $momoName ?: 'Not yet configured' }}</p>
                         </div>
                         <div>
-                            <p class="text-[12px] text-gray-400 uppercase tracking-widest font-bold mb-1">MoMo Number</p>
+                            <p class="text-xs text-gray-400 uppercase tracking-widest font-bold mb-1">MoMo Number</p>
                             <p class="text-2xl font-black text-primary tracking-wider">{{ $momoNumber ?: 'Not yet configured' }}</p>
                         </div>
                     </div>
@@ -124,7 +124,7 @@
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">How To Make A Payment</h2>
-                <p class="text-[16px] text-gray-500 font-medium">A simple, four-step process to secure your vehicle.</p>
+                <p class="text-base text-gray-500 font-medium">A simple, four-step process to secure your vehicle.</p>
             </div>
 
             <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
@@ -136,7 +136,7 @@
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     </div>
                     <h4 class="text-lg font-bold text-gray-900 mb-2">Place Order</h4>
-                    <p class="text-[14px] text-gray-500 leading-relaxed">Place your order from the car's detail page to securely reserve your vehicle.</p>
+                    <p class="text-sm text-gray-500 leading-relaxed">Place your order from the car's detail page to securely reserve your vehicle.</p>
                 </div>
 
                 {{-- Step 2 --}}
@@ -146,7 +146,7 @@
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
                     </div>
                     <h4 class="text-lg font-bold text-gray-900 mb-2">Transfer Funds</h4>
-                    <p class="text-[14px] text-gray-500 leading-relaxed">Transfer the exact amount shown on your invoice to our verified accounts.</p>
+                    <p class="text-sm text-gray-500 leading-relaxed">Transfer the exact amount shown on your invoice to our verified accounts.</p>
                 </div>
 
                 {{-- Step 3 --}}
@@ -156,7 +156,7 @@
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
                     </div>
                     <h4 class="text-lg font-bold text-gray-900 mb-2">Upload Proof</h4>
-                    <p class="text-[14px] text-gray-500 leading-relaxed">Log into your dashboard and upload a screenshot or photo of your payment receipt.</p>
+                    <p class="text-sm text-gray-500 leading-relaxed">Log into your dashboard and upload a screenshot or photo of your payment receipt.</p>
                 </div>
 
                 {{-- Step 4 --}}
@@ -166,7 +166,7 @@
                         <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
                     </div>
                     <h4 class="text-lg font-bold text-gray-900 mb-2">Verification</h4>
-                    <p class="text-[14px] text-gray-600 leading-relaxed">We manually verify the transaction and update your order status to initiate shipping.</p>
+                    <p class="text-sm text-gray-600 leading-relaxed">We manually verify the transaction and update your order status to initiate shipping.</p>
                 </div>
 
             </div>

@@ -466,10 +466,13 @@
     {{-- Global Toast --}}
     <div x-data="{ show: false, message: '' }"
         x-on:toast.window="message = $event.detail.message; show = true; setTimeout(() => show = false, 4000)"
-        x-show="show" x-transition x-cloak class="fixed bottom-4 right-4 z-[60] w-full max-w-sm">
-        <x-ui.alert type="success" title="Success">
-            <span x-text="message"></span>
-        </x-ui.alert>
+        x-show="show" x-transition x-cloak class="fixed top-4 right-4 z-[60] w-full max-w-sm">
+        <div class="rounded-lg py-[14px] px-[16px] flex items-center gap-3 bg-success shadow-lg">
+            <svg class="w-5 h-5 flex-shrink-0 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span class="text-[14px] font-semibold text-white" x-text="message"></span>
+        </div>
     </div>
 
     <livewire:customer.support-chat-bubble />

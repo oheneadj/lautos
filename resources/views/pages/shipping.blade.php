@@ -10,7 +10,7 @@
                     Reliable <span class="text-primary">Shipping Logistics</span>
                 </h1>
 
-                <p class="text-[16px] text-gray-600 leading-relaxed mb-6 font-medium">
+                <p class="text-base text-gray-600 leading-relaxed mb-6 font-medium">
                     We work with the world's leading RoRo (Roll-on/Roll-off) and container shipping lines to ensure your
                     vehicle arrives safely and on time. Our strong logistics partnerships allow us to offer competitive
                     shipping rates and priority boarding for your vehicle.
@@ -26,7 +26,7 @@
                     </div>
                     <div>
                         <h4 class="text-lg font-bold text-gray-900 mb-1">Fully Insured Transit</h4>
-                        <p class="text-[14px] text-gray-500 leading-relaxed">
+                        <p class="text-sm text-gray-500 leading-relaxed">
                             Full marine insurance is included for all direct purchases. Your vehicle is protected
                             against damage or total loss from the moment it leaves the port of origin until it reaches
                             Tema port.
@@ -64,7 +64,7 @@
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Estimated Shipping Timelines</h2>
-                <p class="text-[16px] text-gray-500 font-medium">Clear expectations for when your vehicle will arrive at
+                <p class="text-base text-gray-500 font-medium">Clear expectations for when your vehicle will arrive at
                     Tema Port.</p>
             </div>
 
@@ -80,7 +80,7 @@
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">From Japan</h3>
                     <div class="text-primary font-black text-4xl mb-4">5 - 7 <span
                             class="text-xl text-gray-400 font-bold uppercase tracking-wider">Weeks</span></div>
-                    <p class="text-[15px] text-gray-500 leading-relaxed">
+                    <p class="text-base text-gray-500 leading-relaxed">
                         Shipping from Yokohama, Kobe, or Nagoya ports directly to Tema. This timeline accounts for
                         vessel scheduling, loading, and transit across the ocean.
                     </p>
@@ -96,7 +96,7 @@
                     <h3 class="text-2xl font-bold text-gray-900 mb-2">From South Korea</h3>
                     <div class="text-primary font-black text-4xl mb-4">4 - 6 <span
                             class="text-xl text-gray-400 font-bold uppercase tracking-wider">Weeks</span></div>
-                    <p class="text-[15px] text-gray-500 leading-relaxed">
+                    <p class="text-base text-gray-500 leading-relaxed">
                         Shipping from Incheon or Masan ports. The transit from South Korea to West Africa is typically
                         slightly faster due to shipping routes.
                     </p>
@@ -113,7 +113,7 @@
             <p class="text-gray-500 mb-8 max-w-2xl mx-auto">Once you order, you can monitor your vehicle's progress
                 directly from your customer dashboard.</p>
             <a href="{{ route('dashboard.index') }}"
-                class="inline-flex items-center justify-center bg-gray-900 text-white text-[15px] font-bold py-4 px-10 rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg shadow-gray-900/20">
+                class="inline-flex items-center justify-center bg-gray-900 text-white text-base font-bold py-4 px-10 rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg shadow-gray-900/20">
                 Go to Dashboard
             </a>
         </div>
@@ -136,11 +136,11 @@
                 high-quality Japanese and Korean imports, or contact our expert team for a custom order.</p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a wire:navigate href="{{ route('cars.index') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
+                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-base font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
                     Browse Inventory
                 </a>
                 <a wire:navigate href="{{ route('contact') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
+                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-base font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
                     Contact Support
                 </a>
             </div>

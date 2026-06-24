@@ -121,6 +121,7 @@ class CarsTable
                 Action::make('changeStatus')
                     ->label('Change Status')
                     ->icon('heroicon-m-arrow-path')
+                    ->modalWidth('sm')
                     ->button()
                     ->schema(fn (Car $record) => [
                         Select::make('status')

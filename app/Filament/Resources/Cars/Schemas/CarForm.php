@@ -164,12 +164,23 @@ class CarForm
                             ->appendFiles()
                             ->panelLayout('grid')
                             ->imagePreviewHeight('160')
-                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp', 'image/avif'])
+                            // I don't accept AVIF here — these go through ImageOptimizer's GD
+                            // driver, and GD on this server has no AVIF decode support, so an
+                            // AVIF upload would crash the save instead of being optimized.
+                            ->acceptedFileTypes(['image/jpeg', 'image/png', 'image/webp'])
                             ->maxSize(5120) // 5 MB per image
                             ->disk('public')
                             ->directory('cars')
                             ->minFiles(3)
                             ->required()
+                            ->columnSpanFull(),
+                    ]),
+
+                Section::make('Features')
+                    ->schema([
+                        TagsInput::make('special_features')
+                            ->label('Special Features')
+                            ->placeholder('Type a feature and press Enter')
                             ->columnSpanFull(),
                     ]),
 
@@ -205,14 +216,6 @@ class CarForm
                                 ((float) ($get('price_usd_cents') ?? 0)) * Car::currentExchangeRate(),
                                 2
                             ))
-                            ->columnSpanFull(),
-                    ]),
-
-                Section::make('Features')
-                    ->schema([
-                        TagsInput::make('special_features')
-                            ->label('Special Features')
-                            ->placeholder('Type a feature and press Enter')
                             ->columnSpanFull(),
                     ]),
             ]);

@@ -85,7 +85,7 @@
                     {{ __('Skip for now →') }}
                 </button>
 
-                <x-ui.button type="submit" variant="primary" size="lg" data-test="complete-kyc-button">
+                <x-ui.button type="submit" variant="primary" size="lg" wire:loading.attr="disabled" data-test="complete-kyc-button">
                     {{ __('Save & Continue') }}
                 </x-ui.button>
             </div>

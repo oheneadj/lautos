@@ -166,4 +166,32 @@ class ShipmentTrackingTest extends TestCase
             ->assertDontSee('Order Cancelled')
             ->assertSee('Shipment Timeline');
     }
+
+    #[Test]
+    public function the_vessel_name_and_tracking_number_are_shown_once_an_admin_sets_them(): void
+    {
+        $order = $this->makeOrder([
+            'status' => OrderStatus::Shipped,
+            'vessel_name' => 'MSC Olympia',
+            'tracking_number' => 'MAEU123456789',
+        ]);
+        $user = User::find($order->user_id);
+
+        Livewire::actingAs($user)
+            ->test(OrderDetail::class, ['order' => $order])
+            ->assertSee('MSC Olympia')
+            ->assertSee('MAEU123456789');
+    }
+
+    #[Test]
+    public function no_shipment_info_block_is_shown_when_vessel_name_and_tracking_number_are_blank(): void
+    {
+        $order = $this->makeOrder(['status' => OrderStatus::Shipped]);
+        $user = User::find($order->user_id);
+
+        Livewire::actingAs($user)
+            ->test(OrderDetail::class, ['order' => $order])
+            ->assertDontSee('Vessel')
+            ->assertDontSee('Tracking Number');
+    }
 }

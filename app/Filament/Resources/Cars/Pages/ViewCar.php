@@ -31,7 +31,7 @@ class ViewCar extends ViewRecord
         return $schema
             ->record($this->getRecord())
             ->components([
-                Grid::make(2)
+                Grid::make(1)
                     ->schema([
                         Section::make('Vehicle Details')
                             ->schema([
@@ -51,7 +51,7 @@ class ViewCar extends ViewRecord
                                 TextEntry::make('status')
                                     ->badge()
                                     ->color(fn (CarStatus $state): string => $state->colour()),
-                            ]),
+                            ])->columns(3),
 
                         Section::make('Pricing')
                             ->schema([
@@ -68,7 +68,7 @@ class ViewCar extends ViewRecord
                                     ->label('Special Features')
                                     ->badge()
                                     ->placeholder('—'),
-                            ]),
+                            ])->columns(2),
                     ]),
 
                 Section::make('Photos')
@@ -92,6 +92,6 @@ class ViewCar extends ViewRecord
                             ->columns(3)
                             ->placeholder('No orders have been placed on this car yet.'),
                     ]),
-            ]);
+            ])->columns(2);
     }
 }

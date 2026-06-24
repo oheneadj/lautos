@@ -31,7 +31,7 @@
                     Clearing Your Vehicle <span class="text-primary block">at Tema Port</span>
                 </h2>
 
-                <p class="text-[16px] text-gray-600 leading-relaxed mb-8 font-medium">
+                <p class="text-base text-gray-600 leading-relaxed mb-8 font-medium">
                     When your vehicle arrives in Ghana, it must undergo customs clearance. We offer two distinct paths
                     to ensure you receive your car smoothly.
                 </p>
@@ -46,7 +46,7 @@
                                 1</div>
                             <h3 class="text-xl font-bold text-gray-900">Self-Clearance</h3>
                         </div>
-                        <p class="text-[14px] text-gray-600 leading-relaxed pl-14">
+                        <p class="text-sm text-gray-600 leading-relaxed pl-14">
                             You or your designated clearing agent take full responsibility for the vehicle once it
                             docks. We will provide you with all necessary original shipping documents (Bill of Lading,
                             Export Certificate, Invoice) to facilitate the process.
@@ -65,7 +65,7 @@
                                 2</div>
                             <h3 class="text-xl font-bold text-gray-900">Managed Doorstep Delivery</h3>
                         </div>
-                        <p class="text-[14px] text-gray-600 leading-relaxed pl-14">
+                        <p class="text-sm text-gray-600 leading-relaxed pl-14">
                             Let our experienced logistics team handle everything. We will calculate the duties, process
                             the paperwork with Ghana Customs, clear the vehicle, and deliver it directly to your
                             doorstep.
@@ -82,7 +82,7 @@
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Important Clearance Factors</h2>
-                <p class="text-[16px] text-gray-500 font-medium">Crucial information to ensure a smooth clearing process
+                <p class="text-base text-gray-500 font-medium">Crucial information to ensure a smooth clearing process
                     without unnecessary fees.</p>
             </div>
 
@@ -98,7 +98,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Duties Calculation</h3>
-                    <p class="text-[14px] text-gray-600 leading-relaxed">
+                    <p class="text-sm text-gray-600 leading-relaxed">
                         Customs duties in Ghana are not fixed. They depend entirely on the vehicle's make, model, year
                         of manufacture, and engine capacity. Older vehicles typically attract higher overage penalties.
                     </p>
@@ -114,7 +114,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Certified Agents</h3>
-                    <p class="text-[14px] text-gray-600 leading-relaxed">
+                    <p class="text-sm text-gray-600 leading-relaxed">
                         If you choose to self-clear, always use a GRA-certified clearing agent. Unverified agents can
                         cause severe delays, document mishandling, and unexpected expenses.
                     </p>
@@ -130,7 +130,7 @@
                         </svg>
                     </div>
                     <h3 class="text-xl font-bold text-gray-900 mb-3">Demurrage Warning</h3>
-                    <p class="text-[14px] text-gray-600 leading-relaxed">
+                    <p class="text-sm text-gray-600 leading-relaxed">
                         Once your vehicle is discharged at Tema port, you have a limited number of rent-free days.
                         Delays in providing documentation or paying duties will result in daily demurrage (storage)
                         fees.
@@ -148,7 +148,7 @@
             <p class="text-gray-500 mb-8 max-w-2xl mx-auto">Contact our sales team with the vehicle details and we can
                 help you estimate the customs duties.</p>
             <a href="{{ route('contact') }}"
-                class="inline-flex items-center justify-center bg-gray-900 text-white text-[15px] font-bold py-4 px-10 rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg shadow-gray-900/20">
+                class="inline-flex items-center justify-center bg-gray-900 text-white text-base font-bold py-4 px-10 rounded-lg hover:bg-gray-800 transition-all duration-200 shadow-lg shadow-gray-900/20">
                 Contact Our Team
             </a>
         </div>
@@ -171,11 +171,11 @@
                 high-quality Japanese and Korean imports, or contact our expert team for a custom order.</p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a wire:navigate href="{{ route('cars.index') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
+                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-base font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
                     Browse Inventory
                 </a>
                 <a wire:navigate href="{{ route('contact') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
+                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-base font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
                     Contact Support
                 </a>
             </div>

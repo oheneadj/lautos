@@ -31,13 +31,13 @@
                     We Provide The Best <span class="text-primary block">Imported Vehicles</span>
                 </h1>
 
-                <p class="text-[16px] text-gray-600 leading-relaxed mb-6 font-medium">
+                <p class="text-base text-gray-600 leading-relaxed mb-6 font-medium">
                     Livingston Autos was founded to make buying a quality imported car in Ghana simple and trustworthy.
                     We source directly from auction houses and dealers in Japan and Korea, so every vehicle that reaches
                     our customers has been rigorously inspected before it ever leaves the port of origin.
                 </p>
 
-                <p class="text-[15px] text-gray-500 leading-relaxed mb-10">
+                <p class="text-base text-gray-500 leading-relaxed mb-10">
                     Japan and Korea are home to some of the world's most reliable, well-maintained used vehicles. Strict
                     inspection standards and a culture of meticulous car care mean our imports consistently outperform
                     vehicles sourced elsewhere.
@@ -50,7 +50,7 @@
                             stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span class="text-[15px] font-bold text-gray-800">Direct access to overseas auction
+                        <span class="text-base font-bold text-gray-800">Direct access to overseas auction
                             houses.</span>
                     </div>
                     <div class="flex items-center gap-3">
@@ -58,7 +58,7 @@
                             stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span class="text-[15px] font-bold text-gray-800">Every vehicle undergoes strict quality
+                        <span class="text-base font-bold text-gray-800">Every vehicle undergoes strict quality
                             inspections.</span>
                     </div>
                     <div class="flex items-center gap-3">
@@ -66,7 +66,7 @@
                             stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span class="text-[15px] font-bold text-gray-800">Transparent pricing with no hidden shipping
+                        <span class="text-base font-bold text-gray-800">Transparent pricing with no hidden shipping
                             fees.</span>
                     </div>
                     <div class="flex items-center gap-3">
@@ -74,7 +74,7 @@
                             stroke="currentColor" stroke-width="2.5">
                             <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
-                        <span class="text-[15px] font-bold text-gray-800">Full customs clearance assistance
+                        <span class="text-base font-bold text-gray-800">Full customs clearance assistance
                             provided.</span>
                     </div>
                 </div>
@@ -82,7 +82,7 @@
                 {{-- Action Buttons --}}
                 <div class="flex flex-col sm:flex-row items-center gap-6">
                     <a href="{{ route('cars.index') }}"
-                        class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg shadow-primary/30">
+                        class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-base font-bold py-4 px-8 rounded-lg hover:bg-primary/90 transition-all duration-200 shadow-lg shadow-primary/30">
                         View Inventory
                     </a>
 
@@ -97,8 +97,8 @@
                                 </svg>
                             </div>
                             <div>
-                                <p class="text-[12px] font-medium text-gray-500 uppercase tracking-wider">Call Anytime</p>
-                                <p class="text-[16px] font-bold text-gray-900">{{ \App\Models\Setting::get('contact_phone') }}</p>
+                                <p class="text-xs font-medium text-gray-500 uppercase tracking-wider">Call Anytime</p>
+                                <p class="text-base font-bold text-gray-900">{{ \App\Models\Setting::get('contact_phone') }}</p>
                             </div>
                         </a>
                     @endif
@@ -117,25 +117,25 @@
                     x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/30); if(count >= target) { count = target; clearInterval(i); } }, 30)">
                     <div class="text-4xl lg:text-5xl font-black text-white mb-2"><span x-text="count">0</span><span
                             class="text-white/80">+</span></div>
-                    <div class="text-[13px] font-bold text-white/90 uppercase tracking-wider">Vehicles Imported</div>
+                    <div class="text-sm font-bold text-white/90 uppercase tracking-wider">Vehicles Imported</div>
                 </div>
                 <div class="text-center py-10 px-4" x-data="{ count: 0, target: 10 }"
                     x-intersect.once="let i = setInterval(() => { count += 1; if(count >= target) { count = target; clearInterval(i); } }, 100)">
                     <div class="text-4xl lg:text-5xl font-black text-white mb-2"><span x-text="count">0</span><span
                             class="text-white/80">+</span></div>
-                    <div class="text-[13px] font-bold text-white/90 uppercase tracking-wider">Years Experience</div>
+                    <div class="text-sm font-bold text-white/90 uppercase tracking-wider">Years Experience</div>
                 </div>
                 <div class="text-center py-10 px-4" x-data="{ count: 0, target: 100 }"
                     x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/30); if(count >= target) { count = target; clearInterval(i); } }, 30)">
                     <div class="text-4xl lg:text-5xl font-black text-white mb-2"><span x-text="count">0</span><span
                             class="text-white/80">%</span></div>
-                    <div class="text-[13px] font-bold text-white/90 uppercase tracking-wider">Satisfied Clients</div>
+                    <div class="text-sm font-bold text-white/90 uppercase tracking-wider">Satisfied Clients</div>
                 </div>
                 <div class="text-center py-10 px-4" x-data="{ count: 0, target: 150 }"
                     x-intersect.once="let i = setInterval(() => { count += Math.ceil(target/30); if(count >= target) { count = target; clearInterval(i); } }, 30)">
                     <div class="text-4xl lg:text-5xl font-black text-white mb-2"><span x-text="count">0</span><span
                             class="text-white/80">+</span></div>
-                    <div class="text-[13px] font-bold text-white/90 uppercase tracking-wider">Dealer Reviews</div>
+                    <div class="text-sm font-bold text-white/90 uppercase tracking-wider">Dealer Reviews</div>
                 </div>
             </div>
         </div>
@@ -159,7 +159,7 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-3">Our Mission</h3>
-                        <p class="text-[15px] text-gray-500 leading-relaxed">
+                        <p class="text-base text-gray-500 leading-relaxed">
                             To demystify the vehicle importation process in Ghana by providing a transparent, reliable,
                             and cost-effective pathway for individuals and businesses to acquire high-quality vehicles
                             directly from overseas markets.
@@ -184,7 +184,7 @@
                             </svg>
                         </div>
                         <h3 class="text-xl font-bold text-gray-900 mb-3">Our Vision</h3>
-                        <p class="text-[15px] text-gray-500 leading-relaxed">
+                        <p class="text-base text-gray-500 leading-relaxed">
                             To be the premier, most trusted automotive importer in West Africa, recognized for our
                             unwavering commitment to vehicle quality, customer satisfaction, and innovative digital
                             logistics solutions.
@@ -199,7 +199,7 @@
     <section class="max-w-[90rem] mx-auto px-4 lg:px-8 py-16 lg:py-24">
         <div class="text-center max-w-3xl mx-auto mb-16">
             <h2 class="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">Our Core Values</h2>
-            <p class="text-[16px] text-gray-500 font-medium">The principles that guide every decision we make and every
+            <p class="text-base text-gray-500 font-medium">The principles that guide every decision we make and every
                 car we deliver.</p>
         </div>
 
@@ -218,7 +218,7 @@
                         </svg>
                     </div>
                     <h4 class="text-lg font-bold text-gray-900 mb-2">Transparency</h4>
-                    <p class="text-[14px] text-gray-500 leading-relaxed">No hidden fees, no surprise charges. What you
+                    <p class="text-sm text-gray-500 leading-relaxed">No hidden fees, no surprise charges. What you
                         see is exactly what you pay for.</p>
                 </div>
             </div>
@@ -237,7 +237,7 @@
                         </svg>
                     </div>
                     <h4 class="text-lg font-bold text-gray-900 mb-2">Quality First</h4>
-                    <p class="text-[14px] text-gray-500 leading-relaxed">We never compromise on condition. Every car
+                    <p class="text-sm text-gray-500 leading-relaxed">We never compromise on condition. Every car
                         passes strict export inspections.</p>
                 </div>
             </div>
@@ -256,7 +256,7 @@
                         </svg>
                     </div>
                     <h4 class="text-lg font-bold text-gray-900 mb-2">Reliability</h4>
-                    <p class="text-[14px] text-gray-500 leading-relaxed">We deliver on our promises, ensuring your
+                    <p class="text-sm text-gray-500 leading-relaxed">We deliver on our promises, ensuring your
                         vehicle arrives safely and on time.</p>
                 </div>
             </div>
@@ -275,7 +275,7 @@
                         </svg>
                     </div>
                     <h4 class="text-lg font-bold text-gray-900 mb-2">Customer Success</h4>
-                    <p class="text-[14px] text-gray-500 leading-relaxed">We are dedicated to providing support at every
+                    <p class="text-sm text-gray-500 leading-relaxed">We are dedicated to providing support at every
                         stage, from browsing to driving.</p>
                 </div>
             </div>
@@ -287,7 +287,7 @@
         <div class="max-w-[90rem] mx-auto px-4 lg:px-8">
             <div class="text-center max-w-3xl mx-auto mb-16">
                 <h2 class="text-3xl lg:text-4xl font-bold text-white mb-4">Meet The Team</h2>
-                <p class="text-[16px] text-gray-400 font-medium">The experts working behind the scenes to bring you the
+                <p class="text-base text-gray-400 font-medium">The experts working behind the scenes to bring you the
                     best vehicles.</p>
             </div>
 
@@ -300,7 +300,7 @@
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <h4 class="text-lg font-bold text-white">James Livingston</h4>
-                    <p class="text-[14px] text-primary font-medium">Founder & CEO</p>
+                    <p class="text-sm text-primary font-medium">Founder & CEO</p>
                 </div>
 
                 {{-- Team Member 2 --}}
@@ -311,7 +311,7 @@
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <h4 class="text-lg font-bold text-white">Sarah Osei</h4>
-                    <p class="text-[14px] text-primary font-medium">Head of Operations</p>
+                    <p class="text-sm text-primary font-medium">Head of Operations</p>
                 </div>
 
                 {{-- Team Member 3 --}}
@@ -322,7 +322,7 @@
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <h4 class="text-lg font-bold text-white">David Mensah</h4>
-                    <p class="text-[14px] text-primary font-medium">Logistics Manager</p>
+                    <p class="text-sm text-primary font-medium">Logistics Manager</p>
                 </div>
 
                 {{-- Team Member 4 --}}
@@ -333,7 +333,7 @@
                             class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <h4 class="text-lg font-bold text-white">Grace Abena</h4>
-                    <p class="text-[14px] text-primary font-medium">Customer Success Lead</p>
+                    <p class="text-sm text-primary font-medium">Customer Success Lead</p>
                 </div>
             </div>
         </div>
@@ -356,11 +356,11 @@
                 high-quality Japanese and Korean imports, or contact our expert team for a custom order.</p>
             <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <a wire:navigate href="{{ route('cars.index') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
+                    class="w-full sm:w-auto inline-flex items-center justify-center bg-primary text-white text-base font-bold py-4 px-8 rounded-lg hover:bg-red-700 transition-all duration-200 shadow-lg shadow-primary/30">
                     Browse Inventory
                 </a>
                 <a wire:navigate href="{{ route('contact') }}"
-                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-[15px] font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
+                    class="w-full sm:w-auto inline-flex items-center justify-center bg-white/10 text-white border border-white/20 text-base font-bold py-4 px-8 rounded-lg hover:bg-white/20 transition-all duration-200">
                     Contact Support
                 </a>
             </div>

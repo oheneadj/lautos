@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Enums\CarStatus;
 use App\Enums\OrderStatus;
 use App\Filament\Resources\Orders\OrderResource;
+use App\Filament\Resources\Orders\Pages\EditOrder;
 use App\Filament\Resources\Orders\Pages\ListOrders;
 use App\Filament\Resources\Orders\Pages\ViewOrder;
 use App\Models\Car;
@@ -208,5 +209,78 @@ class OrderManagementTest extends TestCase
             ->set('activeTab', OrderStatus::Delivered->value)
             ->assertCanSeeTableRecords([$delivered])
             ->assertCanNotSeeTableRecords([$pending]);
+    }
+
+    #[Test]
+    public function the_fill_logistics_action_is_hidden_before_the_order_reaches_in_transit_to_port(): void
+    {
+        $this->actingAsAdmin();
+
+        $order = $this->makeOrder(['status' => OrderStatus::Purchased]);
+
+        Livewire::test(ViewOrder::class, ['record' => $order->uuid])
+            ->assertActionHidden('fillLogistics');
+    }
+
+    #[Test]
+    public function the_fill_logistics_action_is_visible_from_in_transit_to_port_onwards(): void
+    {
+        $this->actingAsAdmin();
+
+        foreach ([OrderStatus::InTransitToPort, OrderStatus::Shipped, OrderStatus::ArrivedInGhana, OrderStatus::Cleared, OrderStatus::Delivered] as $status) {
+            $order = $this->makeOrder(['status' => $status]);
+
+            Livewire::test(ViewOrder::class, ['record' => $order->uuid])
+                ->assertActionVisible('fillLogistics');
+        }
+    }
+
+    #[Test]
+    public function admin_can_fill_in_logistics_details_once_shipped(): void
+    {
+        $this->actingAsAdmin();
+
+        $order = $this->makeOrder(['status' => OrderStatus::Shipped]);
+
+        Livewire::test(ViewOrder::class, ['record' => $order->uuid])
+            ->callAction('fillLogistics', data: [
+                'vessel_name' => 'MSC Olympia',
+                'tracking_number' => 'MAEU123456789',
+                'estimated_arrival_date' => now()->addWeeks(2)->toDateString(),
+            ])
+            ->assertHasNoActionErrors();
+
+        $order->refresh();
+        $this->assertSame('MSC Olympia', $order->vessel_name);
+        $this->assertSame('MAEU123456789', $order->tracking_number);
+    }
+
+    #[Test]
+    public function advancing_to_shipped_rejects_a_past_estimated_arrival_date(): void
+    {
+        $this->actingAsAdmin();
+
+        $order = $this->makeOrder(['status' => OrderStatus::InTransitToPort]);
+
+        Livewire::test(ViewOrder::class, ['record' => $order->uuid])
+            ->callAction('advanceStage', data: [
+                'estimated_arrival_date' => now()->subDay()->toDateString(),
+            ])
+            ->assertHasActionErrors(['estimated_arrival_date']);
+
+        $this->assertSame(OrderStatus::InTransitToPort, $order->refresh()->status);
+    }
+
+    #[Test]
+    public function editing_an_order_rejects_a_past_estimated_arrival_date(): void
+    {
+        $this->actingAsAdmin();
+
+        $order = $this->makeOrder(['status' => OrderStatus::Shipped]);
+
+        Livewire::test(EditOrder::class, ['record' => $order->uuid])
+            ->fillForm(['estimated_arrival_date' => now()->subDay()->toDateString()])
+            ->call('save')
+            ->assertHasFormErrors(['estimated_arrival_date']);
     }
 }

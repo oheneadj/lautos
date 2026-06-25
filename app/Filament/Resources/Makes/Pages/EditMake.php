@@ -1,5 +1,9 @@
 <?php
 
+/**
+ * @author Ohene Adjei
+ */
+
 namespace App\Filament\Resources\Makes\Pages;
 
 use App\Filament\Resources\Makes\MakeResource;

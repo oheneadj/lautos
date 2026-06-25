@@ -12,6 +12,7 @@ use App\Models\Review;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -36,7 +37,11 @@ class HomepageTest extends TestCase
         ]);
         $car->update(['status' => CarStatus::Available]);
 
-        $this->get('/')->assertOk()->assertSee($carModel->name);
+        // The "Latest arrivals" section is now a lazy-loaded Livewire component
+        // (cars.latest-cars), so its content arrives via a follow-up request
+        // rather than the homepage's initial HTML — I test it directly.
+        $this->get('/')->assertOk();
+        Livewire::test(\App\Livewire\Cars\LatestCars::class)->assertSee($carModel->name);
     }
 
     #[Test]
@@ -75,8 +80,9 @@ class HomepageTest extends TestCase
     {
         $this->makeApprovedReview('Only one real review so far');
 
-        $this->get('/')
-            ->assertOk()
+        // Testimonials are now a lazy-loaded Livewire component, so I assert
+        // against the component directly rather than the homepage's initial HTML.
+        Livewire::test(\App\Livewire\Home\Testimonials::class)
             ->assertDontSee('Only one real review so far')
             // The hardcoded demo testimonials fill in until there are 3+ real ones.
             ->assertSee('Amazing car, comfortable, smooth ride');
@@ -89,8 +95,7 @@ class HomepageTest extends TestCase
         $this->makeApprovedReview('Second real review');
         $this->makeApprovedReview('Third real review');
 
-        $this->get('/')
-            ->assertOk()
+        Livewire::test(\App\Livewire\Home\Testimonials::class)
             ->assertSee('First real review')
             ->assertDontSee('Amazing car, comfortable, smooth ride');
     }
@@ -104,7 +109,7 @@ class HomepageTest extends TestCase
         $order = Order::factory()->create(['car_id' => $car->id, 'status' => OrderStatus::Delivered]);
         Review::factory()->for($order)->for($order->user)->create(['title' => 'Still pending review']);
 
-        $this->get('/')->assertOk()->assertDontSee('Still pending review');
+        Livewire::test(\App\Livewire\Home\Testimonials::class)->assertDontSee('Still pending review');
     }
 
     #[Test]

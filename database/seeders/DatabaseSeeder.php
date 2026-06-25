@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
             AdminUserSeeder::class,
             SettingsSeeder::class,
             MakesSeeder::class,
+            MakeLogosSeeder::class,
             CarModelsSeeder::class,
             CarSeeder::class,
             OrderSeeder::class,

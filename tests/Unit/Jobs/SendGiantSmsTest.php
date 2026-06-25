@@ -3,6 +3,7 @@
 namespace Tests\Unit\Jobs;
 
 use App\Jobs\SendGiantSms;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -11,36 +12,38 @@ use Tests\TestCase;
 
 /**
  * Tests the queued SMS-sending job — this is where the real GiantSMS API
- * call happens, with its own retry/backoff so a flaky gateway doesn't
- * affect the rest of a notification (US-46 / T-46-2).
+ * call happens (via GiantSmsService), with its own retry/backoff so a
+ * flaky gateway doesn't affect the rest of a notification (US-46 / T-46-2).
  */
 class SendGiantSmsTest extends TestCase
 {
+    use RefreshDatabase;
+
     #[Test]
     public function it_sends_the_sms_via_the_giantsms_api(): void
     {
-        config(['services.giantsms.api_key' => 'test-key', 'services.giantsms.sender_id' => 'LivingstonA']);
-        Http::fake(['api.giantsms.com/*' => Http::response(['status' => 'ok'], 200)]);
+        config(['services.giantsms.api_key' => 'test-token', 'services.giantsms.sender_id' => 'LivingstonA']);
+        Http::fake(['api.giantsms.com/*' => Http::response(['status' => true], 200)]);
 
-        (new SendGiantSms('0551234567', 'Test message'))->handle();
+        (new SendGiantSms('0551234567', 'Test message'))->handle(app(\App\Services\GiantSmsService::class));
 
         Http::assertSent(function (HttpRequest $request) {
             return $request->url() === 'https://api.giantsms.com/api/v1/send'
-                && $request['api_key'] === 'test-key'
+                && $request->hasHeader('Authorization', 'Basic test-token')
                 && $request['to'] === '0551234567'
-                && $request['message'] === 'Test message';
+                && $request['msg'] === 'Test message';
         });
     }
 
     #[Test]
     public function it_throws_when_the_api_call_fails_so_the_queue_retries_it(): void
     {
-        config(['services.giantsms.api_key' => 'test-key']);
+        config(['services.giantsms.api_key' => 'test-token']);
         Http::fake(['api.giantsms.com/*' => Http::response(['error' => 'bad request'], 500)]);
 
         $this->expectException(\RuntimeException::class);
 
-        (new SendGiantSms('0551234567', 'Test message'))->handle();
+        (new SendGiantSms('0551234567', 'Test message'))->handle(app(\App\Services\GiantSmsService::class));
     }
 
     #[Test]

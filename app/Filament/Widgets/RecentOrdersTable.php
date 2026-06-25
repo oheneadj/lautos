@@ -27,7 +27,9 @@ class RecentOrdersTable extends TableWidget
     {
         return $table
             ->heading('Recent Orders')
-            ->query(Order::query()->latest()->limit(10))
+            // I eager-load these so the Customer/Car/Make/Model columns below don't
+            // each trigger their own query per row.
+            ->query(Order::query()->with(['user', 'car.make', 'car.carModel'])->latest()->limit(10))
             ->columns([
                 TextColumn::make('user.name')->label('Customer'),
                 TextColumn::make('car.make.name')

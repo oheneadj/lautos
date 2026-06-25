@@ -61,7 +61,32 @@ class SaveCarButton extends Component
         if ($this->intent === 'save' && $this->intentCarUuid === $this->car->uuid && Auth::check() && ! $this->isSaved) {
             Auth::user()->savedCars()->attach($this->car->id);
             unset($this->isSaved);
+            $this->forgetSavedCarIdsCache();
         }
+    }
+
+    /**
+     * I memoize the signed-in user's saved car IDs in the container rather
+     * than a static property — a catalogue page mounts one SaveCarButton per
+     * card, and without this each one would run its own "is this car saved"
+     * query instead of sharing a single fetch. The container binding (unlike
+     * a static property) is naturally request-scoped, so it can't leak
+     * between unrelated requests or test cases.
+     */
+    private function savedCarIdsCache(): \Illuminate\Support\Collection
+    {
+        $key = 'save-car-button.saved-car-ids.'.Auth::id();
+
+        if (! app()->bound($key)) {
+            app()->instance($key, Auth::user()->savedCars()->pluck('cars.id'));
+        }
+
+        return app($key);
+    }
+
+    private function forgetSavedCarIdsCache(): void
+    {
+        app()->forgetInstance('save-car-button.saved-car-ids.'.Auth::id());
     }
 
     #[Computed]
@@ -71,7 +96,7 @@ class SaveCarButton extends Component
             return false;
         }
 
-        return Auth::user()->savedCars()->where('car_id', $this->car->id)->exists();
+        return $this->savedCarIdsCache()->contains($this->car->id);
     }
 
     /**
@@ -100,6 +125,7 @@ class SaveCarButton extends Component
         Auth::user()->savedCars()->toggle($this->car->id);
 
         unset($this->isSaved);
+        $this->forgetSavedCarIdsCache();
 
         $this->dispatch('saved-cars-updated');
     }

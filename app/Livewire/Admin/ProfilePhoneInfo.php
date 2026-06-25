@@ -9,10 +9,10 @@
 
 namespace App\Livewire\Admin;
 
+use App\Services\GiantSmsService;
 use Filament\Forms\Components\TextInput;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
-use Illuminate\Support\Facades\Log;
 use Jeffgreco13\FilamentBreezy\Livewire\MyProfileComponent;
 
 class ProfilePhoneInfo extends MyProfileComponent
@@ -79,9 +79,19 @@ class ProfilePhoneInfo extends MyProfileComponent
 
         $this->user->update(['phone_verification_code' => $code]);
 
-        // I only log the code here — there's no SMS gateway wired up for admin
-        // accounts yet, same placeholder approach the customer side already uses.
-        Log::info("SMS Verification Code for {$this->user->phone}: {$code}");
+        // Synchronous, same as the customer side — an admin clicking "send"
+        // should know right away if the gateway call failed.
+        try {
+            app(GiantSmsService::class)->send(
+                $this->user->phone,
+                "Your Livingston Autos verification code is {$code}.",
+                'otp'
+            );
+        } catch (\RuntimeException $e) {
+            $this->addError('data.phone', 'Could not send the verification code. Please try again.');
+
+            return;
+        }
 
         $this->showPhoneVerificationModal = true;
 

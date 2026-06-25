@@ -52,10 +52,13 @@ class MakesTable
             ->recordActions([
                 EditAction::make()
                     ->label('Edit')
-                    ->icon('heroicon-m-pencil-square')
-                    ->button(),
+                    ->color('info')
+                    ->button()
+                    ->icon('heroicon-m-pencil-square'),
                 DeleteAction::make()
                     ->label('Delete')
+                    ->color('danger')
+                    ->button()
                     ->icon('heroicon-m-trash')
                     ->button(),
             ])

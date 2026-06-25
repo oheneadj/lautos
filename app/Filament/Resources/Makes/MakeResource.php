@@ -6,7 +6,9 @@
 
 namespace App\Filament\Resources\Makes;
 
+use App\Filament\Resources\Makes\Pages\EditMake;
 use App\Filament\Resources\Makes\Pages\ListMakes;
+use App\Filament\Resources\Makes\RelationManagers\CarModelsRelationManager;
 use App\Filament\Resources\Makes\Schemas\MakeForm;
 use App\Filament\Resources\Makes\Tables\MakesTable;
 use App\Models\Make;
@@ -38,14 +40,18 @@ class MakeResource extends Resource
 
     public static function getRelations(): array
     {
-        return [];
+        return [
+            CarModelsRelationManager::class,
+        ];
     }
 
     public static function getPages(): array
     {
-        // I only register the index page — create and edit open as modals on the list page.
+        // Create still opens as a modal on the list page, but edit now needs
+        // a real page so the models/trims relation manager has somewhere to render.
         return [
             'index' => ListMakes::route('/'),
+            'edit' => EditMake::route('/{record}/edit'),
         ];
     }
 }

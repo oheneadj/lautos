@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Livewire\Admin\ProfilePhoneInfo;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Http;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Spatie\Permission\Models\Role;
@@ -65,6 +66,8 @@ class AdminProfileTest extends TestCase
     #[Test]
     public function an_admin_can_verify_their_phone_number_with_the_correct_code(): void
     {
+        Http::fake(['api.giantsms.com/*' => Http::response(['status' => true], 200)]);
+
         $admin = $this->makeAdmin();
         $admin->update(['phone' => '+233 55 123 4567']);
 
@@ -85,6 +88,8 @@ class AdminProfileTest extends TestCase
     #[Test]
     public function an_admin_sees_an_error_for_the_wrong_verification_code(): void
     {
+        Http::fake(['api.giantsms.com/*' => Http::response(['status' => true], 200)]);
+
         $admin = $this->makeAdmin();
         $admin->update(['phone' => '+233 55 123 4567']);
 

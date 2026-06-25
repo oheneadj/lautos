@@ -478,6 +478,7 @@
 
     <livewire:customer.support-chat-bubble />
 
+    <x-scroll-to-top />
     <x-cookie-consent />
 </body>
 

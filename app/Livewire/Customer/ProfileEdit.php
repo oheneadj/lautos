@@ -14,6 +14,7 @@ namespace App\Livewire\Customer;
 
 use App\Enums\KycStatus;
 use App\Events\KycDocumentsSubmitted;
+use App\Services\GiantSmsService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -154,21 +155,32 @@ class ProfileEdit extends Component
     public function sendPhoneVerificationCode(): void
     {
         $user = Auth::user();
-        
+
         if (empty($user->phone)) {
             $this->addError('phone', 'Please update your phone number first.');
             return;
         }
 
         $code = str_pad((string) random_int(0, 999999), 6, '0', STR_PAD_LEFT);
-        
+
         $user->update([
             'phone_verification_code' => $code,
         ]);
 
-        // Mocking SMS send
-        \Illuminate\Support\Facades\Log::info("SMS Verification Code for {$user->phone}: {$code}");
-        
+        // I send this synchronously (not queued) so the user gets immediate
+        // feedback if the gateway is down, instead of a "sent" toast for a
+        // code that never arrives.
+        try {
+            app(GiantSmsService::class)->send(
+                $user->phone,
+                "Your Livingston Autos verification code is {$code}.",
+                'otp'
+            );
+        } catch (\RuntimeException $e) {
+            $this->addError('phone', 'Could not send the verification code. Please try again.');
+            return;
+        }
+
         $this->showPhoneVerificationModal = true;
         $this->dispatch('toast', message: __('Verification code sent to your phone.'));
     }

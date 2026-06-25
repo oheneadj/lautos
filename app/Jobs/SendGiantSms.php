@@ -11,9 +11,9 @@
 
 namespace App\Jobs;
 
+use App\Services\GiantSmsService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
-use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 class SendGiantSms implements ShouldQueue
@@ -23,7 +23,7 @@ class SendGiantSms implements ShouldQueue
     /** I retry a failed send up to 3 times before giving up. */
     public int $tries = 3;
 
-    public function __construct(public string $phone, public string $message)
+    public function __construct(public string $phone, public string $message, public ?string $context = null)
     {
     }
 
@@ -38,23 +38,11 @@ class SendGiantSms implements ShouldQueue
         return [60, 300, 900];
     }
 
-    public function handle(): void
+    public function handle(GiantSmsService $service): void
     {
-        $apiKey = config('services.giantsms.api_key');
-        $baseUrl = config('services.giantsms.base_url', 'https://api.giantsms.com/api/v1');
-
-        $response = Http::post("{$baseUrl}/send", [
-            'api_key' => $apiKey,
-            'from' => config('services.giantsms.sender_id', 'LivingstonA'),
-            'to' => $this->phone,
-            'message' => $this->message,
-        ]);
-
-        if ($response->failed()) {
-            // I throw here so Laravel's queue retry/backoff actually kicks
-            // in — returning quietly would mark this attempt as successful.
-            throw new \RuntimeException("GiantSMS delivery failed with status {$response->status()}: {$response->body()}");
-        }
+        // The service itself throws on failure (so the queue's retry/backoff
+        // kicks in) and logs every attempt to sms_logs regardless of outcome.
+        $service->send($this->phone, $this->message, $this->context);
     }
 
     /**

@@ -9,6 +9,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -116,5 +117,39 @@ class ProfileEditTest extends TestCase
         Livewire::actingAs($user)
             ->test(ProfileEdit::class)
             ->assertDontSee('Document uploaded');
+    }
+
+    #[Test]
+    public function a_customer_can_request_and_use_a_phone_verification_code(): void
+    {
+        Http::fake(['api.giantsms.com/*' => Http::response(['status' => true], 200)]);
+
+        $user = User::factory()->create(['phone' => '0551234567']);
+
+        $component = Livewire::actingAs($user)
+            ->test(ProfileEdit::class)
+            ->call('sendPhoneVerificationCode');
+
+        $code = $user->refresh()->phone_verification_code;
+        $this->assertNotNull($code);
+        $this->assertDatabaseHas('sms_logs', ['phone' => '0551234567', 'context' => 'otp']);
+
+        $component->set('verificationCode', $code)
+            ->call('verifyPhone');
+
+        $this->assertNotNull($user->refresh()->phone_verified_at);
+    }
+
+    #[Test]
+    public function the_customer_sees_an_error_when_the_sms_gateway_is_down(): void
+    {
+        Http::fake(['api.giantsms.com/*' => Http::response(['status' => false], 500)]);
+
+        $user = User::factory()->create(['phone' => '0551234567']);
+
+        Livewire::actingAs($user)
+            ->test(ProfileEdit::class)
+            ->call('sendPhoneVerificationCode')
+            ->assertHasErrors('phone');
     }
 }

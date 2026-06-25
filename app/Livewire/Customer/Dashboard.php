@@ -118,11 +118,17 @@ class Dashboard extends Component
     #[Computed]
     public function ordersByStage(): array
     {
-        $orders = Auth::user()->orders()->get();
+        // I count per status in the database rather than pulling every order
+        // row just to tally them in PHP.
+        $counts = Auth::user()->orders()
+            ->selectRaw('status, count(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
+
         $stages = [];
 
         foreach (OrderStatus::cases() as $status) {
-            $count = $orders->where('status', $status)->count();
+            $count = $counts[$status->value] ?? 0;
             if ($count > 0) {
                 $stages[] = [
                     'label' => $status->label(),

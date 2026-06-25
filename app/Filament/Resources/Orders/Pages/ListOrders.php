@@ -27,10 +27,17 @@ class ListOrders extends ListRecords
             'all' => Tab::make('All'),
         ];
 
+        // I count every status in one grouped query instead of one count() per
+        // tab, so this page doesn't run 9 separate COUNT queries on every load.
+        $counts = Order::query()
+            ->selectRaw('status, count(*) as aggregate')
+            ->groupBy('status')
+            ->pluck('aggregate', 'status');
+
         foreach (OrderStatus::cases() as $status) {
             $tabs[$status->value] = Tab::make($status->label())
                 ->modifyQueryUsing(fn ($query) => $query->where('status', $status))
-                ->badge(Order::where('status', $status)->count())
+                ->badge($counts[$status->value] ?? 0)
                 ->badgeColor($status->colour());
         }
 

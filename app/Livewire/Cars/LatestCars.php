@@ -9,6 +9,21 @@ use Livewire\Component;
 
 class LatestCars extends Component
 {
+    /**
+     * I show a skeleton grid while this lazy-loads, so the page doesn't jump
+     * once the real cars arrive.
+     */
+    public function placeholder(): string
+    {
+        return <<<'HTML'
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div class="h-[340px] rounded-lg bg-gray-100 animate-pulse"></div>
+                <div class="h-[340px] rounded-lg bg-gray-100 animate-pulse"></div>
+                <div class="h-[340px] rounded-lg bg-gray-100 animate-pulse"></div>
+            </div>
+            HTML;
+    }
+
     public function render()
     {
         // I cap at 5 (not 1) so the card's image slider has photos to cycle through,

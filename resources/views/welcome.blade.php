@@ -1,5 +1,12 @@
 <x-layouts.public title="Welcome">
 
+    @php
+        // I fetch this once and reuse it for both the hero search dropdown and
+        // the "Buy cars" brand grid further down — they were previously running
+        // this identical makes+cars_count query twice on every homepage load.
+        $allMakes = \App\Models\Make::withCount('cars')->orderByDesc('cars_count')->take(40)->get();
+    @endphp
+
     {{-- HERO SECTION with embedded search --}}
     <section class="relative min-h-[70vh] flex items-center overflow-hidden bg-[#0e0e0f]">
         <div class="absolute inset-0">
@@ -17,9 +24,6 @@
                     inspected, competitively priced, delivered to your door.</p>
 
                 {{-- Embedded Search Form — every field maps to a filter CarCatalogue actually understands. --}}
-                @php
-                    $heroMakes = \App\Models\Make::withCount('cars')->orderByDesc('cars_count')->get();
-                @endphp
                 <form action="{{ route('cars.index') }}" method="GET" class="bg-white rounded-lg p-5 shadow-2xl">
                     <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
                         <div>
@@ -31,7 +35,7 @@
                             <select name="make[]"
                                 class="w-full bg-gray-100 border-none rounded-lg py-3 pl-3 pr-10 text-sm text-gray-800 focus:ring-2 focus:ring-primary outline-none font-medium">
                                 <option value="">Any Make</option>
-                                @foreach ($heroMakes as $make)
+                                @foreach ($allMakes as $make)
                                     <option value="{{ $make->slug }}">{{ $make->name }}</option>
                                 @endforeach
                             </select>
@@ -171,13 +175,6 @@
 
             <div
                 class="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-y-10 gap-x-4 justify-items-center">
-                @php
-                    // Fetch more makes to match the large grid design
-                    $allMakes = \App\Models\Make::withCount('cars')
-                        ->orderByDesc('cars_count')
-                        ->take(40)
-                        ->get();
-                @endphp
                 @foreach($allMakes as $make)
                     {{-- makeFilter is a multi-select array, so this needs ['make' => [$make->slug]]
                          (producing make[0]=slug) rather than a plain scalar make=slug. --}}
@@ -305,132 +302,18 @@
                 </a>
             </div>
 
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                @php
-                    $latestCars = \App\Models\Car::with(['make', 'carModel', 'carTrim', 'images'])
-                        ->withCount('orders')
-                        ->where('status', \App\Enums\CarStatus::Available)
-                        ->latest()
-                        ->take(6)
-                        ->get();
-                @endphp
-                @forelse($latestCars as $car)
-                    @include('partials.car-card', ['car' => $car])
-                @empty
-                    <p class="text-gray-500 col-span-3 text-center py-12">No cars available yet. Check back soon!</p>
-                @endforelse
-            </div>
+            {{-- I reuse the existing cars.latest-cars component instead of duplicating
+                 its query here, and load it lazily since this section sits below the
+                 fold — its query no longer blocks the initial homepage response. --}}
+            <livewire:cars.latest-cars lazy />
         </div>
     </section>
 
 
-    {{-- TESTIMONIALS --}}
-    @php
-        // I only ever show approved reviews here — pending/rejected ones
-        // never reach the public site.
-        $approvedReviews = \App\Models\Review::approved()
-            ->with(['user', 'order.car.make', 'order.car.carModel'])
-            ->latest('approved_at')
-            ->limit(9)
-            ->get();
-
-        $demoReviews = [
-            ['author' => 'Richg321', 'subtitle' => 'from The Villages, FL', 'date' => '03/29/2026', 'rating' => 5, 'title' => 'Amazing car, comfortable, smooth ride', 'body' => 'Amazing car, comfortable, smooth ride very quiet solid performance. Averaging 35 miles per gallon. That kind of blew me away. Great turn ratio smooth turning radius.'],
-            ['author' => 'JamesVZ', 'subtitle' => 'from South Bend, IN', 'date' => '03/05/2026', 'rating' => 5, 'title' => 'Great experience with the dealer', 'body' => 'Great experience with the dealer. Have about 300 miles on the new car so far and I really like it. You can\'t beat the brand for innovation and warranty.'],
-            ['author' => 'William H.', 'subtitle' => 'from Round Lake Beach', 'date' => '11/22/2025', 'rating' => 4, 'title' => 'Very comfortable and nice to drive', 'body' => 'I purchased the Kia Sportage EX Hybrid model. It is very comfortable and nice to drive. There are many extras with this model. The warranty is outstanding.'],
-        ];
-
-        // A brand-new (or sparsely-reviewed) site shouldn't show an empty or
-        // half-empty testimonials carousel, so I fall back to the demo set
-        // until there are at least 3 real approved reviews to show instead.
-        if ($approvedReviews->count() < 3) {
-            $reviews = $demoReviews;
-        } else {
-            $reviews = $approvedReviews->map(function ($review) {
-                $car = $review->order->car;
-
-                return [
-                    'author' => $review->user->name,
-                    'subtitle' => "Verified Buyer — {$car->year} {$car->make->name} {$car->carModel->name}",
-                    'date' => $review->approved_at?->format('m/d/Y') ?? $review->created_at->format('m/d/Y'),
-                    'rating' => $review->rating,
-                    'title' => $review->title,
-                    'body' => $review->body,
-                ];
-            })->all();
-        }
-
-        // I group reviews into slides of 3 so the carousel shows three cards
-        // side by side per slide, instead of one centered card with empty
-        // space either side.
-        $reviewGroups = array_chunk($reviews, 3);
-    @endphp
-    <section class="py-20 bg-white" x-data="{ active: 0, total: {{ count($reviewGroups) }} }">
-        <div class="max-w-7xl mx-auto px-4 lg:px-8">
-            <div class="flex items-center justify-between mb-10">
-                <div>
-                    <h2 class="text-2xl font-bold text-gray-900">What our customers say</h2>
-                    <p class="text-sm text-gray-500 mt-1">Most recent reviews from verified buyers</p>
-                </div>
-                <div class="hidden sm:flex items-center gap-2">
-                    <button @click="active = (active - 1 + total) % total" aria-label="Previous review"
-                        class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary transition-colors">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"
-                                d="M15 19l-7-7 7-7" />
-                        </svg>
-                    </button>
-                    <button @click="active = (active + 1) % total" aria-label="Next review"
-                        class="w-9 h-9 rounded-full border border-gray-200 flex items-center justify-center text-gray-500 hover:text-primary hover:border-primary transition-colors">
-                        <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 5l7 7-7 7" />
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="overflow-hidden">
-                <div class="flex transition-transform duration-500 ease-out"
-                    :style="`transform: translateX(-${active * 100}%)`">
-                    @foreach($reviewGroups as $group)
-                        <div class="w-full shrink-0 px-1 grid grid-cols-1 md:grid-cols-3 gap-6">
-                            @foreach($group as $review)
-                                <div
-                                    class="bg-white rounded-2xl p-8 shadow-xl shadow-gray-200/50 border border-gray-100 relative overflow-hidden flex flex-col">
-                                    <div class="flex justify-between items-start mb-1">
-                                        <div class="text-sm text-gray-800 font-medium">By {{ $review['author'] }}</div>
-                                        <div class="text-sm text-gray-500">{{ $review['date'] }}</div>
-                                    </div>
-                                    <div class="text-sm text-gray-500 mb-4">{{ $review['subtitle'] }}</div>
-                                    <div class="flex gap-1 text-secondary mb-4">
-                                        @for($i = 1; $i <= 5; $i++)
-                                            <svg class="w-4 h-4 {{ $i <= $review['rating'] ? '' : 'text-gray-200' }}"
-                                                fill="currentColor" viewBox="0 0 20 20">
-                                                <path
-                                                    d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                                            </svg>
-                                        @endfor
-                                    </div>
-                                    <h3 class="font-bold text-base text-gray-900 mb-3 leading-snug">{{ $review['title'] }}
-                                    </h3>
-                                    <p class="text-sm text-gray-700 leading-relaxed">{{ $review['body'] }}</p>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endforeach
-                </div>
-            </div>
-
-            <div class="flex items-center justify-center gap-2 mt-8">
-                @foreach($reviewGroups as $index => $group)
-                    <button @click="active = {{ $index }}"
-                        :class="active === {{ $index }} ? 'bg-primary w-6' : 'bg-gray-300 w-2'"
-                        class="h-2 rounded-full transition-all duration-300"
-                        aria-label="Go to review slide {{ $index + 1 }}"></button>
-                @endforeach
-            </div>
-        </div>
-    </section>
+    {{-- TESTIMONIALS — extracted to its own lazy-loaded component so the review
+         query doesn't run on every homepage hit before the above-the-fold
+         content paints. --}}
+    <livewire:home.testimonials lazy />
 
     {{-- NEWS & BLOG --}}
     @php

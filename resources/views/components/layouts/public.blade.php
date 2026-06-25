@@ -275,6 +275,7 @@
     </footer>
 
     <x-whatsapp-button />
+    <x-scroll-to-top />
     <x-cookie-consent />
 
     @livewireScripts

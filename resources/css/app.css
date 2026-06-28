@@ -40,6 +40,18 @@ html {
     scroll-behavior: smooth;
 }
 
+/* Safety net against page-level sideways scroll on mobile — no element in
+   this app intentionally needs to extend past the viewport width. */
+html, body {
+    overflow-x: hidden;
+}
+
+/* Alpine doesn't inject this rule itself — without it, x-cloak elements
+   flash visible at full layout size before Alpine initialises. */
+[x-cloak] {
+    display: none !important;
+}
+
 @keyframes pageFadeIn {
     from {
         opacity: 0;

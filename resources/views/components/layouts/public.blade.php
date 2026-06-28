@@ -161,7 +161,7 @@
         </div>
 
         {{-- Mobile menu --}}
-        <div class="lg:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1 shadow-lg absolute w-full" x-show="mobileOpen" x-transition:enter="transition duration-150 ease-out" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak>
+        <div class="lg:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1 shadow-lg absolute left-0 right-0" x-show="mobileOpen" x-transition:enter="transition duration-150 ease-out" x-transition:enter-start="opacity-0 -translate-y-2" x-transition:enter-end="opacity-100 translate-y-0" x-cloak>
             <a wire:navigate href="{{ route('home') }}" class="flex items-center gap-1.5 px-3 py-2.5 mb-1">
                 @if ($headerLogoPath)
                     <img src="{{ \Illuminate\Support\Facades\Storage::url($headerLogoPath) }}" alt="{{ config('app.name') }}" class="h-6 w-auto">

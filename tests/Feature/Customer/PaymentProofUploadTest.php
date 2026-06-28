@@ -201,4 +201,24 @@ class PaymentProofUploadTest extends TestCase
             ->test(OrderDetail::class, ['order' => $order])
             ->assertForbidden();
     }
+
+    #[Test]
+    public function the_payment_info_shown_to_the_customer_uses_the_real_bank_account_details(): void
+    {
+        // paymentInfo() previously read 'account_name'/'account_number' from
+        // Setting, but the Settings page actually stores them under
+        // 'bank_account_name'/'bank_account_number' — so this always rendered
+        // the '—' fallback no matter what the admin set, blocking customers
+        // who pay by bank transfer.
+        Setting::set('bank_account_name', 'Livingston Autos Ltd');
+        Setting::set('bank_account_number', '1234567890');
+
+        $order = $this->makeOrder();
+        $user = User::find($order->user_id);
+
+        Livewire::actingAs($user)
+            ->test(OrderDetail::class, ['order' => $order])
+            ->assertSee('Livingston Autos Ltd')
+            ->assertSee('1234567890');
+    }
 }

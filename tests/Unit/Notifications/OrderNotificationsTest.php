@@ -7,6 +7,8 @@ use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
+use App\Models\Setting;
+use App\Notifications\OrderPlacedNotification;
 use App\Notifications\OrderStageUpdatedNotification;
 use App\Notifications\PaymentProofReceivedNotification;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -71,5 +73,23 @@ class OrderNotificationsTest extends TestCase
         $mail = (new PaymentProofReceivedNotification($order))->toMail($order->user);
 
         $this->assertStringContainsString("We're reviewing it now", implode(' ', $mail->introLines));
+    }
+
+    #[Test]
+    public function the_order_placed_email_includes_the_real_bank_account_details(): void
+    {
+        // The bank/account lines previously read 'account_name'/'account_number'
+        // from Setting, but the Settings page actually stores them under
+        // 'bank_account_name'/'bank_account_number' — so this line always
+        // rendered the '—' fallback no matter what the admin had configured.
+        Setting::set('bank_account_name', 'Livingston Autos Ltd');
+        Setting::set('bank_account_number', '1234567890');
+
+        $order = $this->makeOrder();
+        $mail = (new OrderPlacedNotification($order))->toMail($order->user);
+
+        $line = implode(' ', $mail->introLines);
+        $this->assertStringContainsString('Livingston Autos Ltd', $line);
+        $this->assertStringContainsString('1234567890', $line);
     }
 }

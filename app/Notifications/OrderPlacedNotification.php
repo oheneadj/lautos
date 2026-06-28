@@ -45,7 +45,7 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
             ->greeting("Hi {$notifiable->name},")
             ->line("Order reference: {$this->order->reference}")
             ->line("We've reserved the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} for you. Total due: \${$total}.")
-            ->line('Bank: '.Setting::get('bank_name', '—').' · Account: '.Setting::get('account_number', '—').' ('.Setting::get('account_name', '—').')')
+            ->line('Bank: '.Setting::get('bank_name', '—').' · Account: '.Setting::get('bank_account_number', '—').' ('.Setting::get('bank_account_name', '—').')')
             ->line('Mobile Money: '.Setting::get('momo_number', '—').' ('.Setting::get('momo_name', '—').')')
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid))
             ->line('Once we receive your payment proof, we will confirm your order and begin processing your purchase.');

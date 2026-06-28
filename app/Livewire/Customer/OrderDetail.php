@@ -144,8 +144,8 @@ class OrderDetail extends Component
     {
         return [
             'bank_name' => Setting::get('bank_name', '—'),
-            'account_name' => Setting::get('account_name', '—'),
-            'account_number' => Setting::get('account_number', '—'),
+            'account_name' => Setting::get('bank_account_name', '—'),
+            'account_number' => Setting::get('bank_account_number', '—'),
             'momo_number' => Setting::get('momo_number', '—'),
             'momo_name' => Setting::get('momo_name', '—'),
         ];

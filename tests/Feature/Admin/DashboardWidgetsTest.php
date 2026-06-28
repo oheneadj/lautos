@@ -6,13 +6,14 @@ use App\Enums\CarStatus;
 use App\Enums\OrderStatus;
 use App\Filament\Widgets\ActionRequiredWidget;
 use App\Filament\Widgets\CarStatsWidget;
-use App\Filament\Widgets\RecentCarsTable;
 use App\Filament\Widgets\RecentOrdersTable;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\ShieldPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -41,7 +42,7 @@ class DashboardWidgetsTest extends TestCase
 
     private function actingAsSuperAdmin(): User
     {
-        $this->seed(\Database\Seeders\ShieldPermissionsSeeder::class);
+        $this->seed(ShieldPermissionsSeeder::class);
 
         $admin = User::factory()->create(['is_admin' => true]);
         $admin->assignRole(Role::findOrCreate('super_admin', 'web'));
@@ -52,8 +53,8 @@ class DashboardWidgetsTest extends TestCase
 
     private function actingAsStaffAdmin(): User
     {
-        $this->seed(\Database\Seeders\ShieldPermissionsSeeder::class);
-        $this->seed(\Database\Seeders\RolesAndPermissionsSeeder::class);
+        $this->seed(ShieldPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
 
         $staff = User::factory()->create(['is_admin' => true]);
         $staff->assignRole(Role::findOrCreate('staff_admin', 'web'));
@@ -83,17 +84,6 @@ class DashboardWidgetsTest extends TestCase
         Order::factory()->create(['car_id' => $car->id, 'status' => OrderStatus::PaymentUploaded]);
 
         Livewire::test(ActionRequiredWidget::class)->assertOk();
-    }
-
-    #[Test]
-    public function recent_cars_widget_shows_the_latest_five(): void
-    {
-        $this->actingAsSuperAdmin();
-
-        $car = $this->makeCar();
-
-        Livewire::test(RecentCarsTable::class)
-            ->assertCanSeeTableRecords([$car]);
     }
 
     #[Test]

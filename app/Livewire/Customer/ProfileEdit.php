@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Customer profile and KYC document management page.
  *
@@ -14,9 +16,11 @@ namespace App\Livewire\Customer;
 
 use App\Enums\KycStatus;
 use App\Events\KycDocumentsSubmitted;
+use App\Http\Requests\ProfileEditRequest;
 use App\Services\GiantSmsService;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
@@ -32,13 +36,19 @@ class ProfileEdit extends Component
     use WithFileUploads;
 
     public string $name = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $address = '';
+
     public string $ghana_card_number = '';
+
     public string $tin_number = '';
 
     public string $verificationCode = '';
+
     public bool $showPhoneVerificationModal = false;
 
     #[Validate('nullable|file|mimes:jpg,jpeg,png,pdf|max:5120')]
@@ -60,27 +70,25 @@ class ProfileEdit extends Component
 
     public function updateProfile(): void
     {
-        $this->validate([
-            'name'               => ['required', 'string', 'max:255'],
-            'email'              => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.Auth::id()],
-            'address'            => ['required', 'string', 'max:500'],
-            'ghana_card_number'  => ['required_without:tin_number', 'nullable', 'string', 'max:50'],
-            'tin_number'         => ['required_without:ghana_card_number', 'nullable', 'string', 'max:50'],
-            'ghana_card_file'    => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
-            'tin_file'           => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
-        ], [
-            'ghana_card_number.required_without' => 'Please provide your Ghana Card number or TIN.',
-            'tin_number.required_without'         => 'Please provide your TIN or Ghana Card number.',
-        ]);
+        // I clean the inputs before validation
+        $this->ghana_card_number = strtoupper(trim($this->ghana_card_number));
+        $this->tin_number = strtoupper(trim($this->tin_number));
+
+        $request = new ProfileEditRequest;
+        $rules = $request->rules();
+        // Overwrite the email rule to include the unique check with the current user's ID
+        $rules['email'] = ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:users,email,'.Auth::id()];
+
+        $this->validate($rules, $request->messages());
 
         $user = Auth::user();
 
         $data = [
-            'name'              => $this->name,
-            'email'             => $this->email,
-            'address'           => $this->address,
+            'name' => $this->name,
+            'email' => $this->email,
+            'address' => $this->address,
             'ghana_card_number' => $this->ghana_card_number ?: null,
-            'tin_number'        => $this->tin_number ?: null,
+            'tin_number' => $this->tin_number ?: null,
         ];
 
         if ($this->email !== $user->getOriginal('email')) {
@@ -136,18 +144,21 @@ class ProfileEdit extends Component
 
     public function updatePhone(): void
     {
-        $this->validate([
-            'phone' => ['required', 'string', 'max:20'],
-        ]);
+        $this->phone = preg_replace('/\s+/', '', $this->phone);
+
+        $this->validate(
+            ['phone' => ['required', 'string', 'regex:/^(?:\+233|0)\d{9}$/']],
+            ['phone.regex' => 'Phone number must be a valid Ghanaian number (e.g., 0244000000 or +233244000000).']
+        );
 
         $user = Auth::user();
-        
+
         $data = ['phone' => $this->phone];
-        
+
         if ($this->phone !== $user->phone) {
             $data['phone_verified_at'] = null;
         }
-        
+
         $user->update($data);
         $this->dispatch('toast', message: __('Phone number saved.'));
     }
@@ -158,6 +169,17 @@ class ProfileEdit extends Component
 
         if (empty($user->phone)) {
             $this->addError('phone', 'Please update your phone number first.');
+
+            return;
+        }
+
+        // Without this, nothing stops repeated clicks from sending unlimited
+        // real SMS at the business's cost — there's no uniqueness check on
+        // phone either, so this is the only thing capping abuse per account.
+        $sendKey = 'send-phone-otp:'.$user->id;
+        if (RateLimiter::tooManyAttempts($sendKey, maxAttempts: 1)) {
+            $this->addError('phone', 'Please wait a minute before requesting another code.');
+
             return;
         }
 
@@ -165,6 +187,7 @@ class ProfileEdit extends Component
 
         $user->update([
             'phone_verification_code' => $code,
+            'phone_verification_code_expires_at' => now()->addMinutes(10),
         ]);
 
         // I send this synchronously (not queued) so the user gets immediate
@@ -178,8 +201,11 @@ class ProfileEdit extends Component
             );
         } catch (\RuntimeException $e) {
             $this->addError('phone', 'Could not send the verification code. Please try again.');
+
             return;
         }
+
+        RateLimiter::hit($sendKey, decaySeconds: 60);
 
         $this->showPhoneVerificationModal = true;
         $this->dispatch('toast', message: __('Verification code sent to your phone.'));
@@ -193,17 +219,38 @@ class ProfileEdit extends Component
 
         $user = Auth::user();
 
-        if ($user->phone_verification_code === $this->verificationCode) {
+        // Caps guess attempts at 5 per 10 minutes — the code itself never
+        // expired before this fix, so without a limit here it was brute-forceable.
+        $verifyKey = 'verify-phone-otp:'.$user->id;
+        if (RateLimiter::tooManyAttempts($verifyKey, maxAttempts: 5)) {
+            $this->addError('verificationCode', 'Too many attempts. Please request a new code and try again later.');
+
+            return;
+        }
+
+        $codeExpired = $user->phone_verification_code_expires_at === null
+            || $user->phone_verification_code_expires_at->isPast();
+
+        if (! $codeExpired && hash_equals((string) $user->phone_verification_code, $this->verificationCode)) {
             $user->update([
                 'phone_verified_at' => now(),
                 'phone_verification_code' => null,
+                'phone_verification_code_expires_at' => null,
             ]);
-            
+
+            RateLimiter::clear($verifyKey);
+
             $this->showPhoneVerificationModal = false;
             $this->verificationCode = '';
             $this->dispatch('toast', message: __('Phone number verified successfully.'));
         } else {
-            $this->addError('verificationCode', 'Invalid verification code.');
+            RateLimiter::hit($verifyKey, decaySeconds: 600);
+
+            $message = $codeExpired
+                ? 'This code has expired. Please request a new one.'
+                : 'Invalid verification code.';
+
+            $this->addError('verificationCode', $message);
         }
     }
 
@@ -231,6 +278,7 @@ class ProfileEdit extends Component
 
         if ($user->hasVerifiedEmail()) {
             $this->redirectIntended(default: route('dashboard.index', absolute: false));
+
             return;
         }
 
@@ -243,13 +291,6 @@ class ProfileEdit extends Component
     public function hasUnverifiedEmail(): bool
     {
         return Auth::user() instanceof MustVerifyEmail && ! Auth::user()->hasVerifiedEmail();
-    }
-
-    #[Computed]
-    public function showDeleteUser(): bool
-    {
-        return ! Auth::user() instanceof MustVerifyEmail
-            || (Auth::user() instanceof MustVerifyEmail && Auth::user()->hasVerifiedEmail());
     }
 
     public function render()

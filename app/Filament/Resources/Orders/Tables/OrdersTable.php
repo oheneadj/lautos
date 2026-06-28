@@ -38,14 +38,14 @@ class OrdersTable
                     ->label('Customer')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('car.make.name')
+                TextColumn::make('car_make_name')
                     ->label('Car')
                     ->formatStateUsing(
-                        fn ($record) => "{$record->car?->year} {$record->car?->make?->name} {$record->car?->carModel?->name}"
+                        fn ($record) => "{$record->car_year} {$record->car_make_name} {$record->car_model_name}"
                     )
                     ->searchable(query: fn (Builder $query, string $search) => $query
-                        ->orWhereHas('car.make', fn ($q) => $q->where('name', 'like', "%{$search}%"))
-                        ->orWhereHas('car.carModel', fn ($q) => $q->where('name', 'like', "%{$search}%"))),
+                        ->orWhere('car_make_name', 'like', "%{$search}%")
+                        ->orWhere('car_model_name', 'like', "%{$search}%")),
                 TextColumn::make('status')
                     ->label('Order Status')
                     ->badge()
@@ -62,7 +62,7 @@ class OrdersTable
                     }),
                 TextColumn::make('price_usd_cents')
                     ->label('Total')
-                    ->formatStateUsing(fn ($record) => '$' . number_format($record->total_usd_cents / 100, 2))
+                    ->formatStateUsing(fn ($record) => '$'.number_format($record->total_usd_cents / 100, 2))
                     ->sortable(),
                 TextColumn::make('created_at')
                     ->label('Placed')

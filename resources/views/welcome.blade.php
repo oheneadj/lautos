@@ -200,7 +200,7 @@
     </section>
 
     {{-- POPULAR CATEGORIES (TABS WITH CARS) --}}
-    <section class="py-20 bg-gray-50" x-data="{ activeTab: 'SUVs' }">
+    <section class="py-12 sm:py-16 lg:py-20 bg-gray-50" x-data="{ activeTab: 'SUVs' }">
         <div class="max-w-7xl mx-auto px-4 lg:px-8">
             <div class="flex items-center justify-between mb-8">
                 <div>
@@ -285,7 +285,7 @@
     </section>
 
     {{-- LATEST ARRIVALS --}}
-    <section class="py-20 bg-white">
+    <section class="py-12 sm:py-16 lg:py-20 bg-white">
         <div class="max-w-7xl mx-auto px-4 lg:px-8">
             <div class="flex items-center justify-between mb-10">
                 <div>

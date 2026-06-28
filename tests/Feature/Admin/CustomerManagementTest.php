@@ -3,7 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Enums\KycStatus;
-use App\Filament\Resources\Customers\CustomerResource;
+use App\Events\KycResubmissionRequested;
 use App\Filament\Resources\Customers\Pages\ListCustomers;
 use App\Filament\Resources\Customers\Pages\ViewCustomer;
 use App\Models\Car;
@@ -11,6 +11,7 @@ use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
 use App\Models\User;
+use Database\Seeders\ShieldPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -27,7 +28,7 @@ class CustomerManagementTest extends TestCase
 
     private function actingAsAdmin(): User
     {
-        $this->seed(\Database\Seeders\ShieldPermissionsSeeder::class);
+        $this->seed(ShieldPermissionsSeeder::class);
 
         $admin = User::factory()->create(['is_admin' => true]);
         $admin->assignRole(Role::findOrCreate('super_admin', 'web'));
@@ -108,7 +109,11 @@ class CustomerManagementTest extends TestCase
     {
         $this->actingAsAdmin();
 
-        $customer = User::factory()->create(['kyc_status' => KycStatus::Pending]);
+        $customer = User::factory()->create([
+            'kyc_status' => KycStatus::Pending,
+            'ghana_card_path' => 'kyc/'.uniqid().'/card.jpg',
+            'tin_path' => 'kyc/'.uniqid().'/tin.jpg',
+        ]);
 
         Livewire::test(ViewCustomer::class, ['record' => $customer->uuid])
             ->callAction('verifyKyc');
@@ -117,9 +122,27 @@ class CustomerManagementTest extends TestCase
     }
 
     #[Test]
+    public function trying_to_verify_a_customer_with_no_documents_shows_a_notification_instead_of_crashing(): void
+    {
+        $this->actingAsAdmin();
+
+        $customer = User::factory()->create([
+            'kyc_status' => KycStatus::Pending,
+            'ghana_card_path' => null,
+            'tin_path' => null,
+        ]);
+
+        Livewire::test(ViewCustomer::class, ['record' => $customer->uuid])
+            ->callAction('verifyKyc')
+            ->assertNotified();
+
+        $this->assertSame(KycStatus::Pending, $customer->refresh()->kyc_status);
+    }
+
+    #[Test]
     public function admin_can_request_kyc_resubmission_with_a_reason(): void
     {
-        Event::fake([\App\Events\KycResubmissionRequested::class]);
+        Event::fake([KycResubmissionRequested::class]);
         $this->actingAsAdmin();
 
         $customer = User::factory()->create(['kyc_status' => KycStatus::Pending]);

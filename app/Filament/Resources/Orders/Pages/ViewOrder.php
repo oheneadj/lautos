@@ -17,11 +17,13 @@ use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
 use Illuminate\Support\Facades\Auth;
+use InvalidArgumentException;
 
 /**
  * The admin's single screen for everything about one order — customer/KYC
@@ -46,18 +48,18 @@ class ViewOrder extends ViewRecord
                                 TextEntry::make('user.kyc_status')
                                     ->label('KYC Status')
                                     ->badge(),
-                            ]) ->columns(2),
+                            ])->columns(2),
                         Section::make('Car')
                             ->schema([
-                                TextEntry::make('car.year')->label('Year'),
-                                TextEntry::make('car.make.name')->label('Make'),
-                                TextEntry::make('car.carModel.name')->label('Model'),
+                                TextEntry::make('car_year')->label('Year'),
+                                TextEntry::make('car_make_name')->label('Make'),
+                                TextEntry::make('car_model_name')->label('Model'),
                                 TextEntry::make('total_usd_cents')
                                     ->label('Order Total')
-                                    ->formatStateUsing(fn ($state) => '$' . number_format($state / 100, 2)),
-                            ]) ->columns(3),
+                                    ->formatStateUsing(fn ($state) => '$'.number_format($state / 100, 2)),
+                            ])->columns(3),
                     ]),
-                     Section::make('Shipment Timeline')
+                Section::make('Shipment Timeline')
                     ->schema([
                         ViewEntry::make('timeline')
                             ->view('filament.infolists.order-timeline')
@@ -79,7 +81,7 @@ class ViewOrder extends ViewRecord
                             ->visible(fn ($record) => $this->competingOrdersCount($record) > 0)
                             ->state(fn ($record) => $this->competingOrdersCount($record) === 1
                                 ? '1 other customer also has an open order on this car. Confirming this payment will cancel theirs.'
-                                : $this->competingOrdersCount($record) . ' other customers also have an open order on this car. Confirming this payment will cancel all of theirs.'),
+                                : $this->competingOrdersCount($record).' other customers also have an open order on this car. Confirming this payment will cancel all of theirs.'),
                         TextEntry::make('vessel_name')
                             ->label('Vessel')
                             ->placeholder('Not yet provided')
@@ -95,8 +97,6 @@ class ViewOrder extends ViewRecord
                             ->visible(fn ($record) => $this->hasReachedLogisticsStage($record)),
                     ])
                     ->columns(3),
-
-               
 
                 Section::make('Payment Proofs')
                     ->schema([
@@ -144,6 +144,26 @@ class ViewOrder extends ViewRecord
         ], true);
     }
 
+    /**
+     * Runs an OrderService call from one of the header actions, turning its
+     * InvalidArgumentException (a state-guard the service throws on purpose,
+     * e.g. confirming a payment that's already confirmed) into a friendly
+     * notification instead of a raw 500 — the guard working as intended
+     * shouldn't crash the page.
+     */
+    private function runOrderAction(Order $order, callable $callback): void
+    {
+        try {
+            $callback();
+        } catch (InvalidArgumentException $e) {
+            Notification::make()->danger()->title($e->getMessage())->send();
+
+            return;
+        }
+
+        $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
+    }
+
     protected function getHeaderActions(): array
     {
         $order = $this->getRecord();
@@ -156,17 +176,16 @@ class ViewOrder extends ViewRecord
                 ->icon('heroicon-m-check-circle')
                 ->color('success')
                 ->visible(fn () => $order->status === OrderStatus::PaymentUploaded)
+                ->authorize('update', $order)
                 ->requiresConfirmation()
-                ->action(function () use ($order) {
-                    app(OrderService::class)->confirmPayment($order);
-                    $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
-                }),
+                ->action(fn () => $this->runOrderAction($order, fn () => app(OrderService::class)->confirmPayment($order))),
 
             Action::make('rejectPayment')
                 ->label('Reject Payment')
                 ->icon('heroicon-m-x-circle')
                 ->color('danger')
                 ->visible(fn () => $order->status === OrderStatus::PaymentUploaded)
+                ->authorize('update', $order)
                 ->requiresConfirmation()
                 ->schema([
                     Textarea::make('reason')
@@ -174,15 +193,13 @@ class ViewOrder extends ViewRecord
                         ->placeholder('e.g. The uploaded receipt does not match the order total.')
                         ->required(),
                 ])
-                ->action(function (array $data) use ($order) {
-                    app(OrderService::class)->rejectPayment($order, $data['reason']);
-                    $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
-                }),
+                ->action(fn (array $data) => $this->runOrderAction($order, fn () => app(OrderService::class)->rejectPayment($order, $data['reason']))),
 
             Action::make('advanceStage')
-                ->label(fn () => 'Advance to ' . ($order->status->next()?->label() ?? '—'))
+                ->label(fn () => 'Advance to '.($order->status->next()?->label() ?? '—'))
                 ->icon('heroicon-m-arrow-right-circle')
                 ->visible(fn () => $order->status !== OrderStatus::PaymentUploaded && $order->status->next() !== null)
+                ->authorize('update', $order)
                 ->requiresConfirmation()
                 ->schema(fn () => $order->status->next() === OrderStatus::Shipped ? [
                     DatePicker::make('estimated_arrival_date')
@@ -191,10 +208,7 @@ class ViewOrder extends ViewRecord
                         ->minDate(now())
                         ->required(),
                 ] : [])
-                ->action(function (array $data) use ($order) {
-                    app(OrderService::class)->advanceStage($order, $order->status->next(), $data);
-                    $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
-                }),
+                ->action(fn (array $data) => $this->runOrderAction($order, fn () => app(OrderService::class)->advanceStage($order, $order->status->next(), $data))),
 
             Action::make('fillLogistics')
                 ->label('Fill Logistics')
@@ -202,6 +216,7 @@ class ViewOrder extends ViewRecord
                 ->color('gray')
                 ->modalWidth('sm')
                 ->visible(fn () => $this->hasReachedLogisticsStage($order))
+                ->authorize('update', $order)
                 ->fillForm(fn () => $order->only(['vessel_name', 'tracking_number', 'estimated_arrival_date']))
                 ->schema([
                     TextInput::make('vessel_name')
@@ -221,6 +236,7 @@ class ViewOrder extends ViewRecord
                 ->icon('heroicon-m-no-symbol')
                 ->color('danger')
                 ->visible(fn () => ! in_array($order->status, [OrderStatus::Cancelled, OrderStatus::Delivered], true))
+                ->authorize('update', $order)
                 ->requiresConfirmation()
                 ->modalDescription('This releases the car back to Available if it was reserved for this order, and notifies the customer.')
                 ->schema([
@@ -229,14 +245,12 @@ class ViewOrder extends ViewRecord
                         ->placeholder('e.g. Customer requested cancellation.')
                         ->required(),
                 ])
-                ->action(function (array $data) use ($order) {
-                    app(OrderService::class)->cancelOrder($order, $data['reason']);
-                    $this->redirect(static::getResource()::getUrl('view', ['record' => $order]));
-                }),
+                ->action(fn (array $data) => $this->runOrderAction($order, fn () => app(OrderService::class)->cancelOrder($order, $data['reason']))),
 
             Action::make('addNote')
                 ->label('Add Note')
                 ->icon('heroicon-m-pencil')
+                ->authorize('update', $order)
                 ->schema([
                     Textarea::make('note')
                         ->label('Note')

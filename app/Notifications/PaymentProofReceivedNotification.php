@@ -17,9 +17,7 @@ class PaymentProofReceivedNotification extends Notification implements ShouldQue
 {
     use Queueable;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     /**
      * @return array<int, string>
@@ -37,13 +35,12 @@ class PaymentProofReceivedNotification extends Notification implements ShouldQue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $car = $this->order->car;
 
         return (new MailMessage)
             ->subject('Payment Proof Received')
             ->greeting("Hi {$notifiable->name},")
             ->line("Order reference: {$this->order->reference}")
-            ->line("We've received your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}.")
+            ->line("We've received your payment proof for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name}.")
             ->line("We're reviewing it now and will confirm your order shortly.")
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid));
     }
@@ -60,11 +57,10 @@ class PaymentProofReceivedNotification extends Notification implements ShouldQue
      */
     public function toArray(object $notifiable): array
     {
-        $car = $this->order->car;
 
         return [
             'title' => 'Payment Proof Received',
-            'message' => "We've received your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}. We're reviewing it now.",
+            'message' => "We've received your payment proof for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name}. We're reviewing it now.",
             'icon' => 'document',
             'action_url' => route('dashboard.orders.show', $this->order->uuid),
             'action_text' => 'View Order',

@@ -16,12 +16,16 @@ class SupportTicketDetail extends Component
     use WithFileUploads;
 
     public SupportTicket $ticket;
+
     public $message = '';
+
     public $attachment;
 
     protected $rules = [
         'message' => 'required|string',
-        'attachment' => 'nullable|file|max:5120', // 5MB Max
+        // I restrict to the same types as every other upload in the app —
+        // without this, an .svg or .html attachment could carry a stored XSS payload.
+        'attachment' => 'nullable|file|mimes:jpg,jpeg,png,pdf|max:5120', // 5MB Max
     ];
 
     public function mount($uuid)
@@ -35,7 +39,10 @@ class SupportTicketDetail extends Component
 
         $path = null;
         if ($this->attachment) {
-            $path = $this->attachment->store('tickets/attachments', 'public');
+            // Private disk — attachments may contain sensitive personal
+            // documents, so they're only ever served through the signed
+            // ticket-attachments.show route, never a public storage URL.
+            $path = $this->attachment->store('tickets/attachments', 'private');
         }
 
         $this->ticket->messages()->create([

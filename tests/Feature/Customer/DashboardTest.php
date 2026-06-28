@@ -11,6 +11,7 @@ use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -124,8 +125,8 @@ class DashboardTest extends TestCase
         $user = User::factory()->create();
         $otherUser = User::factory()->create();
 
-        Order::factory()->create(['user_id' => $user->id, 'car_id' => $myCar->id, 'status' => OrderStatus::PendingPayment]);
-        Order::factory()->create(['user_id' => $otherUser->id, 'car_id' => $otherCar->id, 'status' => OrderStatus::Delivered]);
+        Order::factory()->forCar($myCar)->create(['user_id' => $user->id, 'status' => OrderStatus::PendingPayment]);
+        Order::factory()->forCar($otherCar)->create(['user_id' => $otherUser->id, 'status' => OrderStatus::Delivered]);
 
         $response = $this->actingAs($user)->get(route('dashboard.index'));
 
@@ -238,8 +239,8 @@ class DashboardTest extends TestCase
     #[Test]
     public function the_support_card_links_to_open_a_ticket_and_uses_real_settings(): void
     {
-        \App\Models\Setting::set('contact_email', 'help@livingstonautos.com');
-        \App\Models\Setting::set('whatsapp_number', '+233 55 999 8888');
+        Setting::set('contact_email', 'help@livingstonautos.com');
+        Setting::set('whatsapp_number', '+233 55 999 8888');
 
         $user = User::factory()->create();
 

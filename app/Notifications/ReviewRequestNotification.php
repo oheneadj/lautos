@@ -17,9 +17,7 @@ class ReviewRequestNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     /**
      * @return array<int, string>
@@ -37,24 +35,22 @@ class ReviewRequestNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $car = $this->order->car;
 
         return (new MailMessage)
-            ->subject('How was your experience with ' . config('app.name') . '?')
+            ->subject('How was your experience with '.config('app.name').'?')
             ->greeting("Hi {$notifiable->name},")
-            ->line("Your {$car->year} {$car->make->name} {$car->carModel->name} has been delivered — we hope you're enjoying it.")
+            ->line("Your {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} has been delivered — we hope you're enjoying it.")
             ->line("We'd love to hear about your experience. It only takes a minute and helps other buyers make their decision.")
             ->action('Leave a Review', route('dashboard.reviews'))
-            ->line('Thank you for choosing ' . config('app.name') . '.');
+            ->line('Thank you for choosing '.config('app.name').'.');
     }
 
     public function toGiantSms(object $notifiable): GiantSmsMessage
     {
-        $car = $this->order->car;
         $url = route('dashboard.reviews');
 
         return new GiantSmsMessage(
-            "Hi {$notifiable->name}, your {$car->year} {$car->make->name} {$car->carModel->name} has been delivered! Share your experience: {$url}"
+            "Hi {$notifiable->name}, your {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} has been delivered! Share your experience: {$url}"
         );
     }
 
@@ -63,11 +59,10 @@ class ReviewRequestNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
-        $car = $this->order->car;
 
         return [
             'title' => 'How was your experience?',
-            'message' => "Leave a review for your {$car->year} {$car->make->name} {$car->carModel->name}.",
+            'message' => "Leave a review for your {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name}.",
             'icon' => 'star',
             'action_url' => route('dashboard.reviews'),
             'action_text' => 'Leave a Review',

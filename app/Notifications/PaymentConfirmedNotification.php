@@ -17,9 +17,7 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     /**
      * @return array<int, string>
@@ -37,25 +35,23 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $car = $this->order->car;
 
         return (new MailMessage)
             ->subject('Payment Confirmed — Your Order is Reserved')
             ->greeting("Hi {$notifiable->name},")
             ->line("Order reference: {$this->order->reference}")
-            ->line("We've confirmed your payment for the {$car->year} {$car->make->name} {$car->carModel->name}.")
+            ->line("We've confirmed your payment for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name}.")
             ->line('Your car is now reserved and we will begin processing your purchase.')
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid))
-            ->line('Thank you for choosing ' . config('app.name') . '.');
+            ->line('Thank you for choosing '.config('app.name').'.');
     }
 
     public function toGiantSms(object $notifiable): GiantSmsMessage
     {
-        $car = $this->order->car;
         $url = route('dashboard.orders.show', $this->order->uuid);
 
         return new GiantSmsMessage(
-            "Hi {$notifiable->name}, payment confirmed for order {$this->order->reference}. Your {$car->year} {$car->make->name} {$car->carModel->name} is reserved. Track at {$url}"
+            "Hi {$notifiable->name}, payment confirmed for order {$this->order->reference}. Your {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} is reserved. Track at {$url}"
         );
     }
 
@@ -64,11 +60,10 @@ class PaymentConfirmedNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
-        $car = $this->order->car;
 
         return [
             'title' => 'Payment Confirmed',
-            'message' => "We've confirmed your payment for the {$car->year} {$car->make->name} {$car->carModel->name}. Your car is now reserved.",
+            'message' => "We've confirmed your payment for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name}. Your car is now reserved.",
             'icon' => 'check',
             'action_url' => route('dashboard.orders.show', $this->order->uuid),
             'action_text' => 'View Order',

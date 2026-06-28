@@ -67,6 +67,7 @@ class ReviewsTable
                     ->icon('heroicon-m-check')
                     ->color('success')
                     ->visible(fn (Review $record) => $record->status !== ReviewStatus::Approved)
+                    ->authorize('update')
                     ->action(function (Review $record) {
                         $record->update(['status' => ReviewStatus::Approved, 'approved_at' => now()]);
                         Notification::make()->title('Review approved')->success()->send();
@@ -77,6 +78,7 @@ class ReviewsTable
                     ->color('danger')
                     ->requiresConfirmation()
                     ->visible(fn (Review $record) => $record->status !== ReviewStatus::Rejected)
+                    ->authorize('update')
                     ->action(function (Review $record) {
                         $record->update(['status' => ReviewStatus::Rejected, 'approved_at' => null]);
                         Notification::make()->title('Review rejected')->success()->send();

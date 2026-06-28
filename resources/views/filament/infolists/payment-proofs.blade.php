@@ -6,7 +6,11 @@
         @foreach ($order->paymentProofs as $proof)
             @php
                 $isImage = in_array(strtolower(pathinfo($proof->file_path, PATHINFO_EXTENSION)), ['jpg', 'jpeg', 'png', 'webp']);
-                $url = \Illuminate\Support\Facades\Storage::disk('public')->url($proof->file_path);
+                $url = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                    'admin.payment-proofs.show',
+                    now()->addMinutes(5),
+                    ['proof' => $proof->uuid]
+                );
                 $status = $proof->status ?? \App\Enums\PaymentProofStatus::Pending;
             @endphp
             <a href="{{ $url }}" target="_blank" class="block rounded-lg border border-gray-200 p-2 dark:border-gray-700">

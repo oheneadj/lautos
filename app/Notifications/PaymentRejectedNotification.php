@@ -17,9 +17,7 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Order $order, public string $reason)
-    {
-    }
+    public function __construct(public Order $order, public string $reason) {}
 
     /**
      * @return array<int, string>
@@ -37,13 +35,12 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $car = $this->order->car;
 
         return (new MailMessage)
             ->subject('Payment Proof Rejected — Action Needed')
             ->greeting("Hi {$notifiable->name},")
             ->line("Order reference: {$this->order->reference}")
-            ->line("We couldn't verify your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}.")
+            ->line("We couldn't verify your payment proof for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name}.")
             ->line("Reason: {$this->reason}")
             ->line('Please upload a new payment proof from your dashboard.')
             ->action('Upload New Proof', route('dashboard.orders.show', $this->order->uuid))
@@ -64,11 +61,10 @@ class PaymentRejectedNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
-        $car = $this->order->car;
 
         return [
             'title' => 'Payment Proof Rejected',
-            'message' => "We couldn't verify your payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}. Reason: {$this->reason}",
+            'message' => "We couldn't verify your payment proof for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name}. Reason: {$this->reason}",
             'icon' => 'document',
             'action_url' => route('dashboard.orders.show', $this->order->uuid),
             'action_text' => 'Upload New Proof',

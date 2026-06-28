@@ -4,6 +4,7 @@ namespace Tests\Unit\Services;
 
 use App\Enums\CarStatus;
 use App\Enums\OrderStatus;
+use App\Events\OrderCancelledByAdmin;
 use App\Events\OrderPlaced;
 use App\Events\OrderStageUpdated;
 use App\Events\PaymentConfirmed;
@@ -63,11 +64,14 @@ class OrderServiceTest extends TestCase
         $car = $this->makeAvailableCar();
         $user = User::factory()->create();
 
-        $order = (new OrderService())->createOrder($user, $car);
+        $order = (new OrderService)->createOrder($user, $car);
 
         $this->assertSame(OrderStatus::PendingPayment, $order->status);
         $this->assertSame(1500000, $order->price_usd_cents);
         $this->assertSame(200000, $order->shipping_cost_usd_cents);
+        $this->assertSame($car->year, $order->car_year);
+        $this->assertSame('Toyota', $order->car_make_name);
+        $this->assertSame('Corolla', $order->car_model_name);
         // The car only locks once payment is confirmed — see confirmPayment() tests below.
         // Placing an order must never block other customers from also trying to buy it.
         $this->assertSame(CarStatus::Available, $car->refresh()->status);
@@ -79,6 +83,25 @@ class OrderServiceTest extends TestCase
     }
 
     #[Test]
+    public function the_snapshot_survives_the_car_being_soft_deleted_or_edited(): void
+    {
+        $car = $this->makeAvailableCar();
+        $user = User::factory()->create();
+
+        $order = (new OrderService)->createOrder($user, $car);
+
+        $car->update(['year' => $car->year + 1]);
+        $car->make->update(['name' => 'Renamed Make']);
+        $car->delete();
+
+        $order->refresh();
+
+        $this->assertNotSame($car->year, $order->car_year);
+        $this->assertSame('Toyota', $order->car_make_name);
+        $this->assertSame('Corolla', $order->car_model_name);
+    }
+
+    #[Test]
     public function an_already_reserved_car_cannot_be_ordered_again(): void
     {
         $car = $this->makeAvailableCar();
@@ -87,7 +110,7 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        (new OrderService())->createOrder($user, $car);
+        (new OrderService)->createOrder($user, $car);
     }
 
     #[Test]
@@ -99,7 +122,7 @@ class OrderServiceTest extends TestCase
         $firstBuyer = User::factory()->create();
         $secondBuyer = User::factory()->create();
 
-        $service = new OrderService();
+        $service = new OrderService;
         $firstOrder = $service->createOrder($firstBuyer, $car);
         $secondOrder = $service->createOrder($secondBuyer, $car);
 
@@ -115,7 +138,7 @@ class OrderServiceTest extends TestCase
         $car = $this->makeAvailableCar();
         $user = User::factory()->create();
 
-        $service = new OrderService();
+        $service = new OrderService;
         $firstOrder = $service->createOrder($user, $car);
         $secondAttempt = $service->createOrder($user, $car);
 
@@ -132,7 +155,7 @@ class OrderServiceTest extends TestCase
         $winner = User::factory()->create();
         $loser = User::factory()->create();
 
-        $service = new OrderService();
+        $service = new OrderService;
         $winningOrder = $service->createOrder($winner, $car);
         $losingOrder = $service->createOrder($loser, $car);
 
@@ -159,7 +182,7 @@ class OrderServiceTest extends TestCase
 
         $order = $this->makeOrder(['status' => OrderStatus::PaymentUploaded]);
 
-        (new OrderService())->confirmPayment($order);
+        (new OrderService)->confirmPayment($order);
 
         $this->assertSame(OrderStatus::PaymentConfirmed, $order->refresh()->status);
         $this->assertSame(CarStatus::Reserved, $order->car->refresh()->status);
@@ -177,7 +200,23 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        (new OrderService())->confirmPayment($order);
+        (new OrderService)->confirmPayment($order);
+    }
+
+    #[Test]
+    public function confirming_an_already_confirmed_order_again_is_rejected(): void
+    {
+        // I confirm with the original $order instance twice in a row, without
+        // refreshing it in between — this proves the lock re-checks the status
+        // from the database rather than trusting the in-memory model, which is
+        // exactly the gap a real concurrent double-confirm would exploit.
+        $order = $this->makeOrder(['status' => OrderStatus::PaymentUploaded]);
+
+        (new OrderService)->confirmPayment($order);
+
+        $this->expectException(InvalidArgumentException::class);
+
+        (new OrderService)->confirmPayment($order);
     }
 
     #[Test]
@@ -187,7 +226,7 @@ class OrderServiceTest extends TestCase
 
         $order = $this->makeOrder(['status' => OrderStatus::PaymentUploaded]);
 
-        (new OrderService())->rejectPayment($order, 'Amount does not match invoice.');
+        (new OrderService)->rejectPayment($order, 'Amount does not match invoice.');
 
         $this->assertSame(OrderStatus::PendingPayment, $order->refresh()->status);
         $this->assertDatabaseHas('order_status_histories', [
@@ -201,13 +240,13 @@ class OrderServiceTest extends TestCase
     #[Test]
     public function cancelling_a_confirmed_order_releases_the_reserved_car(): void
     {
-        Event::fake([\App\Events\OrderCancelledByAdmin::class]);
+        Event::fake([OrderCancelledByAdmin::class]);
 
         $car = $this->makeAvailableCar();
         $order = Order::factory()->create(['car_id' => $car->id, 'status' => OrderStatus::PaymentConfirmed]);
         $car->update(['status' => CarStatus::Reserved]);
 
-        (new OrderService())->cancelOrder($order, 'Customer requested a refund.');
+        (new OrderService)->cancelOrder($order, 'Customer requested a refund.');
 
         $this->assertSame(OrderStatus::Cancelled, $order->refresh()->status);
         $this->assertSame(CarStatus::Available, $car->refresh()->status);
@@ -216,18 +255,18 @@ class OrderServiceTest extends TestCase
             'status' => OrderStatus::Cancelled->value,
             'notes' => 'Customer requested a refund.',
         ]);
-        Event::assertDispatched(\App\Events\OrderCancelledByAdmin::class, fn ($event) => $event->order->id === $order->id);
+        Event::assertDispatched(OrderCancelledByAdmin::class, fn ($event) => $event->order->id === $order->id);
     }
 
     #[Test]
     public function cancelling_an_order_whose_car_is_not_reserved_does_not_touch_the_car(): void
     {
-        Event::fake([\App\Events\OrderCancelledByAdmin::class]);
+        Event::fake([OrderCancelledByAdmin::class]);
 
         $order = $this->makeOrder(['status' => OrderStatus::PendingPayment]);
         $order->car->update(['status' => CarStatus::Available]);
 
-        (new OrderService())->cancelOrder($order, 'Customer changed their mind.');
+        (new OrderService)->cancelOrder($order, 'Customer changed their mind.');
 
         $this->assertSame(OrderStatus::Cancelled, $order->refresh()->status);
         $this->assertSame(CarStatus::Available, $order->car->refresh()->status);
@@ -240,7 +279,7 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        (new OrderService())->cancelOrder($order, 'Already cancelled.');
+        (new OrderService)->cancelOrder($order, 'Already cancelled.');
     }
 
     #[Test]
@@ -250,7 +289,7 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        (new OrderService())->cancelOrder($order, 'Too late.');
+        (new OrderService)->cancelOrder($order, 'Too late.');
     }
 
     #[Test]
@@ -261,7 +300,7 @@ class OrderServiceTest extends TestCase
         $this->expectException(InvalidArgumentException::class);
 
         // Skips Payment Uploaded and Payment Confirmed entirely.
-        (new OrderService())->advanceStage($order, OrderStatus::Purchased);
+        (new OrderService)->advanceStage($order, OrderStatus::Purchased);
     }
 
     #[Test]
@@ -271,7 +310,7 @@ class OrderServiceTest extends TestCase
 
         $this->expectException(InvalidArgumentException::class);
 
-        (new OrderService())->advanceStage($order, OrderStatus::Shipped);
+        (new OrderService)->advanceStage($order, OrderStatus::Shipped);
     }
 
     #[Test]
@@ -281,7 +320,7 @@ class OrderServiceTest extends TestCase
 
         $order = $this->makeOrder(['status' => OrderStatus::InTransitToPort]);
 
-        (new OrderService())->advanceStage($order, OrderStatus::Shipped, [
+        (new OrderService)->advanceStage($order, OrderStatus::Shipped, [
             'estimated_arrival_date' => now()->addWeeks(3)->toDateString(),
         ]);
 
@@ -298,7 +337,7 @@ class OrderServiceTest extends TestCase
 
         $order = $this->makeOrder(['status' => OrderStatus::Cleared]);
 
-        (new OrderService())->advanceStage($order, OrderStatus::Delivered);
+        (new OrderService)->advanceStage($order, OrderStatus::Delivered);
 
         $order->refresh();
         $this->assertSame(OrderStatus::Delivered, $order->status);
@@ -312,7 +351,7 @@ class OrderServiceTest extends TestCase
     {
         $order = $this->makeOrder(['status' => OrderStatus::PaymentConfirmed]);
 
-        (new OrderService())->advanceStage($order, OrderStatus::Purchased);
+        (new OrderService)->advanceStage($order, OrderStatus::Purchased);
 
         $this->assertDatabaseHas('order_status_histories', [
             'order_id' => $order->id,

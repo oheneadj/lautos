@@ -59,7 +59,9 @@ class AdminProfileTest extends TestCase
             ->set('data.phone', '+233 55 123 4567')
             ->call('submit');
 
-        $this->assertSame('+233 55 123 4567', $admin->refresh()->phone);
+        // I assert the stripped form here — CLAUDE.md's Ghana phone pattern
+        // requires spaces stripped before validating/saving.
+        $this->assertSame('+233551234567', $admin->refresh()->phone);
         $this->assertNull($admin->phone_verified_at);
     }
 
@@ -98,6 +100,71 @@ class AdminProfileTest extends TestCase
         Livewire::test(ProfilePhoneInfo::class)
             ->call('sendPhoneVerificationCode')
             ->set('verificationCode', '000000')
+            ->call('verifyPhone')
+            ->assertHasErrors('verificationCode');
+
+        $this->assertNull($admin->refresh()->phone_verified_at);
+    }
+
+    #[Test]
+    public function a_second_admin_otp_send_within_a_minute_is_rate_limited(): void
+    {
+        Http::fake(['api.giantsms.com/*' => Http::response(['status' => true], 200)]);
+
+        $admin = $this->makeAdmin();
+        $admin->update(['phone' => '+233 55 123 4567']);
+
+        $this->actingAs($admin)->get('/admin/my-profile');
+
+        $component = Livewire::test(ProfilePhoneInfo::class);
+        $component->call('sendPhoneVerificationCode');
+        $firstCode = $admin->refresh()->phone_verification_code;
+
+        $component->call('sendPhoneVerificationCode')->assertHasErrors('data.phone');
+
+        $this->assertSame($firstCode, $admin->refresh()->phone_verification_code);
+        Http::assertSentCount(1);
+    }
+
+    #[Test]
+    public function an_expired_admin_verification_code_is_rejected(): void
+    {
+        $admin = $this->makeAdmin();
+        $admin->update([
+            'phone' => '+233 55 123 4567',
+            'phone_verification_code' => '123456',
+            'phone_verification_code_expires_at' => now()->subMinute(),
+        ]);
+
+        $this->actingAs($admin)->get('/admin/my-profile');
+
+        Livewire::test(ProfilePhoneInfo::class)
+            ->set('verificationCode', '123456')
+            ->call('verifyPhone')
+            ->assertHasErrors('verificationCode');
+
+        $this->assertNull($admin->refresh()->phone_verified_at);
+    }
+
+    #[Test]
+    public function repeated_wrong_admin_codes_are_rate_limited(): void
+    {
+        $admin = $this->makeAdmin();
+        $admin->update([
+            'phone' => '+233 55 123 4567',
+            'phone_verification_code' => '123456',
+            'phone_verification_code_expires_at' => now()->addMinutes(10),
+        ]);
+
+        $this->actingAs($admin)->get('/admin/my-profile');
+
+        $component = Livewire::test(ProfilePhoneInfo::class);
+
+        for ($i = 0; $i < 5; $i++) {
+            $component->set('verificationCode', '000000')->call('verifyPhone');
+        }
+
+        $component->set('verificationCode', '123456')
             ->call('verifyPhone')
             ->assertHasErrors('verificationCode');
 

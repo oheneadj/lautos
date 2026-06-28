@@ -10,6 +10,12 @@ $type = $attributes->get('type', 'text');
 $isPassword = $type === 'password';
 $inputId = $attributes->get('id') ?? 'input-' . uniqid();
 
+// I default name from the label (or wire:model, as a fallback) so every
+// input is autofill/screen-reader friendly even when a caller doesn't
+// bother passing one explicitly — Livewire's own binding doesn't need it,
+// but browsers and assistive tech do.
+$inputName = $attributes->get('name') ?? \Illuminate\Support\Str::slug(preg_replace('/\s*\(.*?\)/', '', $label ?? $attributes->get('wire:model', 'field')), '_');
+
 $baseClasses = 'w-full px-[14px] py-[10px] text-[15px] bg-base-100 border rounded-lg transition-all duration-120 outline-none placeholder:text-base-content/40 disabled:bg-base-200 disabled:cursor-not-allowed';
 $normalClasses = 'border-base-content/10 focus:border-primary focus:ring-3 focus:ring-primary/20';
 $errorClasses  = 'border-error focus:ring-3 focus:ring-error/20';
@@ -28,7 +34,7 @@ if ($isPassword) $inputClasses .= ' pr-11';
     <div class="relative">
         @if ($isPassword)
             <input
-                {{ $attributes->merge(['class' => $inputClasses, 'id' => $inputId]) }}
+                {{ $attributes->merge(['class' => $inputClasses, 'id' => $inputId, 'name' => $inputName]) }}
                 x-data="{ show: false }"
                 x-bind:type="show ? 'text' : 'password'"
             >
@@ -47,7 +53,7 @@ if ($isPassword) $inputClasses .= ' pr-11';
             </button>
         @else
             <input
-                {{ $attributes->merge(['class' => $inputClasses, 'id' => $inputId]) }}
+                {{ $attributes->merge(['class' => $inputClasses, 'id' => $inputId, 'name' => $inputName]) }}
             >
         @endif
     </div>

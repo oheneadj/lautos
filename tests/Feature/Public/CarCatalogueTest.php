@@ -2,6 +2,7 @@
 
 namespace Tests\Feature\Public;
 
+use App\Enums\CarBodyType;
 use App\Enums\CarStatus;
 use App\Livewire\Cars\CarCatalogue;
 use App\Models\Car;
@@ -69,6 +70,34 @@ class CarCatalogueTest extends TestCase
             ->set('makeFilter', [$toyota->make->slug])
             ->assertSee($toyota->slug)
             ->assertDontSee($honda->slug);
+    }
+
+    #[Test]
+    public function leaving_any_make_selected_in_the_hero_search_does_not_hide_every_car(): void
+    {
+        // The hero search's "Any Make" option still submits make[]= (an empty
+        // string), which used to land in $makeFilter as [''] and make
+        // whereIn('slug', ['']) match nothing — wiping out every car.
+        $toyota = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla']);
+
+        $this->get(route('cars.index', ['make' => ['']]))
+            ->assertOk()
+            ->assertSee($toyota->slug);
+    }
+
+    #[Test]
+    public function selecting_a_transmission_from_the_hero_search_still_returns_matches(): void
+    {
+        // Reproduces the exact hero-form request: "Any Make" left blank
+        // alongside a real transmission selection — both are submitted
+        // together, so the blank make[] must not blank out the transmission match.
+        $manual = $this->makeCar(['transmission' => 'Manual']);
+        $automatic = $this->makeCar(['transmission' => 'Automatic']);
+
+        $this->get(route('cars.index', ['make' => [''], 'transmission' => 'Manual']))
+            ->assertOk()
+            ->assertSee($manual->slug)
+            ->assertDontSee($automatic->slug);
     }
 
     #[Test]
@@ -171,25 +200,47 @@ class CarCatalogueTest extends TestCase
     #[Test]
     public function it_filters_by_body_type(): void
     {
-        $suv = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Suv]);
-        $sedan = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Sedan]);
+        $suv = $this->makeCar(['body_type' => CarBodyType::Suv]);
+        $sedan = $this->makeCar(['body_type' => CarBodyType::Sedan]);
 
         Livewire::test(CarCatalogue::class)
-            ->set('bodyTypeFilter', [\App\Enums\CarBodyType::Suv->value])
+            ->set('bodyTypeFilter', [CarBodyType::Suv->value])
             ->assertSee($suv->slug)
             ->assertDontSee($sedan->slug);
     }
 
     #[Test]
-    public function removing_a_body_type_chip_clears_just_that_body_type(): void
+    public function an_unrecognised_body_type_in_the_url_does_not_crash_the_page(): void
     {
-        $suv = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Suv]);
-        $sedan = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Sedan]);
+        // CarBodyType::from() throws on an unknown value — a crafted URL like
+        // ?body_type[0]=zzz must not take the whole catalogue page down.
+        Livewire::test(CarCatalogue::class)
+            ->set('bodyTypeFilter', ['zzz'])
+            ->assertOk();
+    }
+
+    #[Test]
+    public function an_unrecognised_make_slug_in_the_url_is_silently_ignored(): void
+    {
+        $toyota = $this->makeCar(['make' => 'Toyota', 'model' => 'Corolla']);
 
         Livewire::test(CarCatalogue::class)
-            ->set('bodyTypeFilter', [\App\Enums\CarBodyType::Suv->value, \App\Enums\CarBodyType::Sedan->value])
-            ->call('removeBodyType', \App\Enums\CarBodyType::Suv->value)
-            ->assertSet('bodyTypeFilter', [\App\Enums\CarBodyType::Sedan->value])
+            ->set('makeFilter', ['not-a-real-make', $toyota->make->slug])
+            ->assertOk()
+            ->assertDontSee('not-a-real-make')
+            ->assertSee('Toyota');
+    }
+
+    #[Test]
+    public function removing_a_body_type_chip_clears_just_that_body_type(): void
+    {
+        $suv = $this->makeCar(['body_type' => CarBodyType::Suv]);
+        $sedan = $this->makeCar(['body_type' => CarBodyType::Sedan]);
+
+        Livewire::test(CarCatalogue::class)
+            ->set('bodyTypeFilter', [CarBodyType::Suv->value, CarBodyType::Sedan->value])
+            ->call('removeBodyType', CarBodyType::Suv->value)
+            ->assertSet('bodyTypeFilter', [CarBodyType::Sedan->value])
             ->assertDontSee($suv->slug)
             ->assertSee($sedan->slug);
     }
@@ -293,7 +344,7 @@ class CarCatalogueTest extends TestCase
         Livewire::test(CarCatalogue::class)
             ->set('makeFilter', [$corolla->make->slug])
             ->set('modelFilter', ['Corolla'])
-            ->set('bodyTypeFilter', [\App\Enums\CarBodyType::Suv->value])
+            ->set('bodyTypeFilter', [CarBodyType::Suv->value])
             ->set('maxMileage', 50000)
             ->call('clearFilters')
             ->assertSet('makeFilter', [])

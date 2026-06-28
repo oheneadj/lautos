@@ -13,10 +13,12 @@ use Filament\Actions\Action;
 use Filament\Forms\Components\Textarea;
 use Filament\Infolists\Components\TextEntry;
 use Filament\Infolists\Components\ViewEntry;
+use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use InvalidArgumentException;
 
 class ViewCustomer extends ViewRecord
 {
@@ -70,7 +72,14 @@ class ViewCustomer extends ViewRecord
                 ->visible(fn () => $customer->kyc_status !== KycStatus::Verified)
                 ->requiresConfirmation()
                 ->action(function () use ($customer) {
-                    app(KycService::class)->verify($customer);
+                    try {
+                        app(KycService::class)->verify($customer);
+                    } catch (InvalidArgumentException $e) {
+                        Notification::make()->danger()->title($e->getMessage())->send();
+
+                        return;
+                    }
+
                     $this->redirect(static::getResource()::getUrl('view', ['record' => $customer]));
                 }),
 

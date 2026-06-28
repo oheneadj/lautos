@@ -33,11 +33,7 @@
                                     INV-{{ strtoupper(substr($order->uuid, 0, 8)) }}
                                 </td>
                                 <td class="px-6 py-4 font-medium text-base-content">
-                                    @if ($order->car)
-                                        {{ $order->car->year }} {{ $order->car->make->name }} {{ $order->car->carModel->name }}
-                                    @else
-                                        {{ __('Car Import Order') }}
-                                    @endif
+                                    {{ $order->car_year }} {{ $order->car_make_name }} {{ $order->car_model_name }}
                                 </td>
                                 <td class="px-6 py-4 font-bold text-base-content">
                                     ${{ number_format($order->total_usd_cents / 100, 2) }}

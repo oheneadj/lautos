@@ -12,6 +12,12 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        // I run only the seeders that are safe on a live database in
+        // production — permissions/roles Filament needs, the real admin
+        // account (idempotent via firstOrCreate), default settings, and
+        // real car-make/model/FAQ reference data. CarSeeder, OrderSeeder,
+        // and BlogPostSeeder are fake demo content and must never touch
+        // a live store, so they're skipped outright outside local/testing.
         $this->call([
             ShieldPermissionsSeeder::class,
             RolesAndPermissionsSeeder::class,
@@ -20,10 +26,15 @@ class DatabaseSeeder extends Seeder
             MakesSeeder::class,
             MakeLogosSeeder::class,
             CarModelsSeeder::class,
-            CarSeeder::class,
-            OrderSeeder::class,
-            BlogPostSeeder::class,
             FaqSeeder::class,
         ]);
+
+        if (! app()->environment('production')) {
+            $this->call([
+                CarSeeder::class,
+                OrderSeeder::class,
+                BlogPostSeeder::class,
+            ]);
+        }
     }
 }

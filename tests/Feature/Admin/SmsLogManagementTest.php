@@ -5,6 +5,8 @@ namespace Tests\Feature\Admin;
 use App\Filament\Resources\SmsLogs\Pages\ListSmsLogs;
 use App\Models\SmsLog;
 use App\Models\User;
+use Database\Seeders\RolesAndPermissionsSeeder;
+use Database\Seeders\ShieldPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -21,7 +23,7 @@ class SmsLogManagementTest extends TestCase
 
     private function actingAsAdmin(): User
     {
-        $this->seed(\Database\Seeders\ShieldPermissionsSeeder::class);
+        $this->seed(ShieldPermissionsSeeder::class);
 
         $user = User::factory()->create(['is_admin' => true]);
         $user->assignRole(Role::findOrCreate('super_admin', 'web'));
@@ -45,5 +47,20 @@ class SmsLogManagementTest extends TestCase
         $log = SmsLog::factory()->create(['phone' => '0551234567']);
 
         Livewire::test(ListSmsLogs::class)->assertCanSeeTableRecords([$log]);
+    }
+
+    #[Test]
+    public function staff_admin_cannot_view_sms_logs(): void
+    {
+        // SMS log messages include the literal OTP code that was sent — only
+        // super_admin should be able to read these, not every panel role.
+        $this->seed(ShieldPermissionsSeeder::class);
+        $this->seed(RolesAndPermissionsSeeder::class);
+
+        $staff = User::factory()->create(['is_admin' => true]);
+        $staff->assignRole(Role::findOrCreate('staff_admin', 'web'));
+        $this->actingAs($staff);
+
+        $this->get(ListSmsLogs::getUrl())->assertForbidden();
     }
 }

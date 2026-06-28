@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Step 2 of customer registration — collects KYC information.
  *
@@ -12,8 +14,8 @@
 
 namespace App\Livewire\Auth;
 
+use App\Http\Requests\CompleteKycRequest;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
 use Livewire\Attributes\Validate;
@@ -27,8 +29,11 @@ class CompleteKyc extends Component
     use WithFileUploads;
 
     public string $phone = '';
+
     public string $address = '';
+
     public string $ghana_card_number = '';
+
     public string $tin_number = '';
 
     // I use nullable TemporaryUploadedFile here — Livewire handles the type via WithFileUploads.
@@ -51,25 +56,21 @@ class CompleteKyc extends Component
 
     public function submit(): void
     {
-        $this->validate([
-            'phone'              => ['required', 'string', 'max:20'],
-            'address'            => ['required', 'string', 'max:500'],
-            'ghana_card_number'  => ['required_without:tin_number', 'nullable', 'string', 'max:50'],
-            'tin_number'         => ['required_without:ghana_card_number', 'nullable', 'string', 'max:50'],
-            'ghana_card_file'    => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
-            'tin_file'           => ['nullable', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:5120'],
-        ], [
-            'ghana_card_number.required_without' => 'Please provide your Ghana Card number or TIN.',
-            'tin_number.required_without'         => 'Please provide your TIN or Ghana Card number.',
-        ]);
+        // I clean the inputs before validation to ensure a smooth user experience
+        $this->phone = preg_replace('/\s+/', '', $this->phone);
+        $this->ghana_card_number = strtoupper(trim($this->ghana_card_number));
+        $this->tin_number = strtoupper(trim($this->tin_number));
+
+        $request = new CompleteKycRequest;
+        $this->validate($request->rules(), $request->messages());
 
         $user = Auth::user();
 
         $data = [
-            'phone'             => $this->phone,
-            'address'           => $this->address,
+            'phone' => $this->phone,
+            'address' => $this->address,
             'ghana_card_number' => $this->ghana_card_number ?: null,
-            'tin_number'        => $this->tin_number ?: null,
+            'tin_number' => $this->tin_number ?: null,
         ];
 
         // I store KYC docs on the private disk — never public.

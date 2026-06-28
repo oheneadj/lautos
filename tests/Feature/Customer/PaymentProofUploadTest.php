@@ -11,9 +11,12 @@ use App\Models\Make;
 use App\Models\Order;
 use App\Models\Setting;
 use App\Models\User;
+use App\Notifications\PaymentProofUploadedNotification;
+use App\Services\OrderService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Support\Facades\Storage;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -75,7 +78,7 @@ class PaymentProofUploadTest extends TestCase
 
         // A rejection sends the order back to Pending Payment, which is the
         // only thing that reopens the upload form for a resubmission.
-        app(\App\Services\OrderService::class)->rejectPayment($order->refresh(), 'Receipt image is unreadable.');
+        app(OrderService::class)->rejectPayment($order->refresh(), 'Receipt image is unreadable.');
 
         $component->set('paymentProofFile', UploadedFile::fake()->image('second.jpg'))->call('uploadPaymentProof');
 
@@ -118,7 +121,7 @@ class PaymentProofUploadTest extends TestCase
         $component = Livewire::actingAs($user)->test(OrderDetail::class, ['order' => $order]);
         $component->set('paymentProofFile', UploadedFile::fake()->image('first.jpg'))->call('uploadPaymentProof');
 
-        app(\App\Services\OrderService::class)->rejectPayment($order->refresh(), 'Receipt image is unreadable.');
+        app(OrderService::class)->rejectPayment($order->refresh(), 'Receipt image is unreadable.');
 
         Livewire::actingAs($user)
             ->test(OrderDetail::class, ['order' => $order])
@@ -141,7 +144,7 @@ class PaymentProofUploadTest extends TestCase
     public function admin_is_notified_by_email_when_a_proof_is_uploaded(): void
     {
         Storage::fake('private');
-        \Illuminate\Support\Facades\Notification::fake();
+        Notification::fake();
         Setting::set('contact_email', 'admin@livingstonautos.com');
 
         $order = $this->makeOrder();
@@ -152,12 +155,40 @@ class PaymentProofUploadTest extends TestCase
             ->set('paymentProofFile', UploadedFile::fake()->image('receipt.jpg'))
             ->call('uploadPaymentProof');
 
-        \Illuminate\Support\Facades\Notification::assertSentOnDemand(
-            \App\Notifications\PaymentProofUploadedNotification::class,
+        Notification::assertSentOnDemand(
+            PaymentProofUploadedNotification::class,
             function ($notification, $channels, $notifiable) {
                 return $notifiable->routes['mail'] === Setting::get('contact_email');
             }
         );
+    }
+
+    #[Test]
+    public function the_proof_record_is_still_created_even_when_the_order_no_longer_matches_the_in_memory_status(): void
+    {
+        // This proves uploadPaymentProof() re-checks the DB rather than the
+        // stale in-memory $this->order property — I move the order to
+        // PaymentUploaded directly in the DB (simulating an admin action
+        // landing between this request's start and its final write) without
+        // ever refreshing the component's own copy, then call the method.
+        Storage::fake('private');
+
+        $order = $this->makeOrder();
+        $user = User::find($order->user_id);
+
+        $component = Livewire::actingAs($user)->test(OrderDetail::class, ['order' => $order]);
+
+        $order->update(['status' => OrderStatus::PaymentUploaded]);
+
+        $component->set('paymentProofFile', UploadedFile::fake()->image('receipt.jpg'))
+            ->call('uploadPaymentProof')
+            ->assertForbidden();
+
+        // The earlier abort_unless still blocks it (status check happens
+        // before the lock), so the proof must NOT be created and the status
+        // an admin already set must NOT be reverted.
+        $this->assertCount(0, $order->refresh()->paymentProofs);
+        $this->assertSame(OrderStatus::PaymentUploaded, $order->status);
     }
 
     #[Test]

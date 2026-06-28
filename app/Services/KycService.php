@@ -10,7 +10,9 @@ namespace App\Services;
 
 use App\Enums\KycStatus;
 use App\Events\KycResubmissionRequested;
+use App\Events\KycVerified;
 use App\Models\User;
+use InvalidArgumentException;
 
 class KycService
 {
@@ -19,10 +21,22 @@ class KycService
      */
     public function verify(User $customer): void
     {
+        // Without this, an admin could mark a customer Verified with no
+        // documents on file at all — e.g. after a prior rejection that was
+        // never resubmitted — and kyc_status gates delivery eligibility.
+        // A customer only ever needs one of the two documents (see
+        // ProfileEditRequest's required_without rules), so I only block
+        // verification when both are missing, not when either one is.
+        if (empty($customer->ghana_card_path) && empty($customer->tin_path)) {
+            throw new InvalidArgumentException('This customer has no KYC documents on file to verify.');
+        }
+
         $customer->update([
             'kyc_status' => KycStatus::Verified,
             'kyc_notes' => null,
         ]);
+
+        KycVerified::dispatch($customer);
     }
 
     /**

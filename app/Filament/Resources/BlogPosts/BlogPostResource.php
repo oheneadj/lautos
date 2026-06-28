@@ -61,4 +61,11 @@ class BlogPostResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
+    // The table shows category.name and author.name on every row — without
+    // this each page of the list triggers two extra queries per post.
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['category', 'author']);
+    }
 }

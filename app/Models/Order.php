@@ -14,13 +14,12 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Str;
-
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
 
 class Order extends Model
 {
-    use HasFactory, SoftDeletes, LogsActivity;
+    use HasFactory, LogsActivity, SoftDeletes;
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -35,6 +34,10 @@ class Order extends Model
         'user_id',
         'car_id',
         'status',
+        'car_year',
+        'car_make_name',
+        'car_model_name',
+        'car_thumbnail_path',
         'price_usd_cents',
         'shipping_cost_usd_cents',
         'estimated_arrival_date',
@@ -46,9 +49,9 @@ class Order extends Model
     protected function casts(): array
     {
         return [
-            'status'                => OrderStatus::class,
-            'estimated_arrival_date'=> 'date',
-            'delivered_at'          => 'datetime',
+            'status' => OrderStatus::class,
+            'estimated_arrival_date' => 'date',
+            'delivered_at' => 'datetime',
         ];
     }
 

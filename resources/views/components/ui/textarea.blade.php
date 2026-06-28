@@ -8,6 +8,7 @@
 
 @php
 $textareaId = $attributes->get('id') ?? 'textarea-' . uniqid();
+$textareaName = $attributes->get('name') ?? \Illuminate\Support\Str::slug(preg_replace('/\s*\(.*?\)/', '', $label ?? $attributes->get('wire:model', 'field')), '_');
 $base = 'w-full px-[14px] py-[10px] text-[15px] bg-base-100 border rounded-md transition-all outline-none placeholder:text-base-content/40';
 $normal = 'border-base-content/10 focus:border-primary focus:ring-3 focus:ring-primary/20';
 $err    = 'border-error focus:ring-3 focus:ring-error/20';
@@ -23,7 +24,7 @@ $classes = $base . ' ' . ($error ? $err : $normal);
 
     <textarea
         rows="{{ $rows }}"
-        {{ $attributes->merge(['class' => $classes, 'id' => $textareaId]) }}
+        {{ $attributes->merge(['class' => $classes, 'id' => $textareaId, 'name' => $textareaName]) }}
     ></textarea>
 
     @if ($error)

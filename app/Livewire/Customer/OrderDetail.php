@@ -14,7 +14,7 @@ use App\Events\PaymentProofUploaded;
 use App\Models\Order;
 use App\Models\Setting;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\DB;
 use Livewire\Attributes\Computed;
 use Livewire\Attributes\Layout;
 use Livewire\Attributes\Title;
@@ -73,7 +73,7 @@ class OrderDetail extends Component
 
         $this->validate([
             'paymentProofFile' => ['required', 'file', 'mimes:jpg,jpeg,png,pdf', 'max:10240'],
-            'transactionNote'  => ['nullable', 'string', 'max:500'],
+            'transactionNote' => ['nullable', 'string', 'max:500'],
         ]);
 
         $path = $this->paymentProofFile->store(
@@ -81,15 +81,23 @@ class OrderDetail extends Component
             'private'
         );
 
-        $this->order->paymentProofs()->create([
-            'file_path' => $path,
-            'note'      => $this->transactionNote ?: null,
-        ]);
+        // I re-lock and re-check status here rather than trusting the
+        // in-memory $this->order — that property was hydrated at the start
+        // of this request and never re-queried, so without this an admin
+        // rejecting/confirming the same order in the moment between request
+        // start and this write could get silently overridden.
+        DB::transaction(function () use ($path) {
+            $locked = Order::lockForUpdate()->findOrFail($this->order->id);
 
-        // Advance the pipeline if we're still waiting for payment.
-        if ($this->order->status === OrderStatus::PendingPayment) {
-            $this->order->update(['status' => OrderStatus::PaymentUploaded]);
-        }
+            $locked->paymentProofs()->create([
+                'file_path' => $path,
+                'note' => $this->transactionNote ?: null,
+            ]);
+
+            if ($locked->status === OrderStatus::PendingPayment) {
+                $locked->update(['status' => OrderStatus::PaymentUploaded]);
+            }
+        });
 
         $this->reset(['paymentProofFile', 'transactionNote']);
         $this->order->refresh();
@@ -121,12 +129,12 @@ class OrderDetail extends Component
             $history = $histories->get($stage->value);
 
             return [
-                'label'     => $stage->label(),
-                'value'     => $stage->value,
+                'label' => $stage->label(),
+                'value' => $stage->value,
                 'completed' => $index < $currentIndex,
-                'current'   => $index === $currentIndex,
-                'future'    => $index > $currentIndex,
-                'date'      => $history?->created_at?->format('M d, Y'),
+                'current' => $index === $currentIndex,
+                'future' => $index > $currentIndex,
+                'date' => $history?->created_at?->format('M d, Y'),
             ];
         })->all();
     }
@@ -135,11 +143,11 @@ class OrderDetail extends Component
     public function paymentInfo(): array
     {
         return [
-            'bank_name'      => Setting::get('bank_name', '—'),
-            'account_name'   => Setting::get('account_name', '—'),
+            'bank_name' => Setting::get('bank_name', '—'),
+            'account_name' => Setting::get('account_name', '—'),
             'account_number' => Setting::get('account_number', '—'),
-            'momo_number'    => Setting::get('momo_number', '—'),
-            'momo_name'      => Setting::get('momo_name', '—'),
+            'momo_number' => Setting::get('momo_number', '—'),
+            'momo_name' => Setting::get('momo_name', '—'),
         ];
     }
 

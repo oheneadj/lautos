@@ -3,8 +3,12 @@
 namespace App\Livewire\Settings;
 
 use App\Concerns\PasswordValidationRules;
+use App\Services\SessionService;
 use Exception;
+use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\ValidationException;
 use Laravel\Fortify\Actions\ConfirmTwoFactorAuthentication;
 use Laravel\Fortify\Actions\DisableTwoFactorAuthentication;
@@ -27,6 +31,10 @@ class Security extends Component
     public string $password = '';
 
     public string $password_confirmation = '';
+
+    public bool $showDisconnectGoogleForm = false;
+
+    public string $disconnect_google_password = '';
 
     #[Locked]
     public bool $canManageTwoFactor;
@@ -85,11 +93,117 @@ class Security extends Component
 
         Auth::user()->update([
             'password' => $validated['password'],
+            'has_password' => true,
         ]);
 
         $this->reset('current_password', 'password', 'password_confirmation');
 
         $this->dispatch('toast', message: __('Password updated.'));
+    }
+
+    /**
+     * Whether the authenticated user has connected a Google account.
+     */
+    #[Computed]
+    public function googleConnected(): bool
+    {
+        return filled(Auth::user()->google_id);
+    }
+
+    /**
+     * Whether the user has ever set a real password — false only for an
+     * account created entirely through Google sign-in.
+     */
+    #[Computed]
+    public function hasPassword(): bool
+    {
+        return Auth::user()->has_password;
+    }
+
+    /**
+     * Every active database session belonging to the authenticated user,
+     * most recently active first, with the current session flagged.
+     *
+     * @return array<int, object>
+     */
+    #[Computed]
+    public function sessions(): array
+    {
+        $currentSessionId = session()->getId();
+
+        return DB::table('sessions')
+            ->where('user_id', Auth::id())
+            ->orderByDesc('last_activity')
+            ->get()
+            ->map(fn ($session) => (object) [
+                'id' => $session->id,
+                'ip_address' => $session->ip_address,
+                'user_agent' => $session->user_agent,
+                'last_active' => Carbon::createFromTimestamp($session->last_activity),
+                'isCurrent' => $session->id === $currentSessionId,
+            ])
+            ->all();
+    }
+
+    /**
+     * Disconnects Google from the authenticated user's account. Requires
+     * confirming the real password — an account that's never set one
+     * (a Google-only signup) can't pass this and can't lock itself out.
+     */
+    public function disconnectGoogle(): void
+    {
+        try {
+            $this->validate([
+                'disconnect_google_password' => $this->currentPasswordRules(),
+            ], [], ['disconnect_google_password' => 'password']);
+        } catch (ValidationException $e) {
+            $this->reset('disconnect_google_password');
+
+            throw $e;
+        }
+
+        Auth::user()->update(['google_id' => null]);
+
+        $this->reset('disconnect_google_password', 'showDisconnectGoogleForm');
+
+        $this->dispatch('toast', message: __('Google account disconnected.'));
+    }
+
+    /**
+     * Emails the authenticated user a password-reset link without making
+     * them log out first — the only way for a Google-only account to set
+     * a real password, since they don't know the random one we generated.
+     */
+    public function sendPasswordSetupLink(): void
+    {
+        Password::sendResetLink(['email' => Auth::user()->email]);
+
+        $this->dispatch('toast', message: __('Check your email for a link to set your password.'));
+    }
+
+    /**
+     * Logs out one specific session of the authenticated user's.
+     */
+    public function logoutSession(string $sessionId): void
+    {
+        DB::table('sessions')
+            ->where('user_id', Auth::id())
+            ->where('id', $sessionId)
+            ->delete();
+
+        unset($this->sessions);
+    }
+
+    /**
+     * Logs out every session except the one currently making this request.
+     */
+    public function logoutOtherSessions(): void
+    {
+        app(SessionService::class)->deleteOtherSessions(Auth::user(), session()->getId());
+
+        unset($this->sessions);
+
+        $this->dispatch('toast', message: __('Logged out of all other sessions.'));
     }
 
     /**

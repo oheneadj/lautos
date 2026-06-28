@@ -7,7 +7,6 @@
 namespace App\Filament\Resources\SupportTickets\Pages;
 
 use App\Filament\Resources\SupportTickets\SupportTicketResource;
-use App\Models\SupportTicket;
 use Filament\Actions\Action;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Textarea;
@@ -78,7 +77,7 @@ class ViewSupportTicket extends ViewRecord
                         ->required(),
                     FileUpload::make('attachment_path')
                         ->label('Attachment (optional)')
-                        ->disk('public')
+                        ->disk('private')
                         ->directory('tickets/attachments'),
                 ])
                 ->action(function (array $data) use ($ticket) {

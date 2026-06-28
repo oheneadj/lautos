@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 /**
  * Handles the public enquiry form — shared by the contact page and the car detail page.
  *
@@ -9,8 +11,10 @@
 namespace App\Livewire\Contact;
 
 use App\Events\ContactEnquirySubmitted;
+use App\Http\Requests\ContactFormRequest;
 use App\Models\Car;
 use App\Models\ContactEnquiry;
+use Illuminate\Support\Facades\RateLimiter;
 use Livewire\Component;
 
 class ContactForm extends Component
@@ -24,10 +28,15 @@ class ContactForm extends Component
     ];
 
     public string $name = '';
+
     public string $email = '';
+
     public string $phone = '';
+
     public string $subject = 'General Enquiry';
+
     public string $message = '';
+
     public bool $submitted = false;
 
     /** Set when the form is embedded on a car detail page, so we know which car the enquiry is about. */
@@ -45,20 +54,24 @@ class ContactForm extends Component
         }
     }
 
-    protected function rules(): array
-    {
-        return [
-            'name'    => 'required|string|max:100',
-            'email'   => 'required|email|max:150',
-            'phone'   => 'nullable|string|max:30',
-            'subject' => 'required|string|max:150',
-            'message' => 'required|string|min:10|max:2000',
-        ];
-    }
-
     public function submit(): void
     {
-        $this->validate();
+        // This form has no auth to key a per-account limit off, so I key by
+        // IP — CLAUDE.md names this form specifically as needing a throttle,
+        // and unlimited public submissions can spam the DB and admin inbox.
+        $throttleKey = 'contact-form:'.request()->ip();
+        if (RateLimiter::tooManyAttempts($throttleKey, maxAttempts: 3)) {
+            $this->addError('message', 'Too many submissions. Please try again in a few minutes.');
+
+            return;
+        }
+
+        $this->phone = preg_replace('/\s+/', '', $this->phone ?? '');
+
+        $request = new ContactFormRequest;
+        $this->validate($request->rules(), $request->messages());
+
+        RateLimiter::hit($throttleKey, decaySeconds: 600);
 
         // I prefix the message with the car's details so admin knows which listing this is about.
         $message = $this->message;
@@ -67,9 +80,9 @@ class ContactForm extends Component
         }
 
         $enquiry = ContactEnquiry::create([
-            'name'    => $this->name,
-            'email'   => $this->email,
-            'phone'   => $this->phone,
+            'name' => $this->name,
+            'email' => $this->email,
+            'phone' => $this->phone,
             'subject' => $this->subject,
             'message' => $message,
         ]);

@@ -21,7 +21,7 @@ class GoogleAuthTest extends TestCase
 
     private function fakeGoogleUser(string $id, string $email, string $name): SocialiteUser
     {
-        $socialiteUser = new SocialiteUser();
+        $socialiteUser = new SocialiteUser;
         $socialiteUser->id = $id;
         $socialiteUser->email = $email;
         $socialiteUser->name = $name;
@@ -72,5 +72,47 @@ class GoogleAuthTest extends TestCase
         $user = User::factory()->create();
 
         $this->actingAs($user)->get(route('auth.google.redirect'))->assertRedirect(route('home'));
+    }
+
+    #[Test]
+    public function a_guest_cannot_visit_the_link_route(): void
+    {
+        $this->get(route('auth.google.link'))->assertRedirect(route('login'));
+    }
+
+    #[Test]
+    public function an_authenticated_customer_can_connect_their_google_account(): void
+    {
+        $user = User::factory()->create(['google_id' => null]);
+        $googleUser = $this->fakeGoogleUser('google-link-1', 'unrelated@example.com', 'Whoever Google Says');
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('redirect')->once()->andReturn(redirect('https://accounts.google.com/fake'));
+        $provider->shouldReceive('user')->once()->andReturn($googleUser);
+        Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
+
+        $this->actingAs($user)->get(route('auth.google.link'))->assertRedirect('https://accounts.google.com/fake');
+        $this->get(route('auth.google.callback'))->assertRedirect(route('security.edit'));
+
+        $this->assertSame('google-link-1', $user->refresh()->google_id);
+    }
+
+    #[Test]
+    public function connecting_a_google_identity_already_used_by_someone_else_does_not_link_it(): void
+    {
+        $other = User::factory()->create(['google_id' => 'google-taken']);
+        $me = User::factory()->create(['google_id' => null]);
+        $googleUser = $this->fakeGoogleUser('google-taken', 'whoever@example.com', 'Whoever');
+
+        $provider = Mockery::mock(Provider::class);
+        $provider->shouldReceive('redirect')->once()->andReturn(redirect('https://accounts.google.com/fake'));
+        $provider->shouldReceive('user')->once()->andReturn($googleUser);
+        Socialite::shouldReceive('driver')->with('google')->andReturn($provider);
+
+        $this->actingAs($me)->get(route('auth.google.link'));
+        $this->get(route('auth.google.callback'))->assertRedirect(route('security.edit'));
+
+        $this->assertNull($me->refresh()->google_id);
+        $this->assertSame('google-taken', $other->refresh()->google_id);
     }
 }

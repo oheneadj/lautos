@@ -27,3 +27,20 @@ test('new users can register', function () {
 
     $this->assertAuthenticated();
 });
+
+test('repeated registration attempts from the same ip are throttled', function () {
+    $attempt = fn (string $email) => $this->post(route('register.store'), [
+        'name' => 'John Doe',
+        'email' => $email,
+        'password' => 'password',
+        'password_confirmation' => 'password',
+    ]);
+
+    for ($i = 0; $i < 5; $i++) {
+        $attempt("test{$i}@example.com")->assertSessionHasNoErrors();
+        auth()->logout();
+    }
+
+    // The 6th attempt within the same minute, from the same IP, should be throttled.
+    $attempt('test-overflow@example.com')->assertStatus(429);
+});

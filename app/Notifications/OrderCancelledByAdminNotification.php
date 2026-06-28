@@ -17,9 +17,7 @@ class OrderCancelledByAdminNotification extends Notification implements ShouldQu
 {
     use Queueable;
 
-    public function __construct(public Order $order, public string $reason)
-    {
-    }
+    public function __construct(public Order $order, public string $reason) {}
 
     /**
      * @return array<int, string>
@@ -37,13 +35,12 @@ class OrderCancelledByAdminNotification extends Notification implements ShouldQu
 
     public function toMail(object $notifiable): MailMessage
     {
-        $car = $this->order->car;
 
         return (new MailMessage)
             ->subject('Order Cancelled')
             ->greeting("Hi {$notifiable->name},")
             ->line("Order reference: {$this->order->reference}")
-            ->line("Your order for the {$car->year} {$car->make->name} {$car->carModel->name} has been cancelled.")
+            ->line("Your order for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} has been cancelled.")
             ->line("Reason: {$this->reason}")
             ->action('Browse Other Cars', route('cars.index'))
             ->line('Contact us if you have any questions.');
@@ -51,10 +48,9 @@ class OrderCancelledByAdminNotification extends Notification implements ShouldQu
 
     public function toGiantSms(object $notifiable): GiantSmsMessage
     {
-        $car = $this->order->car;
 
         return new GiantSmsMessage(
-            "Hi {$notifiable->name}, your order {$this->order->reference} for the {$car->year} {$car->make->name} {$car->carModel->name} has been cancelled. Reason: {$this->reason}"
+            "Hi {$notifiable->name}, your order {$this->order->reference} for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} has been cancelled. Reason: {$this->reason}"
         );
     }
 
@@ -63,11 +59,10 @@ class OrderCancelledByAdminNotification extends Notification implements ShouldQu
      */
     public function toArray(object $notifiable): array
     {
-        $car = $this->order->car;
 
         return [
             'title' => 'Order Cancelled',
-            'message' => "Your order for the {$car->year} {$car->make->name} {$car->carModel->name} was cancelled. Reason: {$this->reason}",
+            'message' => "Your order for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} was cancelled. Reason: {$this->reason}",
             'icon' => 'document',
             'action_url' => route('cars.index'),
             'action_text' => 'Browse Other Cars',

@@ -7,6 +7,7 @@
 
 @php
 $selectId = $attributes->get('id') ?? 'select-' . uniqid();
+$selectName = $attributes->get('name') ?? \Illuminate\Support\Str::slug(preg_replace('/\s*\(.*?\)/', '', $label ?? $attributes->get('wire:model', 'field')), '_');
 $base = 'w-full px-[14px] py-[10px] text-[15px] bg-base-100 border rounded-md transition-all duration-120 outline-none disabled:bg-base-200 disabled:cursor-not-allowed';
 $normal = 'border-base-content/10 focus:border-primary focus:ring-3 focus:ring-primary/20';
 $err    = 'border-error focus:ring-3 focus:ring-error/20';
@@ -20,7 +21,7 @@ $classes = $base . ' ' . ($error ? $err : $normal);
         </label>
     @endif
 
-    <select {{ $attributes->merge(['class' => $classes, 'id' => $selectId]) }}>
+    <select {{ $attributes->merge(['class' => $classes, 'id' => $selectId, 'name' => $selectName]) }}>
         {{ $slot }}
     </select>
 

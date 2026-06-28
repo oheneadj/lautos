@@ -122,7 +122,7 @@
                             <p class="text-[13px] font-medium text-base-content/40">{{ __('Your pipeline is empty.') }}</p>
                         </div>
                     @else
-                        <div class="relative ml-2 space-y-3 mt-2">
+                        <div class="relative ml-2 space-y-3 mt-2 py-2">
                             <!-- Vertical connector line -->
                             <div class="absolute left-1.5 top-2.5 bottom-2.5 w-[2px] bg-base-content/5 rounded-full"></div>
                             
@@ -174,20 +174,12 @@
                             <a href="{{ route('dashboard.orders.show', $order->uuid) }}" wire:navigate class="flex items-center gap-3 px-5 py-3 hover:bg-base-200/60 transition-colors duration-150 group">
                                 {{-- Avatar/Initials --}}
                                 <div class="flex w-9 h-9 flex-shrink-0 items-center justify-center rounded-lg bg-base-200 text-[11px] font-bold text-base-content/60 uppercase">
-                                    @if ($order->car)
-                                        {{ substr($order->car->make->name, 0, 2) }}
-                                    @else
-                                        --
-                                    @endif
+                                    {{ substr($order->car_make_name, 0, 2) }}
                                 </div>
 
                                 <div class="flex-1 min-w-0">
                                     <p class="text-[13px] font-medium text-base-content truncate group-hover:text-primary transition-colors duration-150">
-                                        @if ($order->car)
-                                            {{ $order->car->year }} {{ $order->car->make->name }} {{ $order->car->carModel->name }}
-                                        @else
-                                            {{ __('Car Removed') }}
-                                        @endif
+                                        {{ $order->car_year }} {{ $order->car_make_name }} {{ $order->car_model_name }}
                                     </p>
                                     <div class="flex items-center gap-2 mt-0.5">
                                         <x-ui.badge :type="$order->status->colour()">

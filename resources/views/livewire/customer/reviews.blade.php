@@ -13,7 +13,7 @@
                 @foreach ($this->reviewableOrders as $order)
                     <x-ui.card class="p-5 flex flex-col">
                         <p class="text-[15px] font-bold text-base-content leading-tight">
-                            {{ $order->car->year }} {{ $order->car->make->name }} {{ $order->car->carModel->name }}
+                            {{ $order->car_year }} {{ $order->car_make_name }} {{ $order->car_model_name }}
                         </p>
                         <p class="text-[12px] text-base-content/40 mt-1">{{ __('Order') }} {{ $order->reference }}</p>
                         <button
@@ -53,7 +53,7 @@
                             <x-ui.badge :type="$review->status->colour()">{{ $review->status->label() }}</x-ui.badge>
                         </div>
                         <p class="text-[12px] text-base-content/40 mt-2">
-                            {{ $review->order->car->year }} {{ $review->order->car->make->name }} {{ $review->order->car->carModel->name }}
+                            {{ $review->order->car_year }} {{ $review->order->car_make_name }} {{ $review->order->car_model_name }}
                         </p>
                         <h3 class="font-bold text-[14px] text-base-content mt-2 leading-snug">{{ $review->title }}</h3>
                         <p class="text-[13px] text-base-content/60 leading-relaxed mt-1 flex-1">{{ $review->body }}</p>

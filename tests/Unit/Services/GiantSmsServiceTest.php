@@ -5,6 +5,7 @@ namespace Tests\Unit\Services;
 use App\Enums\SmsLogStatus;
 use App\Services\GiantSmsService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\Client\ConnectionException;
 use Illuminate\Http\Client\Request as HttpRequest;
 use Illuminate\Support\Facades\Http;
 use PHPUnit\Framework\Attributes\Test;
@@ -91,6 +92,28 @@ class GiantSmsServiceTest extends TestCase
         Http::assertNothingSent();
         $this->assertDatabaseHas('sms_logs', [
             'phone' => '0551234567',
+            'status' => SmsLogStatus::Failed->value,
+        ]);
+    }
+
+    #[Test]
+    public function it_logs_and_throws_when_the_gateway_never_responds(): void
+    {
+        config(['services.giantsms.api_key' => 'test-token']);
+        Http::fake(function () {
+            throw new ConnectionException('cURL error 28: Operation timed out');
+        });
+
+        try {
+            app(GiantSmsService::class)->send('0551234567', 'Hello there', 'otp');
+            $this->fail('Expected a RuntimeException to be thrown.');
+        } catch (\RuntimeException $e) {
+            $this->assertStringContainsString('Operation timed out', $e->getMessage());
+        }
+
+        $this->assertDatabaseHas('sms_logs', [
+            'phone' => '0551234567',
+            'context' => 'otp',
             'status' => SmsLogStatus::Failed->value,
         ]);
     }

@@ -7,6 +7,7 @@ use App\Services\SocialAuthService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Socialite\Two\User as SocialiteUser;
 use PHPUnit\Framework\Attributes\Test;
+use RuntimeException;
 use Tests\TestCase;
 
 /**
@@ -18,7 +19,7 @@ class SocialAuthServiceTest extends TestCase
 
     private function makeSocialiteUser(string $id, string $email, string $name): SocialiteUser
     {
-        $socialiteUser = new SocialiteUser();
+        $socialiteUser = new SocialiteUser;
         $socialiteUser->id = $id;
         $socialiteUser->email = $email;
         $socialiteUser->name = $name;
@@ -31,7 +32,7 @@ class SocialAuthServiceTest extends TestCase
     {
         $googleUser = $this->makeSocialiteUser('google-123', 'new@example.com', 'New Customer');
 
-        $user = (new SocialAuthService())->findOrCreateFromGoogle($googleUser);
+        $user = (new SocialAuthService)->findOrCreateFromGoogle($googleUser);
 
         $this->assertDatabaseHas('users', [
             'email' => 'new@example.com',
@@ -40,19 +41,46 @@ class SocialAuthServiceTest extends TestCase
         ]);
         $this->assertNotNull($user->email_verified_at);
         $this->assertNull($user->phone);
+        $this->assertFalse($user->has_password);
     }
 
     #[Test]
-    public function an_existing_email_gets_linked_to_the_google_account_instead_of_duplicated(): void
+    public function signing_in_with_google_using_an_email_that_already_has_a_password_account_is_rejected(): void
     {
+        // I don't auto-link by email match — our own registration never
+        // verifies email ownership, so an attacker could pre-register the
+        // victim's email and silently inherit the victim's Google identity
+        // the moment the real owner signs in with Google. This must throw,
+        // not link.
         $existing = User::factory()->create(['email' => 'existing@example.com']);
         $googleUser = $this->makeSocialiteUser('google-456', 'existing@example.com', 'Existing Customer');
 
-        $user = (new SocialAuthService())->findOrCreateFromGoogle($googleUser);
+        $this->expectException(RuntimeException::class);
 
-        $this->assertSame($existing->id, $user->id);
-        $this->assertSame('google-456', $user->refresh()->google_id);
-        $this->assertSame(1, User::where('email', 'existing@example.com')->count());
+        (new SocialAuthService)->findOrCreateFromGoogle($googleUser);
+    }
+
+    #[Test]
+    public function linking_google_to_the_authenticated_users_account_succeeds(): void
+    {
+        $user = User::factory()->create(['email' => 'me@example.com', 'google_id' => null]);
+        $googleUser = $this->makeSocialiteUser('google-999', 'doesnotmatter@example.com', 'Me');
+
+        (new SocialAuthService)->linkGoogleAccount($user, $googleUser);
+
+        $this->assertSame('google-999', $user->refresh()->google_id);
+    }
+
+    #[Test]
+    public function linking_a_google_identity_already_used_by_a_different_account_is_rejected(): void
+    {
+        $other = User::factory()->create(['google_id' => 'google-already-taken']);
+        $me = User::factory()->create(['google_id' => null]);
+        $googleUser = $this->makeSocialiteUser('google-already-taken', 'whatever@example.com', 'Whoever');
+
+        $this->expectException(RuntimeException::class);
+
+        (new SocialAuthService)->linkGoogleAccount($me, $googleUser);
     }
 
     #[Test]
@@ -60,7 +88,7 @@ class SocialAuthServiceTest extends TestCase
     {
         $googleUser = $this->makeSocialiteUser('google-789', 'returning@example.com', 'Returning Customer');
 
-        $service = new SocialAuthService();
+        $service = new SocialAuthService;
         $first = $service->findOrCreateFromGoogle($googleUser);
         $second = $service->findOrCreateFromGoogle($googleUser);
 

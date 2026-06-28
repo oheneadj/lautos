@@ -11,6 +11,7 @@ use App\Models\Make;
 use App\Models\Order;
 use App\Models\Review;
 use App\Models\User;
+use Database\Seeders\ShieldPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
@@ -37,7 +38,7 @@ class ReviewManagementTest extends TestCase
 
     private function actingAsAdmin(): User
     {
-        $this->seed(\Database\Seeders\ShieldPermissionsSeeder::class);
+        $this->seed(ShieldPermissionsSeeder::class);
 
         $user = User::factory()->create(['is_admin' => true]);
         $user->assignRole(Role::findOrCreate('super_admin', 'web'));
@@ -99,5 +100,24 @@ class ReviewManagementTest extends TestCase
             ->callTableAction('delete', $review);
 
         $this->assertDatabaseMissing('reviews', ['id' => $review->id]);
+    }
+
+    #[Test]
+    public function a_role_without_update_review_permission_cannot_approve_or_reject(): void
+    {
+        $this->seed(ShieldPermissionsSeeder::class);
+
+        $viewer = User::factory()->create(['is_admin' => true]);
+        $viewer->assignRole(Role::findOrCreate('review_viewer', 'web'));
+        $viewer->syncPermissions(['ViewAny:Review', 'View:Review']);
+        $this->actingAs($viewer);
+
+        $review = $this->makeReview();
+
+        Livewire::test(ListReviews::class)
+            ->assertTableActionHidden('approve', $review)
+            ->assertTableActionHidden('reject', $review);
+
+        $this->assertSame(ReviewStatus::Pending, $review->refresh()->status);
     }
 }

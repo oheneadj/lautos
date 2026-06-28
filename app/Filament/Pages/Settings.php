@@ -37,7 +37,23 @@ class Settings extends Page implements HasForms
 
     public function mount(): void
     {
-        $this->form->fill(app(SettingsService::class)->all());
+        $data = app(SettingsService::class)->all();
+
+        // disabled() only blocks editing in the browser — the field still
+        // renders its current value, so without this a staff_admin (who only
+        // has Order permissions) could read the real bank/MoMo numbers just
+        // by opening this page. I strip them from the form state itself so
+        // there's nothing to leak, mirroring the same checks save() already
+        // does on the way back in.
+        if (! Auth::user()?->hasRole('super_admin')) {
+            $data = array_diff_key($data, array_flip(self::SUPER_ADMIN_ONLY_KEYS));
+        }
+
+        if (Gate::denies('update_exchange_rate')) {
+            unset($data['exchange_rate_usd_to_ghs']);
+        }
+
+        $this->form->fill($data);
     }
 
     public function form(Schema $schema): Schema
@@ -98,7 +114,7 @@ class Settings extends Page implements HasForms
                     ]),
 
                 Section::make('Exchange Rate')
-                    ->description('Used to show GHS prices on every car listing. Last updated: ' . (Setting::get('exchange_rate_usd_to_ghs_updated_at') ?? 'never'))
+                    ->description('Used to show GHS prices on every car listing. Last updated: '.(Setting::get('exchange_rate_usd_to_ghs_updated_at') ?? 'never'))
                     ->aside()
                     ->icon(Heroicon::OutlinedCurrencyDollar)
                     ->schema([
@@ -139,10 +155,31 @@ class Settings extends Page implements HasForms
             ->statePath('data');
     }
 
+    /**
+     * Fields whose form inputs are only disabled() client-side — that's a UI
+     * hint, not a backend guarantee, so I re-check permission here before
+     * persisting anything. Without this, a tampered Livewire payload could
+     * let a non-super-admin redirect where customer payments go.
+     *
+     * @var array<int, string>
+     */
+    private const SUPER_ADMIN_ONLY_KEYS = [
+        'bank_name', 'bank_account_name', 'bank_account_number',
+        'momo_number', 'momo_name',
+    ];
+
     public function save(): void
     {
         $data = $this->form->getState();
         $service = app(SettingsService::class);
+
+        if (! Auth::user()?->hasRole('super_admin')) {
+            $data = array_diff_key($data, array_flip(self::SUPER_ADMIN_ONLY_KEYS));
+        }
+
+        if (Gate::denies('update_exchange_rate')) {
+            unset($data['exchange_rate_usd_to_ghs']);
+        }
 
         foreach ($data as $key => $value) {
             $service->update($key, $value);

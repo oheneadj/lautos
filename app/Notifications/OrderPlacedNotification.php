@@ -18,9 +18,7 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     /**
      * @return array<int, string>
@@ -40,14 +38,13 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $car = $this->order->car;
         $total = number_format($this->order->total_usd_cents / 100, 0);
 
         return (new MailMessage)
             ->subject('Order Confirmed — Payment Instructions')
             ->greeting("Hi {$notifiable->name},")
             ->line("Order reference: {$this->order->reference}")
-            ->line("We've reserved the {$car->year} {$car->make->name} {$car->carModel->name} for you. Total due: \${$total}.")
+            ->line("We've reserved the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} for you. Total due: \${$total}.")
             ->line('Bank: '.Setting::get('bank_name', '—').' · Account: '.Setting::get('account_number', '—').' ('.Setting::get('account_name', '—').')')
             ->line('Mobile Money: '.Setting::get('momo_number', '—').' ('.Setting::get('momo_name', '—').')')
             ->action('View Your Order', route('dashboard.orders.show', $this->order->uuid))
@@ -56,12 +53,11 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
 
     public function toGiantSms(object $notifiable): GiantSmsMessage
     {
-        $car = $this->order->car;
         $total = number_format($this->order->total_usd_cents / 100, 0);
         $url = route('dashboard.orders.show', $this->order->uuid);
 
         return new GiantSmsMessage(
-            "Hi {$notifiable->name}, your order {$this->order->reference} for the {$car->year} {$car->make->name} {$car->carModel->name} is confirmed. Total: \${$total}. Upload payment proof at {$url}"
+            "Hi {$notifiable->name}, your order {$this->order->reference} for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} is confirmed. Total: \${$total}. Upload payment proof at {$url}"
         );
     }
 
@@ -70,12 +66,11 @@ class OrderPlacedNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
-        $car = $this->order->car;
         $total = number_format($this->order->total_usd_cents / 100, 0);
 
         return [
             'title' => 'Order Confirmed',
-            'message' => "We've reserved the {$car->year} {$car->make->name} {$car->carModel->name} for you. Total due: \${$total}.",
+            'message' => "We've reserved the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} for you. Total due: \${$total}.",
             'icon' => 'check',
             'action_url' => route('dashboard.orders.show', $this->order->uuid),
             'action_text' => 'View Order',

@@ -4,6 +4,10 @@ namespace Tests\Feature\Admin;
 
 use App\Enums\CarStatus;
 use App\Enums\OrderStatus;
+use App\Events\OrderCancelledByAdmin;
+use App\Events\OrderStageUpdated;
+use App\Events\PaymentConfirmed;
+use App\Events\PaymentRejected;
 use App\Filament\Resources\Orders\OrderResource;
 use App\Filament\Resources\Orders\Pages\EditOrder;
 use App\Filament\Resources\Orders\Pages\ListOrders;
@@ -13,6 +17,7 @@ use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
 use App\Models\User;
+use Database\Seeders\ShieldPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Livewire\Livewire;
@@ -31,7 +36,7 @@ class OrderManagementTest extends TestCase
 
     private function actingAsAdmin(): User
     {
-        $this->seed(\Database\Seeders\ShieldPermissionsSeeder::class);
+        $this->seed(ShieldPermissionsSeeder::class);
 
         $user = User::factory()->create(['is_admin' => true]);
         $user->assignRole(Role::findOrCreate('super_admin', 'web'));
@@ -122,7 +127,7 @@ class OrderManagementTest extends TestCase
     #[Test]
     public function admin_can_confirm_payment_from_the_order_page(): void
     {
-        Event::fake([\App\Events\PaymentConfirmed::class]);
+        Event::fake([PaymentConfirmed::class]);
         $this->actingAsAdmin();
 
         $order = $this->makeOrder(['status' => OrderStatus::PaymentUploaded]);
@@ -135,9 +140,35 @@ class OrderManagementTest extends TestCase
     }
 
     #[Test]
+    public function a_role_without_update_order_permission_cannot_confirm_payment(): void
+    {
+        // No seeded role today actually lacks Update:Order, but the action
+        // itself must still enforce the policy — this proves authorize()
+        // is really wired rather than relying on the seeded roles happening
+        // to always have the permission.
+        $this->seed(ShieldPermissionsSeeder::class);
+
+        $viewer = User::factory()->create(['is_admin' => true]);
+        $viewer->assignRole(Role::findOrCreate('order_viewer', 'web'));
+        $viewer->syncPermissions(['ViewAny:Order', 'View:Order']);
+        $this->actingAs($viewer);
+
+        $order = $this->makeOrder(['status' => OrderStatus::PaymentUploaded]);
+
+        // A denied authorize() hides the action by default (Filament's
+        // CanBeHidden::isHidden() folds in isAuthorizedOrNotHiddenWhenUnauthorized()).
+        // Filament's own test helper refuses to call a hidden action at all,
+        // which is itself proof the gate holds — there's no further state to check.
+        Livewire::test(ViewOrder::class, ['record' => $order->uuid])
+            ->assertActionHidden('confirmPayment');
+
+        $this->assertSame(OrderStatus::PaymentUploaded, $order->refresh()->status);
+    }
+
+    #[Test]
     public function admin_can_reject_payment_with_a_reason(): void
     {
-        Event::fake([\App\Events\PaymentRejected::class]);
+        Event::fake([PaymentRejected::class]);
         $this->actingAsAdmin();
 
         $order = $this->makeOrder(['status' => OrderStatus::PaymentUploaded]);
@@ -152,7 +183,7 @@ class OrderManagementTest extends TestCase
     #[Test]
     public function admin_can_cancel_a_confirmed_order_and_release_the_reserved_car(): void
     {
-        Event::fake([\App\Events\OrderCancelledByAdmin::class]);
+        Event::fake([OrderCancelledByAdmin::class]);
         $this->actingAsAdmin();
 
         $order = $this->makeOrder(['status' => OrderStatus::PaymentConfirmed]);
@@ -169,7 +200,7 @@ class OrderManagementTest extends TestCase
     #[Test]
     public function admin_can_advance_the_order_to_the_next_stage(): void
     {
-        Event::fake([\App\Events\OrderStageUpdated::class]);
+        Event::fake([OrderStageUpdated::class]);
         $this->actingAsAdmin();
 
         $order = $this->makeOrder(['status' => OrderStatus::PaymentConfirmed]);

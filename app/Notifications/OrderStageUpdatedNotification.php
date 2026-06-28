@@ -18,9 +18,7 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     /**
      * @return array<int, string>
@@ -38,17 +36,16 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $car = $this->order->car;
         $stage = $this->order->status->label();
 
         $mail = (new MailMessage)
             ->subject("Order Update — {$stage}")
             ->greeting("Hi {$notifiable->name},")
             ->line("Order reference: {$this->order->reference}")
-            ->line("Your order for the {$car->year} {$car->make->name} {$car->carModel->name} has moved to: {$stage}.");
+            ->line("Your order for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} has moved to: {$stage}.");
 
         if ($this->order->estimated_arrival_date) {
-            $mail->line('Estimated arrival in Ghana: ' . $this->order->estimated_arrival_date->format('M j, Y'));
+            $mail->line('Estimated arrival in Ghana: '.$this->order->estimated_arrival_date->format('M j, Y'));
         }
 
         // The clearing/demurrage warning is the one piece of stage-specific
@@ -59,12 +56,12 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
         }
 
         if ($this->order->status === OrderStatus::Delivered) {
-            $mail->line('Your car has been delivered. Thank you for choosing ' . config('app.name') . '!');
+            $mail->line('Your car has been delivered. Thank you for choosing '.config('app.name').'!');
         }
 
         return $mail
             ->action('Track Your Order', route('dashboard.orders.show', $this->order->uuid))
-            ->line('Thank you for choosing ' . config('app.name') . '.');
+            ->line('Thank you for choosing '.config('app.name').'.');
     }
 
     public function toGiantSms(object $notifiable): GiantSmsMessage
@@ -82,12 +79,11 @@ class OrderStageUpdatedNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
-        $car = $this->order->car;
         $stage = $this->order->status->label();
 
         return [
             'title' => "Order Update — {$stage}",
-            'message' => "Your order for the {$car->year} {$car->make->name} {$car->carModel->name} has moved to: {$stage}.",
+            'message' => "Your order for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name} has moved to: {$stage}.",
             'icon' => 'truck',
             'action_url' => route('dashboard.orders.show', $this->order->uuid),
             'action_text' => 'Track Order',

@@ -53,6 +53,110 @@
         </div>
     </x-ui.card>
 
+    {{-- Connected Accounts Card --}}
+    <x-ui.card class="overflow-hidden">
+        <div class="p-6 md:p-8 space-y-6">
+            <div class="border-b border-base-content/5 pb-2.5">
+                <h2 class="text-[11px] font-bold uppercase tracking-widest text-base-content/60">
+                    {{ __('Connected Accounts') }}
+                </h2>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-medium text-base-content">{{ __('Google') }}</p>
+                    @if ($this->googleConnected)
+                        <p class="text-[12px] text-success">{{ __('Connected') }}</p>
+                    @else
+                        <p class="text-[12px] text-base-content/50">{{ __('Not connected') }}</p>
+                    @endif
+                </div>
+
+                @if ($this->googleConnected)
+                    <x-ui.button variant="danger" wire:click="$set('showDisconnectGoogleForm', true)">
+                        {{ __('Disconnect') }}
+                    </x-ui.button>
+                @else
+                    <x-ui.button variant="outline" href="{{ route('auth.google.link') }}">
+                        {{ __('Connect Google account') }}
+                    </x-ui.button>
+                @endif
+            </div>
+
+            @if ($showDisconnectGoogleForm)
+                <form wire:submit="disconnectGoogle" class="space-y-4 rounded-lg border border-base-300 p-4">
+                    <p class="text-sm text-base-content/60">
+                        {{ __('Confirm your password to disconnect Google.') }}
+                    </p>
+                    <x-ui.input
+                        label="Password"
+                        id="disconnect_google_password"
+                        name="disconnect_google_password"
+                        type="password"
+                        wire:model="disconnect_google_password"
+                        :required="true"
+                        autocomplete="current-password"
+                        :error="$errors->first('disconnect_google_password')"
+                    />
+                    <div class="flex items-center gap-3">
+                        <x-ui.button type="submit" variant="danger" wire:loading.attr="disabled">{{ __('Disconnect') }}</x-ui.button>
+                        <x-ui.button type="button" variant="outline" wire:click="$set('showDisconnectGoogleForm', false)">{{ __('Cancel') }}</x-ui.button>
+                    </div>
+                </form>
+            @endif
+
+            @unless ($this->hasPassword)
+                <div class="flex items-center justify-between rounded-lg border border-base-300 p-4">
+                    <p class="text-sm text-base-content/60">
+                        {{ __("You signed up with Google and don't have a password yet. Add one to also sign in with your email.") }}
+                    </p>
+                    <x-ui.button variant="outline" wire:click="sendPasswordSetupLink" wire:loading.attr="disabled">
+                        {{ __('Add Password') }}
+                    </x-ui.button>
+                </div>
+            @endunless
+        </div>
+    </x-ui.card>
+
+    {{-- Active Sessions Card --}}
+    <x-ui.card class="overflow-hidden">
+        <div class="p-6 md:p-8 space-y-6">
+            <div class="flex items-center justify-between border-b border-base-content/5 pb-2.5">
+                <h2 class="text-[11px] font-bold uppercase tracking-widest text-base-content/60">
+                    {{ __('Active Sessions') }}
+                </h2>
+                @if (count($this->sessions) > 1)
+                    <x-ui.button variant="outline" wire:click="logoutOtherSessions" wire:loading.attr="disabled">
+                        {{ __('Log out all other sessions') }}
+                    </x-ui.button>
+                @endif
+            </div>
+
+            <div class="space-y-3">
+                @foreach ($this->sessions as $session)
+                    <div class="flex items-center justify-between gap-4 rounded-lg border border-base-300 p-3">
+                        <div class="text-sm">
+                            <p class="font-medium text-base-content">
+                                {{ $session->user_agent ?: __('Unknown device') }}
+                                @if ($session->isCurrent)
+                                    <span class="text-[11px] font-semibold text-success">{{ __('This device') }}</span>
+                                @endif
+                            </p>
+                            <p class="text-[12px] text-base-content/50">
+                                {{ $session->ip_address }} &middot; {{ __('Last active') }} {{ $session->last_active->diffForHumans() }}
+                            </p>
+                        </div>
+                        @unless ($session->isCurrent)
+                            <x-ui.button variant="outline" wire:click="logoutSession('{{ $session->id }}')">
+                                {{ __('Log out') }}
+                            </x-ui.button>
+                        @endunless
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </x-ui.card>
+
     {{-- 2FA Card --}}
     @if ($canManageTwoFactor)
         <x-ui.card class="overflow-hidden">

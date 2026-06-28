@@ -2,6 +2,7 @@
 
 use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Notification;
 use Laravel\Fortify\Features;
 
@@ -62,4 +63,31 @@ test('password can be reset with valid token', function () {
 
         return true;
     });
+});
+
+test('resetting a password logs out every other active session for that user', function () {
+    Notification::fake();
+
+    $user = User::factory()->create(['has_password' => false]);
+
+    DB::table('sessions')->insert([
+        ['id' => 'attacker-session', 'user_id' => $user->id, 'payload' => 'x', 'last_activity' => time()],
+        ['id' => 'another-device', 'user_id' => $user->id, 'payload' => 'x', 'last_activity' => time()],
+    ]);
+
+    $this->post(route('password.request'), ['email' => $user->email]);
+
+    Notification::assertSentTo($user, ResetPassword::class, function ($notification) use ($user) {
+        $this->post(route('password.update'), [
+            'token' => $notification->token,
+            'email' => $user->email,
+            'password' => 'password',
+            'password_confirmation' => 'password',
+        ]);
+
+        return true;
+    });
+
+    $this->assertDatabaseCount('sessions', 0);
+    $this->assertTrue($user->refresh()->has_password);
 });

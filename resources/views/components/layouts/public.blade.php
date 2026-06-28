@@ -8,10 +8,39 @@
         if (! \Artesaos\SEOTools\Facades\SEOMeta::getTitle() && ($title ?? null)) {
             \Artesaos\SEOTools\Facades\SEOMeta::setTitle($title . ' — Quality Japanese & Korean Imports');
         }
+
+        // Site-wide Organization schema, sourced entirely from Settings — I
+        // always start a fresh JsonLdMulti group here so this never overwrites
+        // whatever a route already added (Breadcrumb/Article/FAQPage).
+        \Artesaos\SEOTools\Facades\JsonLdMulti::newJsonLd();
+        \Artesaos\SEOTools\Facades\JsonLdMulti::setType('Organization');
+        \Artesaos\SEOTools\Facades\JsonLdMulti::setTitle(\App\Models\Setting::get('site_name', config('app.name')));
+        $orgSameAs = array_values(array_filter([
+            \App\Models\Setting::get('facebook_url'),
+            \App\Models\Setting::get('instagram_url'),
+            \App\Models\Setting::get('twitter_url'),
+        ]));
+        if ($orgSameAs) {
+            \Artesaos\SEOTools\Facades\JsonLdMulti::addValue('sameAs', $orgSameAs);
+        }
+        if (\App\Models\Setting::get('contact_email')) {
+            \Artesaos\SEOTools\Facades\JsonLdMulti::addValue('email', \App\Models\Setting::get('contact_email'));
+        }
+        if (\App\Models\Setting::get('contact_phone')) {
+            \Artesaos\SEOTools\Facades\JsonLdMulti::addValue('telephone', \App\Models\Setting::get('contact_phone'));
+        }
+        if (\App\Models\Setting::get('contact_address')) {
+            \Artesaos\SEOTools\Facades\JsonLdMulti::addValue('address', [
+                '@type' => 'PostalAddress',
+                'streetAddress' => \App\Models\Setting::get('contact_address'),
+            ]);
+        }
     @endphp
     {!! SEOMeta::generate() !!}
     {!! OpenGraph::generate() !!}
+    {!! \Artesaos\SEOTools\Facades\TwitterCard::generate() !!}
     {!! JsonLd::generate() !!}
+    {!! \Artesaos\SEOTools\Facades\JsonLdMulti::generate() !!}
 
     {{-- app.css sets Plus Jakarta Sans as font-sans, but the font itself still has to be fetched from somewhere. --}}
     <link rel="preconnect" href="https://fonts.bunny.net">

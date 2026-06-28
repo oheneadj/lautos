@@ -2,13 +2,18 @@
 
 namespace Tests\Feature\Admin;
 
+use App\Enums\CarBodyType;
 use App\Enums\CarStatus;
+use App\Filament\Resources\Cars\Pages\CreateCar;
 use App\Filament\Resources\Cars\Pages\ListCars;
+use App\Filament\Resources\Cars\Pages\ViewCar;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\User;
+use Database\Seeders\ShieldPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Http\UploadedFile;
 use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Spatie\Permission\Models\Role;
@@ -35,7 +40,7 @@ class CarManagementTest extends TestCase
 
     private function actingAsAdmin(): User
     {
-        $this->seed(\Database\Seeders\ShieldPermissionsSeeder::class);
+        $this->seed(ShieldPermissionsSeeder::class);
 
         $user = User::factory()->create(['is_admin' => true]);
         $user->assignRole(Role::findOrCreate('super_admin', 'web'));
@@ -88,11 +93,11 @@ class CarManagementTest extends TestCase
     {
         $this->actingAsAdmin();
 
-        $suv = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Suv]);
-        $sedan = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Sedan]);
+        $suv = $this->makeCar(['body_type' => CarBodyType::Suv]);
+        $sedan = $this->makeCar(['body_type' => CarBodyType::Sedan]);
 
         Livewire::test(ListCars::class)
-            ->filterTable('body_type', \App\Enums\CarBodyType::Suv->value)
+            ->filterTable('body_type', CarBodyType::Suv->value)
             ->assertCanSeeTableRecords([$suv])
             ->assertCanNotSeeTableRecords([$sedan]);
     }
@@ -102,9 +107,9 @@ class CarManagementTest extends TestCase
     {
         $this->actingAsAdmin();
 
-        $car = $this->makeCar(['body_type' => \App\Enums\CarBodyType::Suv]);
+        $car = $this->makeCar(['body_type' => CarBodyType::Suv]);
 
-        Livewire::test(\App\Filament\Resources\Cars\Pages\ViewCar::class, ['record' => $car->uuid])
+        Livewire::test(ViewCar::class, ['record' => $car->uuid])
             ->assertOk()
             ->assertSee('SUV');
     }
@@ -117,7 +122,7 @@ class CarManagementTest extends TestCase
         $make = Make::firstOrCreate(['name' => 'Toyota']);
         $carModel = CarModel::firstOrCreate(['make_id' => $make->id, 'name' => 'Corolla']);
 
-        Livewire::test(\App\Filament\Resources\Cars\Pages\CreateCar::class)
+        Livewire::test(CreateCar::class)
             ->fillForm([
                 'make_id' => $make->id,
                 'car_model_id' => $carModel->id,
@@ -128,11 +133,11 @@ class CarManagementTest extends TestCase
                 'mileage' => 30000,
                 'colour' => 'White',
                 'country_of_origin' => 'Japan',
-                'body_type' => \App\Enums\CarBodyType::Sedan->value,
+                'body_type' => CarBodyType::Sedan->value,
                 'image_paths' => [
-                    \Illuminate\Http\UploadedFile::fake()->image('a.jpg'),
-                    \Illuminate\Http\UploadedFile::fake()->image('b.jpg'),
-                    \Illuminate\Http\UploadedFile::fake()->image('c.jpg'),
+                    UploadedFile::fake()->image('a.jpg'),
+                    UploadedFile::fake()->image('b.jpg'),
+                    UploadedFile::fake()->image('c.jpg'),
                 ],
                 'price_usd_cents' => 150,
                 'shipping_cost_usd_cents' => 20,
@@ -142,7 +147,7 @@ class CarManagementTest extends TestCase
 
         $this->assertDatabaseHas('cars', [
             'make_id' => $make->id,
-            'body_type' => \App\Enums\CarBodyType::Sedan->value,
+            'body_type' => CarBodyType::Sedan->value,
         ]);
     }
 
@@ -157,6 +162,27 @@ class CarManagementTest extends TestCase
             ->callTableBulkAction('changeStatus', [$car], data: ['status' => CarStatus::Reserved->value]);
 
         $this->assertSame(CarStatus::Reserved, $car->refresh()->status);
+    }
+
+    #[Test]
+    public function a_role_without_update_car_permission_cannot_change_status(): void
+    {
+        $this->seed(ShieldPermissionsSeeder::class);
+
+        $viewer = User::factory()->create(['is_admin' => true]);
+        $viewer->assignRole(Role::findOrCreate('car_viewer', 'web'));
+        $viewer->syncPermissions(['ViewAny:Car', 'View:Car']);
+        $this->actingAs($viewer);
+
+        $car = $this->makeCar(['status' => CarStatus::Available]);
+
+        // The bulk version uses authorizeIndividualRecords(), so it stays
+        // visible but must silently skip records the user can't update.
+        Livewire::test(ListCars::class)
+            ->assertTableActionHidden('changeStatus', $car)
+            ->callTableBulkAction('changeStatus', [$car], data: ['status' => CarStatus::Reserved->value]);
+
+        $this->assertSame(CarStatus::Available, $car->refresh()->status);
     }
 
     #[Test]

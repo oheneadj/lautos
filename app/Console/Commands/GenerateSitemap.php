@@ -9,7 +9,6 @@
 
 namespace App\Console\Commands;
 
-use App\Enums\CarStatus;
 use App\Models\BlogPost;
 use App\Models\Car;
 use Illuminate\Console\Command;
@@ -41,7 +40,10 @@ class GenerateSitemap extends Command
             ->add(Url::create(route('pages.privacy'))->setPriority(0.3))
             ->add(Url::create(route('pages.fraud-awareness'))->setPriority(0.4));
 
-        Car::where('status', CarStatus::Available)->get()->each(
+        // I use the same visibility scope as the public catalogue itself, not
+        // a strict Available check, so the sitemap never drifts from what's
+        // actually indexable on the site (Reserved cars are still browsable).
+        Car::visibleOnCatalogue()->get()->each(
             fn (Car $car) => $sitemap->add(
                 Url::create(route('cars.show', $car->slug))
                     ->setLastModificationDate($car->updated_at)

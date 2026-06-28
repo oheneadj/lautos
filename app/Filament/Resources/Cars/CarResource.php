@@ -64,4 +64,11 @@ class CarResource extends Resource
                 SoftDeletingScope::class,
             ]);
     }
+
+    // The table shows make.name, carModel.name, and the first image on every
+    // row — without this each page of the list triggers three extra queries per car.
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['make', 'carModel', 'images']);
+    }
 }

@@ -57,7 +57,6 @@
 
             {{-- Right Side: Accordions --}}
             <div class="lg:col-span-8 space-y-4">
-                @php $faqs = \App\Models\Faq::ordered()->get(); @endphp
                 @foreach ($faqs as $faq)
                     <details class="group bg-white rounded-2xl shadow-xl shadow-gray-200/50 border border-gray-100 [&_summary::-webkit-details-marker]:hidden" @if ($loop->first) open @endif>
                         <summary class="flex items-center justify-between cursor-pointer p-6 md:p-8">

@@ -181,7 +181,7 @@
 
                         <div class="space-y-6">
                             {{-- Ghana Card --}}
-                            <div class="bg-base-200 p-6 rounded-xl border border-base-content/5 {{ $fieldsLocked ? 'opacity-80' : '' }}">
+                            <div class="bg-base-200 p-6 rounded-xl border border-base-content/5 transition-opacity duration-300 {{ $fieldsLocked ? 'opacity-80' : '' }}">
                                 <div class="grid gap-6 sm:grid-cols-2 items-start">
                                     <div>
                                         <x-ui.input
@@ -202,7 +202,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <div>
+                                    <div wire:key="ghana-card-upload-{{ $fieldsLocked ? 'locked' : 'unlocked' }}" wire:transition>
                                         @if (!$fieldsLocked)
                                             <label class="text-[13px] font-medium text-base-content block mb-1.5">{{ __('Upload Ghana Card') }}</label>
                                             <x-ui.filepond
@@ -234,7 +234,7 @@
                             </div>
 
                             {{-- TIN --}}
-                            <div class="bg-base-200 p-6 rounded-xl border border-base-content/5 {{ $fieldsLocked ? 'opacity-80' : '' }}">
+                            <div class="bg-base-200 p-6 rounded-xl border border-base-content/5 transition-opacity duration-300 {{ $fieldsLocked ? 'opacity-80' : '' }}">
                                 <div class="grid gap-6 sm:grid-cols-2 items-start">
                                     <div>
                                         <x-ui.input
@@ -253,7 +253,7 @@
                                             </div>
                                         @endif
                                     </div>
-                                    <div>
+                                    <div wire:key="tin-upload-{{ $fieldsLocked ? 'locked' : 'unlocked' }}" wire:transition>
                                         @if (!$fieldsLocked)
                                             <label class="text-[13px] font-medium text-base-content block mb-1.5">{{ __('Upload TIN Document') }}</label>
                                             <x-ui.filepond
@@ -282,11 +282,22 @@
 
                 {{-- Form Footer --}}
                 <div class="border-t border-base-content/5 bg-base-200/30 px-6 py-4 flex items-center justify-end gap-3">
-                    <span wire:loading wire:target="updateProfile, ghana_card_file, tin_file" class="text-[12px] text-base-content/40 font-medium">
+                    <span
+                        wire:loading
+                        wire:target="updateProfile, ghana_card_file, tin_file"
+                        class="text-[12px] text-base-content/40 font-medium transition-opacity duration-200"
+                    >
                         {{ __('Uploading / Processing...') }}
                     </span>
-                    <x-ui.button type="submit" variant="primary" wire:loading.attr="disabled">
-                        {{ __('Save Changes') }}
+                    <x-ui.button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="updateProfile">
+                        <span wire:loading.remove wire:target="updateProfile">{{ __('Save Changes') }}</span>
+                        <span wire:loading wire:target="updateProfile" class="inline-flex items-center gap-1.5">
+                            <svg class="w-3.5 h-3.5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                            </svg>
+                            {{ __('Saving...') }}
+                        </span>
                     </x-ui.button>
                 </div>
             </form>
@@ -323,13 +334,6 @@
                         </div>
                     </form>
                 </div>
-            </div>
-        @endif
-
-        {{-- Delete Account Section --}}
-        @if ($this->showDeleteUser)
-            <div class="mt-8">
-                <livewire:settings.delete-user-form />
             </div>
         @endif
     </div>

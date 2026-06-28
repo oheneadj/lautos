@@ -64,6 +64,7 @@ class Dashboard extends Component
     public function needsEmailVerification(): bool
     {
         $user = Auth::user();
+
         return $user instanceof MustVerifyEmail && ! $user->hasVerifiedEmail();
     }
 
@@ -71,6 +72,7 @@ class Dashboard extends Component
     public function needsKyc(): bool
     {
         $user = Auth::user();
+
         return $user->kyc_status !== KycStatus::Verified;
     }
 
@@ -111,7 +113,7 @@ class Dashboard extends Component
         return Auth::user()->orders()
             ->with(['car.make', 'car.carModel', 'car.images'])
             ->latest()
-            ->take(4)
+            ->take(5)
             ->get();
     }
 

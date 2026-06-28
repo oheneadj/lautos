@@ -8,11 +8,7 @@
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
                     <h1 class="text-[28px] font-semibold text-base-content leading-tight">
-                        @if ($order->car)
-                            {{ $order->car->year }} {{ $order->car->make->name }} {{ $order->car->carModel->name }}
-                        @else
-                            {{ __('Order Details') }}
-                        @endif
+                        {{ $order->car_year }} {{ $order->car_make_name }} {{ $order->car_model_name }}
                     </h1>
                     <p class="text-[14px] text-base-content/50 mt-1">{{ __('Order placed') }}: {{ $order->created_at->format('d F, Y') }}</p>
                 </div>
@@ -96,39 +92,48 @@
                 @endunless
 
                 {{-- Payment Proof Upload --}}
-                @if ($this->canUploadProof)
-                    <x-ui.card title="{{ __('Upload Payment Proof') }}" headerBorder>
-                        <div class="p-6">
-                            <form wire:submit="uploadPaymentProof" class="space-y-4">
-                                <div>
-                                    <label for="paymentProofFile" class="text-[13px] font-medium text-base-content block mb-1">
-                                        {{ __('Receipt / Screenshot') }} <span class="text-error ml-0.5">*</span>
-                                    </label>
-                                    <x-ui.filepond
-                                        wire:model="paymentProofFile"
-                                        accepts="image/jpeg, image/png, application/pdf"
-                                        maxSize="10MB"
+                <div wire:key="payment-proof-upload-{{ $this->canUploadProof ? 'open' : 'closed' }}" wire:transition>
+                    @if ($this->canUploadProof)
+                        <x-ui.card title="{{ __('Upload Payment Proof') }}" headerBorder>
+                            <div class="p-6">
+                                <form wire:submit="uploadPaymentProof" class="space-y-4">
+                                    <div>
+                                        <label for="paymentProofFile" class="text-[13px] font-medium text-base-content block mb-1">
+                                            {{ __('Receipt / Screenshot') }} <span class="text-error ml-0.5">*</span>
+                                        </label>
+                                        <x-ui.filepond
+                                            wire:model="paymentProofFile"
+                                            accepts="image/jpeg, image/png, application/pdf"
+                                            maxSize="10MB"
+                                        />
+                                        @error('paymentProofFile')
+                                            <span class="text-xs text-error flex items-center gap-1 mt-1.5">⚠ {{ $message }}</span>
+                                        @enderror
+                                    </div>
+
+                                    <x-ui.textarea
+                                        label="Transaction Note (optional)"
+                                        id="transactionNote"
+                                        wire:model="transactionNote"
+                                        placeholder="e.g. MoMo transaction ID or bank reference"
+                                        rows="2"
                                     />
-                                    @error('paymentProofFile')
-                                        <span class="text-xs text-error flex items-center gap-1 mt-1.5">⚠ {{ $message }}</span>
-                                    @enderror
-                                </div>
 
-                                <x-ui.textarea
-                                    label="Transaction Note (optional)"
-                                    id="transactionNote"
-                                    wire:model="transactionNote"
-                                    placeholder="e.g. MoMo transaction ID or bank reference"
-                                    rows="2"
-                                />
-
-                                <x-ui.button type="submit" variant="primary" wire:loading.attr="disabled">
-                                    {{ __('Upload Proof') }}
-                                </x-ui.button>
-                            </form>
-                        </div>
-                    </x-ui.card>
-                @endif
+                                    <x-ui.button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="uploadPaymentProof">
+                                        <span wire:loading.remove wire:target="uploadPaymentProof">{{ __('Upload Proof') }}</span>
+                                        <span wire:loading wire:target="uploadPaymentProof" class="inline-flex items-center gap-1.5">
+                                            <svg class="w-3.5 h-3.5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                                                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z"></path>
+                                            </svg>
+                                            {{ __('Uploading...') }}
+                                        </span>
+                                    </x-ui.button>
+                                </form>
+                            </div>
+                        </x-ui.card>
+                    @endif
+                </div>
 
                 {{-- Uploaded Proofs --}}
                 @if ($order->paymentProofs->isNotEmpty())
@@ -159,9 +164,9 @@
                 {{-- Order Summary --}}
                 <x-ui.card title="{{ __('Order Summary') }}" headerBorder>
                     <div class="p-5 space-y-4">
-                        @if ($order->car && $order->car->images->first())
+                        @if ($order->car_thumbnail_path)
                             <div class="aspect-video rounded-lg bg-base-200 overflow-hidden">
-                                <img src="{{ Storage::url($order->car->images->first()->path) }}" alt="" class="size-full object-cover" />
+                                <img src="{{ Storage::url($order->car_thumbnail_path) }}" alt="" class="size-full object-cover" />
                             </div>
                         @endif
 

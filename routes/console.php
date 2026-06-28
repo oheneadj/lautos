@@ -19,3 +19,9 @@ Schedule::command(ArchiveSoldCars::class)->dailyAt('00:00')->timezone('Africa/Ac
 // I regenerate the sitemap hourly rather than on every car/post save — search engines
 // don't need it that fresh, and this avoids regenerating on every single admin edit.
 Schedule::command(GenerateSitemap::class)->hourly();
+
+// I back up nightly rather than more often — this app's data (cars, orders, KYC
+// docs) doesn't change fast enough to justify the extra disk/CPU on shared hosting.
+Schedule::command('backup:clean')->daily()->at('01:00');
+Schedule::command('backup:run')->daily()->at('01:30');
+Schedule::command('backup:monitor')->daily()->at('02:00');

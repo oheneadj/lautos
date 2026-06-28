@@ -8,7 +8,6 @@
 
 namespace App\Livewire\Cars;
 
-use App\Enums\CarBodyType;
 use App\Enums\OrderStatus;
 use App\Models\Car;
 use App\Models\CarModel;
@@ -39,12 +38,19 @@ class CarCatalogue extends Component
     public array $bodyTypeFilter = [];
 
     public string $transmissionFilter = '';
+
     public string $fuelFilter = '';
+
     public string $countryFilter = '';
+
     public string $minYear = '';
+
     public string $maxYear = '';
+
     public string $maxPriceGhs = '';
+
     public string $maxMileage = '';
+
     public string $sort = 'latest';
 
     // Purely transient UI state for the mobile filter drawer — not worth
@@ -52,21 +58,63 @@ class CarCatalogue extends Component
     public bool $showMobileFilters = false;
 
     protected $queryString = [
-        'search'              => ['except' => ''],
-        'makeFilter'          => ['except' => [], 'as' => 'make'],
-        'modelFilter'         => ['except' => [], 'as' => 'model'],
-        'bodyTypeFilter'      => ['except' => [], 'as' => 'body_type'],
-        'transmissionFilter'  => ['except' => '', 'as' => 'transmission'],
-        'fuelFilter'          => ['except' => '', 'as' => 'fuel'],
-        'countryFilter'       => ['except' => '', 'as' => 'country'],
-        'minYear'             => ['except' => '', 'as' => 'min_year'],
-        'maxYear'             => ['except' => '', 'as' => 'max_year'],
-        'maxPriceGhs'         => ['except' => '', 'as' => 'max_price'],
-        'maxMileage'          => ['except' => '', 'as' => 'max_mileage'],
-        'sort'                => ['except' => 'latest'],
+        'search' => ['except' => ''],
+        'makeFilter' => ['except' => [], 'as' => 'make'],
+        'modelFilter' => ['except' => [], 'as' => 'model'],
+        'bodyTypeFilter' => ['except' => [], 'as' => 'body_type'],
+        'transmissionFilter' => ['except' => '', 'as' => 'transmission'],
+        'fuelFilter' => ['except' => '', 'as' => 'fuel'],
+        'countryFilter' => ['except' => '', 'as' => 'country'],
+        'minYear' => ['except' => '', 'as' => 'min_year'],
+        'maxYear' => ['except' => '', 'as' => 'max_year'],
+        'maxPriceGhs' => ['except' => '', 'as' => 'max_price'],
+        'maxMileage' => ['except' => '', 'as' => 'max_mileage'],
+        'sort' => ['except' => 'latest'],
     ];
 
-    public function updatedSearch(): void { $this->resetPage(); }
+    /**
+     * A <select> with an unselected "Any" option (e.g. the homepage hero
+     * search) still submits an empty string for that field — once that
+     * lands in one of these array properties as [''], whereIn() matches
+     * nothing and wipes out the whole result set. I can't strip this in
+     * mount() — Livewire's query-string sync for the initial page load
+     * runs after mount() and would just overwrite it — so every call site
+     * below reads through these instead of the raw properties.
+     *
+     * @return array<int, string>
+     */
+    private function makeSlugs(): array
+    {
+        return $this->stripBlanks($this->makeFilter);
+    }
+
+    /** @return array<int, string> */
+    private function modelNames(): array
+    {
+        return $this->stripBlanks($this->modelFilter);
+    }
+
+    /** @return array<int, string> */
+    private function bodyTypeValues(): array
+    {
+        return $this->stripBlanks($this->bodyTypeFilter);
+    }
+
+    /**
+     * @param  array<int, string|null>  $values
+     * @return array<int, string>
+     */
+    private function stripBlanks(array $values): array
+    {
+        // Livewire's query-string hydration turns an empty-string entry
+        // (from an unselected <select>) into null, not '' — both need to go.
+        return array_values(array_filter($values, fn ($value) => $value !== '' && $value !== null));
+    }
+
+    public function updatedSearch(): void
+    {
+        $this->resetPage();
+    }
 
     public function updatedMakeFilter(): void
     {
@@ -78,14 +126,45 @@ class CarCatalogue extends Component
         $this->resetPage();
     }
 
-    public function updatedModelFilter(): void { $this->resetPage(); }
-    public function updatedBodyTypeFilter(): void { $this->resetPage(); }
-    public function updatedTransmissionFilter(): void { $this->resetPage(); }
-    public function updatedFuelFilter(): void { $this->resetPage(); }
-    public function updatedCountryFilter(): void { $this->resetPage(); }
-    public function updatedMinYear(): void { $this->resetPage(); }
-    public function updatedMaxYear(): void { $this->resetPage(); }
-    public function updatedMaxPriceGhs(): void { $this->resetPage(); }
+    public function updatedModelFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedBodyTypeFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedTransmissionFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedFuelFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedCountryFilter(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedMinYear(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedMaxYear(): void
+    {
+        $this->resetPage();
+    }
+
+    public function updatedMaxPriceGhs(): void
+    {
+        $this->resetPage();
+    }
 
     public function updatedMaxMileage(): void
     {
@@ -152,17 +231,23 @@ class CarCatalogue extends Component
             });
         }
 
-        if (! in_array('make', $exclude, true) && ! empty($this->makeFilter)) {
+        $makeSlugs = $this->makeSlugs();
+
+        if (! in_array('make', $exclude, true) && ! empty($makeSlugs)) {
             // I filter by slug, not id, so the URL and the filter checkboxes both use a readable value.
-            $query->whereHas('make', fn ($m) => $m->whereIn('slug', $this->makeFilter));
+            $query->whereHas('make', fn ($m) => $m->whereIn('slug', $makeSlugs));
         }
 
-        if (! in_array('model', $exclude, true) && ! empty($this->modelFilter)) {
-            $query->whereHas('carModel', fn ($m) => $m->whereIn('name', $this->modelFilter));
+        $modelNames = $this->modelNames();
+
+        if (! in_array('model', $exclude, true) && ! empty($modelNames)) {
+            $query->whereHas('carModel', fn ($m) => $m->whereIn('name', $modelNames));
         }
 
-        if (! in_array('bodyType', $exclude, true) && ! empty($this->bodyTypeFilter)) {
-            $query->whereIn('body_type', $this->bodyTypeFilter);
+        $bodyTypeValues = $this->bodyTypeValues();
+
+        if (! in_array('bodyType', $exclude, true) && ! empty($bodyTypeValues)) {
+            $query->whereIn('body_type', $bodyTypeValues);
         }
 
         if ($this->transmissionFilter) {
@@ -213,7 +298,7 @@ class CarCatalogue extends Component
             ->when($this->sort === 'year_desc', fn ($q) => $q->orderByDesc('year'))
             ->when($this->sort === 'latest', fn ($q) => $q->latest());
 
-        $cars  = $query->paginate(12);
+        $cars = $query->paginate(12);
         $makes = Make::orderBy('name')->get();
 
         // I count "if I also picked this make" against every OTHER active
@@ -228,8 +313,10 @@ class CarCatalogue extends Component
         $models = collect();
         $modelCounts = collect();
 
-        if (! empty($this->makeFilter)) {
-            $selectedMakeIds = Make::whereIn('slug', $this->makeFilter)->pluck('id');
+        $makeSlugs = $this->makeSlugs();
+
+        if (! empty($makeSlugs)) {
+            $selectedMakeIds = Make::whereIn('slug', $makeSlugs)->pluck('id');
 
             $models = CarModel::whereIn('make_id', $selectedMakeIds)->orderBy('name')->get();
 

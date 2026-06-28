@@ -152,4 +152,66 @@ class ProfileEditTest extends TestCase
             ->call('sendPhoneVerificationCode')
             ->assertHasErrors('phone');
     }
+
+    #[Test]
+    public function a_second_otp_send_within_a_minute_is_rate_limited(): void
+    {
+        Http::fake(['api.giantsms.com/*' => Http::response(['status' => true], 200)]);
+
+        $user = User::factory()->create(['phone' => '0551234567']);
+
+        $component = Livewire::actingAs($user)->test(ProfileEdit::class);
+
+        $component->call('sendPhoneVerificationCode');
+        $firstCode = $user->refresh()->phone_verification_code;
+
+        // Without the rate limit, this second call would overwrite the code
+        // and send another real SMS — exactly the abuse vector being fixed.
+        $component->call('sendPhoneVerificationCode')->assertHasErrors('phone');
+
+        $this->assertSame($firstCode, $user->refresh()->phone_verification_code);
+        Http::assertSentCount(1);
+    }
+
+    #[Test]
+    public function an_expired_verification_code_is_rejected(): void
+    {
+        $user = User::factory()->create([
+            'phone' => '0551234567',
+            'phone_verification_code' => '123456',
+            'phone_verification_code_expires_at' => now()->subMinute(),
+        ]);
+
+        Livewire::actingAs($user)
+            ->test(ProfileEdit::class)
+            ->set('verificationCode', '123456')
+            ->call('verifyPhone')
+            ->assertHasErrors('verificationCode');
+
+        $this->assertNull($user->refresh()->phone_verified_at);
+    }
+
+    #[Test]
+    public function repeated_wrong_codes_are_rate_limited(): void
+    {
+        $user = User::factory()->create([
+            'phone' => '0551234567',
+            'phone_verification_code' => '123456',
+            'phone_verification_code_expires_at' => now()->addMinutes(10),
+        ]);
+
+        $component = Livewire::actingAs($user)->test(ProfileEdit::class);
+
+        // 5 wrong guesses is the limit — the 6th should be blocked even if
+        // the customer then guesses correctly, proving the lockout holds.
+        for ($i = 0; $i < 5; $i++) {
+            $component->set('verificationCode', '000000')->call('verifyPhone');
+        }
+
+        $component->set('verificationCode', '123456')
+            ->call('verifyPhone')
+            ->assertHasErrors('verificationCode');
+
+        $this->assertNull($user->refresh()->phone_verified_at);
+    }
 }

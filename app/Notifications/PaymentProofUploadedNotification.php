@@ -16,9 +16,7 @@ class PaymentProofUploadedNotification extends Notification implements ShouldQue
 {
     use Queueable;
 
-    public function __construct(public Order $order)
-    {
-    }
+    public function __construct(public Order $order) {}
 
     /**
      * @return array<int, string>
@@ -32,12 +30,11 @@ class PaymentProofUploadedNotification extends Notification implements ShouldQue
 
     public function toMail(object $notifiable): MailMessage
     {
-        $car = $this->order->car;
 
         return (new MailMessage)
             ->subject('Payment Proof Uploaded — Review Needed')
             ->greeting('New payment proof to review')
-            ->line("{$this->order->user->name} uploaded a payment proof for the {$car->year} {$car->make->name} {$car->carModel->name}.")
+            ->line("{$this->order->user->name} uploaded a payment proof for the {$this->order->car_year} {$this->order->car_make_name} {$this->order->car_model_name}.")
             ->action('Review in Admin', url('/admin'));
     }
 }

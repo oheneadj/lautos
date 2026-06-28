@@ -62,11 +62,11 @@ class CarsTable
                 TextColumn::make('price_usd_cents')
                     ->label('Price')
                     ->sortable()
-                    ->formatStateUsing(fn (int $state): string => '$' . number_format($state / 100, 2)),
+                    ->formatStateUsing(fn (int $state): string => '$'.number_format($state / 100, 2)),
                 TextColumn::make('shipping_cost_usd_cents')
                     ->label('Shipping')
                     ->sortable()
-                    ->formatStateUsing(fn (int $state): string => '$' . number_format($state / 100, 2))
+                    ->formatStateUsing(fn (int $state): string => '$'.number_format($state / 100, 2))
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('status')
                     ->badge()
@@ -123,6 +123,7 @@ class CarsTable
                     ->icon('heroicon-m-arrow-path')
                     ->modalWidth('sm')
                     ->button()
+                    ->authorize('update')
                     ->schema(fn (Car $record) => [
                         Select::make('status')
                             ->options(CarStatus::class)
@@ -156,6 +157,7 @@ class CarsTable
                     BulkAction::make('changeStatus')
                         ->label('Change Status')
                         ->icon('heroicon-m-arrow-path')
+                        ->authorizeIndividualRecords('update')
                         ->schema([
                             Select::make('status')
                                 ->options(CarStatus::class)

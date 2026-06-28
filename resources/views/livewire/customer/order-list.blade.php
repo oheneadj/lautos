@@ -59,29 +59,21 @@
                                         <div class="flex items-center gap-3">
                                             {{-- Car Thumbnail --}}
                                             <div class="w-10 h-10 flex-shrink-0 rounded-lg bg-base-200 overflow-hidden">
-                                                @if ($order->car && $order->car->images->first())
-                                                    <img src="{{ Storage::url($order->car->images->first()->path) }}" alt="" class="size-full object-cover" />
+                                                @if ($order->car_thumbnail_path)
+                                                    <img src="{{ Storage::url($order->car_thumbnail_path) }}" alt="" class="size-full object-cover" />
                                                 @else
                                                     <div class="flex size-full items-center justify-center text-[10px] font-bold text-base-content/40 uppercase">
-                                                        @if ($order->car)
-                                                            {{ substr($order->car->make->name, 0, 2) }}
-                                                        @else
-                                                            --
-                                                        @endif
+                                                        {{ substr($order->car_make_name, 0, 2) }}
                                                     </div>
                                                 @endif
                                             </div>
                                             <span class="font-medium text-base-content">
-                                                @if ($order->car)
-                                                    {{ $order->car->make->name }} {{ $order->car->carModel->name }}
-                                                @else
-                                                    {{ __('Car Removed') }}
-                                                @endif
+                                                {{ $order->car_make_name }} {{ $order->car_model_name }}
                                             </span>
                                         </div>
                                     </td>
                                     <td class="px-6 py-3.5 text-base-content/60">
-                                        {{ $order->car ? $order->car->year : '—' }}
+                                        {{ $order->car_year }}
                                     </td>
                                     <td class="px-6 py-3.5 font-bold text-base-content">
                                         ${{ number_format($order->total_usd_cents / 100, 0) }}

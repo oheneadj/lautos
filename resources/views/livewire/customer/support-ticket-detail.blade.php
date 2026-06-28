@@ -31,8 +31,15 @@
                         <div class="max-w-[80%] rounded-2xl px-5 py-3 {{ $msg->is_admin ? 'bg-white border border-base-content/10 rounded-bl-sm shadow-sm' : 'bg-primary text-white rounded-br-sm shadow-sm' }}">
                             <p class="text-[14px] whitespace-pre-wrap">{{ $msg->message }}</p>
                             @if ($msg->attachment_path)
+                                @php
+                                    $attachmentUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                                        'ticket-attachments.show',
+                                        now()->addMinutes(5),
+                                        ['message' => $msg->uuid]
+                                    );
+                                @endphp
                                 <div class="mt-3">
-                                    <a href="{{ Storage::url($msg->attachment_path) }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg {{ $msg->is_admin ? 'bg-base-200 text-base-content hover:bg-base-300' : 'bg-white/20 text-white hover:bg-white/30' }} text-[12px] font-medium transition-colors">
+                                    <a href="{{ $attachmentUrl }}" target="_blank" class="inline-flex items-center gap-2 px-3 py-2 rounded-lg {{ $msg->is_admin ? 'bg-base-200 text-base-content hover:bg-base-300' : 'bg-white/20 text-white hover:bg-white/30' }} text-[12px] font-medium transition-colors">
                                         <svg class="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M18.375 12.739l-7.693 7.693a4.5 4.5 0 01-6.364-6.364l10.94-10.94A3 3 0 1119.5 7.372L8.552 18.32m.009-.01l-.01.01m5.699-9.941l-7.81 7.81a1.5 1.5 0 002.112 2.13" /></svg>
                                         {{ __('View Attachment') }}
                                     </a>

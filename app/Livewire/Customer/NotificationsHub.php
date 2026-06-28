@@ -34,15 +34,16 @@ class NotificationsHub extends Component
      * Maps notification class basenames to UI categories.
      */
     private const CATEGORY_MAP = [
-        'OrderPlacedNotification'              => 'orders',
-        'OrderStageUpdatedNotification'        => 'orders',
-        'ReservationLostNotification'          => 'orders',
-        'PaymentConfirmedNotification'         => 'payments',
-        'PaymentRejectedNotification'          => 'payments',
-        'PaymentProofUploadedNotification'     => 'payments',
-        'PaymentProofReceivedNotification'     => 'payments',
-        'KycDocumentsSubmittedNotification'    => 'kyc',
+        'OrderPlacedNotification' => 'orders',
+        'OrderStageUpdatedNotification' => 'orders',
+        'ReservationLostNotification' => 'orders',
+        'PaymentConfirmedNotification' => 'payments',
+        'PaymentRejectedNotification' => 'payments',
+        'PaymentProofUploadedNotification' => 'payments',
+        'PaymentProofReceivedNotification' => 'payments',
+        'KycDocumentsSubmittedNotification' => 'kyc',
         'KycResubmissionRequestedNotification' => 'kyc',
+        'KycVerifiedNotification' => 'kyc',
     ];
 
     public function markAsRead(string $id): void
@@ -116,7 +117,7 @@ class NotificationsHub extends Component
             if (! empty($classNames)) {
                 $query->where(function ($q) use ($classNames) {
                     foreach ($classNames as $className) {
-                        $q->orWhere('type', 'like', '%\\' . $className);
+                        $q->orWhere('type', 'like', '%\\'.$className);
                     }
                 });
             }
@@ -128,8 +129,8 @@ class NotificationsHub extends Component
 
         return view('livewire.customer.notifications-hub', [
             'notifications' => $query->paginate(15),
-            'unreadCount'   => $unreadCount,
-            'totalCount'    => $totalCount,
+            'unreadCount' => $unreadCount,
+            'totalCount' => $totalCount,
         ]);
     }
 }

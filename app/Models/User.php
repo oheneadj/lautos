@@ -9,26 +9,27 @@ namespace App\Models;
 use App\Enums\KycStatus;
 use Database\Factories\UserFactory;
 use Filament\Models\Contracts\FilamentUser;
+use Filament\Panel;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Str;
 use Jeffgreco13\FilamentBreezy\Traits\TwoFactorAuthenticatable as BreezyTwoFactorAuthenticatable;
-use Laravel\Fortify\TwoFactorAuthenticatable;
-use Spatie\Permission\Traits\HasRoles;
-
 // I implement FilamentUser so canAccessPanel() is actually consulted — without it,
 // Filament's Authenticate middleware ignores the method entirely and falls back to
 // allowing access only when app.env is 'local', which silently 403s everywhere else.
+use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Activitylog\Models\Concerns\LogsActivity;
 use Spatie\Activitylog\Support\LogOptions;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable implements FilamentUser
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, BreezyTwoFactorAuthenticatable, HasRoles, SoftDeletes, LogsActivity;
+    use BreezyTwoFactorAuthenticatable, HasFactory, HasRoles, LogsActivity, Notifiable, SoftDeletes, TwoFactorAuthenticatable;
 
     public function getActivitylogOptions(): LogOptions
     {
@@ -44,9 +45,11 @@ class User extends Authenticatable implements FilamentUser
         'email',
         'google_id',
         'password',
+        'has_password',
         'phone',
         'phone_verified_at',
         'phone_verification_code',
+        'phone_verification_code_expires_at',
         'address',
         'ghana_card_number',
         'tin_number',
@@ -67,14 +70,16 @@ class User extends Authenticatable implements FilamentUser
     protected function casts(): array
     {
         return [
-            'email_verified_at'  => 'datetime',
-            'phone_verified_at'  => 'datetime',
-            'password'           => 'hashed',
+            'email_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
+            'phone_verification_code_expires_at' => 'datetime',
+            'password' => 'hashed',
+            'has_password' => 'boolean',
             // I encrypt KYC identifiers at rest — these never leave the DB unencrypted.
-            'ghana_card_number'  => 'encrypted',
-            'tin_number'         => 'encrypted',
-            'kyc_status'         => KycStatus::class,
-            'is_admin'           => 'boolean',
+            'ghana_card_number' => 'encrypted',
+            'tin_number' => 'encrypted',
+            'kyc_status' => KycStatus::class,
+            'is_admin' => 'boolean',
         ];
     }
 
@@ -108,7 +113,7 @@ class User extends Authenticatable implements FilamentUser
 
     // I check for an assigned Spatie role rather than just is_admin, since that's what
     // Shield's policies and the super_admin gate actually key off of.
-    public function canAccessPanel(\Filament\Panel $panel): bool
+    public function canAccessPanel(Panel $panel): bool
     {
         return $this->is_admin && $this->roles()->exists();
     }
@@ -126,7 +131,7 @@ class User extends Authenticatable implements FilamentUser
         return $this->hasMany(Order::class);
     }
 
-    public function savedCars(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function savedCars(): BelongsToMany
     {
         // I track timestamps on the pivot so the dashboard's "recently
         // saved" ordering actually means something instead of sorting on

@@ -3,12 +3,14 @@
 namespace Tests\Feature\Customer;
 
 use App\Enums\OrderStatus;
+use App\Livewire\Customer\OrderList;
 use App\Models\Car;
 use App\Models\CarModel;
 use App\Models\Make;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Livewire\Livewire;
 use PHPUnit\Framework\Attributes\Test;
 use Tests\TestCase;
 
@@ -42,8 +44,8 @@ class OrderListTest extends TestCase
         $myCar = $this->makeCar('Toyota');
         $otherCar = $this->makeCar('Hyundai');
 
-        Order::factory()->create(['user_id' => $user->id, 'car_id' => $myCar->id]);
-        Order::factory()->create(['user_id' => $otherUser->id, 'car_id' => $otherCar->id]);
+        Order::factory()->forCar($myCar)->create(['user_id' => $user->id]);
+        Order::factory()->forCar($otherCar)->create(['user_id' => $otherUser->id]);
 
         $response = $this->actingAs($user)->get(route('dashboard.orders'));
 
@@ -60,19 +62,17 @@ class OrderListTest extends TestCase
         $pendingCar = $this->makeCar('Toyota');
         $deliveredCar = $this->makeCar('Hyundai');
 
-        Order::factory()->create([
+        Order::factory()->forCar($pendingCar)->create([
             'user_id' => $user->id,
-            'car_id' => $pendingCar->id,
             'status' => OrderStatus::PendingPayment,
         ]);
-        Order::factory()->create([
+        Order::factory()->forCar($deliveredCar)->create([
             'user_id' => $user->id,
-            'car_id' => $deliveredCar->id,
             'status' => OrderStatus::Delivered,
         ]);
 
-        \Livewire\Livewire::actingAs($user)
-            ->test(\App\Livewire\Customer\OrderList::class)
+        Livewire::actingAs($user)
+            ->test(OrderList::class)
             ->set('statusFilter', OrderStatus::Delivered->value)
             ->assertSee('Hyundai')
             ->assertDontSee('Toyota');

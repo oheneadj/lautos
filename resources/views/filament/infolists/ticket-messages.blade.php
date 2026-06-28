@@ -9,7 +9,14 @@
             <div class="rounded-lg border p-3 {{ $message->is_admin ? 'border-primary-200 bg-primary-50 dark:border-primary-800 dark:bg-primary-950' : 'border-gray-200 dark:border-gray-700' }}">
                 <p class="text-sm whitespace-pre-wrap">{{ $message->message }}</p>
                 @if ($message->attachment_path)
-                    <a href="{{ \Illuminate\Support\Facades\Storage::url($message->attachment_path) }}" target="_blank" class="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:underline">
+                    @php
+                        $attachmentUrl = \Illuminate\Support\Facades\URL::temporarySignedRoute(
+                            'ticket-attachments.show',
+                            now()->addMinutes(5),
+                            ['message' => $message->uuid]
+                        );
+                    @endphp
+                    <a href="{{ $attachmentUrl }}" target="_blank" class="mt-2 inline-flex items-center gap-1 text-xs font-medium text-primary-600 hover:underline">
                         View Attachment
                     </a>
                 @endif

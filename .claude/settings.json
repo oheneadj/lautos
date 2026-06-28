@@ -6,7 +6,8 @@
       "Bash(composer require *)",
       "Bash(php artisan *)",
       "Bash(php vendor/bin/pest tests/Unit tests/Feature/Admin tests/Feature/Public)",
-      "Bash(python3 -c ' *)"
+      "Bash(python3 -c ' *)",
+      "mcp__chrome-devtools__take_screenshot"
     ]
   }
 }

@@ -23,6 +23,7 @@ use App\Models\Car;
 use App\Models\Order;
 use App\Models\User;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
 class OrderService
@@ -52,11 +53,18 @@ class OrderService
             return $existing;
         }
 
+        // I snapshot the car's identity here too — same reason as the price
+        // fields below — so a later edit or deletion of the car never
+        // changes how this order displays.
         $order = Order::create([
-            'user_id'                 => $user->id,
-            'car_id'                  => $car->id,
-            'status'                  => OrderStatus::PendingPayment,
-            'price_usd_cents'         => $car->price_usd_cents,
+            'user_id' => $user->id,
+            'car_id' => $car->id,
+            'status' => OrderStatus::PendingPayment,
+            'car_year' => $car->year,
+            'car_make_name' => $car->make->name,
+            'car_model_name' => $car->carModel->name,
+            'car_thumbnail_path' => $car->images->first()?->path,
+            'price_usd_cents' => $car->price_usd_cents,
             'shipping_cost_usd_cents' => $car->shipping_cost_usd_cents,
         ]);
 
@@ -74,22 +82,31 @@ class OrderService
      */
     public function confirmPayment(Order $order): void
     {
-        if ($order->status !== OrderStatus::PaymentUploaded) {
-            throw new InvalidArgumentException('Payment can only be confirmed while the order is in Payment Uploaded.');
-        }
+        // I lock the row and re-check status inside the transaction so two
+        // near-simultaneous confirms (a double-click, or two admin sessions
+        // on the same order) can't both pass the check before either writes
+        // — without this, the order could get double-logged, the event
+        // double-fired, and cancelCompetingOrders() run from two "winners".
+        DB::transaction(function () use ($order) {
+            $locked = Order::lockForUpdate()->findOrFail($order->id);
 
-        $order->update(['status' => OrderStatus::PaymentConfirmed]);
-        $order->car->update(['status' => CarStatus::Reserved]);
+            if ($locked->status !== OrderStatus::PaymentUploaded) {
+                throw new InvalidArgumentException('Payment can only be confirmed while the order is in Payment Uploaded.');
+            }
 
-        // The latest upload is the one the admin just reviewed — everything
-        // before it was already resolved (accepted or rejected) on a prior pass.
-        $order->paymentProofs()->first()?->update(['status' => PaymentProofStatus::Accepted]);
+            $locked->update(['status' => OrderStatus::PaymentConfirmed]);
+            $locked->car->update(['status' => CarStatus::Reserved]);
 
-        $this->logHistory($order, OrderStatus::PaymentConfirmed);
+            // The latest upload is the one the admin just reviewed — everything
+            // before it was already resolved (accepted or rejected) on a prior pass.
+            $locked->paymentProofs()->first()?->update(['status' => PaymentProofStatus::Accepted]);
 
-        PaymentConfirmed::dispatch($order);
+            $this->logHistory($locked, OrderStatus::PaymentConfirmed);
 
-        $this->cancelCompetingOrders($order);
+            PaymentConfirmed::dispatch($locked);
+
+            $this->cancelCompetingOrders($locked);
+        });
     }
 
     /**
@@ -167,7 +184,7 @@ class OrderService
 
         if ($expectedNext === null || $toStage !== $expectedNext) {
             throw new InvalidArgumentException(
-                "Orders must advance one stage at a time. Expected " . ($expectedNext?->label() ?? 'no further stages') . "."
+                'Orders must advance one stage at a time. Expected '.($expectedNext?->label() ?? 'no further stages').'.'
             );
         }
 

@@ -3,6 +3,7 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\User;
+use Database\Seeders\ShieldPermissionsSeeder;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\URL;
@@ -21,7 +22,7 @@ class KycDocumentControllerTest extends TestCase
 
     private function actingAsAdmin(): User
     {
-        $this->seed(\Database\Seeders\ShieldPermissionsSeeder::class);
+        $this->seed(ShieldPermissionsSeeder::class);
 
         $admin = User::factory()->create(['is_admin' => true]);
         $admin->assignRole(Role::findOrCreate('super_admin', 'web'));
@@ -56,6 +57,24 @@ class KycDocumentControllerTest extends TestCase
 
         $this->get(route('admin.kyc-documents.show', ['user' => $customer, 'type' => 'ghana_card']))
             ->assertForbidden();
+    }
+
+    #[Test]
+    public function a_non_admin_customer_cannot_view_another_users_kyc_document_even_with_a_valid_signature(): void
+    {
+        Storage::fake('private');
+
+        $customer = User::factory()->create(['ghana_card_path' => 'kyc/'.uniqid().'/card.jpg']);
+        Storage::disk('private')->put($customer->ghana_card_path, 'fake-image-bytes');
+
+        $otherCustomer = User::factory()->create();
+        $this->actingAs($otherCustomer);
+
+        // The signature is genuinely valid here — I'm proving that a valid
+        // signature alone isn't enough; the requester must also be an admin.
+        $url = URL::signedRoute('admin.kyc-documents.show', ['user' => $customer, 'type' => 'ghana_card']);
+
+        $this->get($url)->assertForbidden();
     }
 
     #[Test]

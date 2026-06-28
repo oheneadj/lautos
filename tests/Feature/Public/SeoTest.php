@@ -8,7 +8,9 @@ use App\Models\BlogCategory;
 use App\Models\BlogPost;
 use App\Models\Car;
 use App\Models\CarModel;
+use App\Models\Faq;
 use App\Models\Make;
+use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use PHPUnit\Framework\Attributes\Test;
@@ -28,7 +30,7 @@ class SeoTest extends TestCase
         $this->get('/')
             ->assertOk()
             ->assertSee('<title>Livingston Autos — Quality Japanese & Korean Imports</title>', false)
-            ->assertSee('<link rel="canonical" href="' . url('/') . '">', false);
+            ->assertSee('<link rel="canonical" href="'.url('/').'">', false);
     }
 
     #[Test]
@@ -55,6 +57,8 @@ class SeoTest extends TestCase
         $response->assertSee("{$car->year} {$car->make->name} {$car->carModel->name}", false);
         $response->assertSee('"@type":"Product"', false);
         $response->assertSee('"@type":"Offer"', false);
+        $response->assertSee('"@type":"BreadcrumbList"', false);
+        $response->assertSee('twitter:card', false);
     }
 
     #[Test]
@@ -80,10 +84,65 @@ class SeoTest extends TestCase
             'published_at' => now()->subDay(),
         ]);
 
-        $this->get(route('blog.show', $post->slug))
+        $response = $this->get(route('blog.show', $post->slug))
             ->assertOk()
             ->assertSee('<title>How to Import a Car | Livingston Autos</title>', false)
             ->assertSee('<meta name="description" content="A short guide to importing your first car.">', false);
+
+        // Article schema should reflect the real author and post, not placeholder copy.
+        $response->assertSee('"@type":"Article"', false);
+        $response->assertSee($author->name, false);
+        $response->assertSee('"@type":"BreadcrumbList"', false);
+    }
+
+    #[Test]
+    public function the_cars_and_blog_listings_canonicalize_every_filtered_or_paginated_url_back_to_the_base_url(): void
+    {
+        $this->get('/cars?make=Toyota&page=2')
+            ->assertOk()
+            ->assertSee('<link rel="canonical" href="'.url('/cars').'">', false);
+
+        $this->get('/blog?page=2')
+            ->assertOk()
+            ->assertSee('<link rel="canonical" href="'.url('/blog').'">', false);
+    }
+
+    #[Test]
+    public function every_public_page_carries_the_site_wide_organization_schema_from_settings(): void
+    {
+        Setting::set('site_name', 'Livingston Autos');
+        Setting::set('contact_email', 'info@livingstonautos.test');
+
+        $response = $this->get('/')->assertOk();
+
+        $response->assertSee('"@type":"Organization"', false);
+        $response->assertSee('info@livingstonautos.test', false);
+    }
+
+    #[Test]
+    public function the_faqs_page_has_a_faqpage_schema_matching_the_real_database_rows(): void
+    {
+        Faq::create(['question' => 'How long does shipping take?', 'answer' => 'Usually five to seven weeks.', 'sort_order' => 1]);
+
+        $response = $this->get(route('pages.faqs'))->assertOk();
+
+        $response->assertSee('"@type":"FAQPage"', false);
+        $response->assertSee('How long does shipping take?', false);
+        $response->assertSee('Usually five to seven weeks.', false);
+    }
+
+    #[Test]
+    public function every_static_page_has_its_own_real_title_instead_of_the_generic_fallback(): void
+    {
+        $this->get('/how-it-works')->assertSee('<title>How It Works — Importing a Car | Livingston Autos</title>', false);
+        $this->get('/shipping-and-delivery')->assertSee('<title>Shipping & Delivery | Livingston Autos</title>', false);
+        $this->get('/customs-clearance')->assertSee('<title>Customs Clearance Guide | Livingston Autos</title>', false);
+        $this->get('/quality-guarantee')->assertSee('<title>Vehicle Inspections & Quality Guarantee | Livingston Autos</title>', false);
+        $this->get('/faqs')->assertSee('<title>Frequently Asked Questions | Livingston Autos</title>', false);
+        $this->get('/refund-policy')->assertSee('<title>Refund Policy | Livingston Autos</title>', false);
+        $this->get('/terms-and-conditions')->assertSee('<title>Terms & Conditions | Livingston Autos</title>', false);
+        $this->get('/privacy-policy')->assertSee('<title>Privacy Policy | Livingston Autos</title>', false);
+        $this->get('/fraud-awareness')->assertSee('<title>Fraud Awareness | Livingston Autos</title>', false);
     }
 
     #[Test]

@@ -53,11 +53,11 @@ class Testimonials extends Component
             $reviews = $demoReviews;
         } else {
             $reviews = $approvedReviews->map(function ($review) {
-                $car = $review->order->car;
+                $order = $review->order;
 
                 return [
                     'author' => $review->user->name,
-                    'subtitle' => "Verified Buyer — {$car->year} {$car->make->name} {$car->carModel->name}",
+                    'subtitle' => "Verified Buyer — {$order->car_year} {$order->car_make_name} {$order->car_model_name}",
                     'date' => $review->approved_at?->format('m/d/Y') ?? $review->created_at->format('m/d/Y'),
                     'rating' => $review->rating,
                     'title' => $review->title,

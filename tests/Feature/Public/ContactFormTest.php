@@ -32,8 +32,8 @@ class ContactFormTest extends TestCase
             ->assertSet('submitted', true);
 
         $this->assertDatabaseHas('contact_enquiries', [
-            'name'    => 'Kofi Mensah',
-            'email'   => 'kofi@example.com',
+            'name' => 'Kofi Mensah',
+            'email' => 'kofi@example.com',
             'subject' => 'General Enquiry',
         ]);
     }
@@ -61,6 +61,25 @@ class ContactFormTest extends TestCase
             ->assertHasErrors(['name', 'email', 'message']);
 
         $this->assertDatabaseCount('contact_enquiries', 0);
+    }
+
+    #[Test]
+    public function a_fourth_submission_within_the_window_is_rate_limited(): void
+    {
+        $submit = function () {
+            return Livewire::test(ContactForm::class)
+                ->set('name', 'Kofi Mensah')
+                ->set('email', 'kofi@example.com')
+                ->set('message', 'I would like to know more about your import process.')
+                ->call('submit');
+        };
+
+        $submit();
+        $submit();
+        $submit();
+        $submit()->assertHasErrors('message');
+
+        $this->assertDatabaseCount('contact_enquiries', 3);
     }
 
     #[Test]

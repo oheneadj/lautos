@@ -35,24 +35,6 @@
     --color-zinc-950: #0a0a0a;
 }
 
-@media (prefers-color-scheme: dark) {
-    :root {
-        --color-base-100: #18181b;
-        --color-base-200: #09090b;
-        --color-base-300: #27272a;
-        --color-base-content: #f4f4f5;
-        --color-neutral: #fafafa;
-    }
-}
-
-.dark {
-    --color-base-100: #18181b;
-    --color-base-200: #09090b;
-    --color-base-300: #27272a;
-    --color-base-content: #f4f4f5;
-    --color-neutral: #fafafa;
-}
-
 
 html {
     scroll-behavior: smooth;

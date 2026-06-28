@@ -314,4 +314,17 @@ class OrderManagementTest extends TestCase
             ->call('save')
             ->assertHasFormErrors(['estimated_arrival_date']);
     }
+
+    #[Test]
+    public function editing_an_order_rejects_a_zero_price(): void
+    {
+        $this->actingAsAdmin();
+
+        $order = $this->makeOrder();
+
+        Livewire::test(EditOrder::class, ['record' => $order->uuid])
+            ->fillForm(['price_usd_cents' => 0])
+            ->call('save')
+            ->assertHasFormErrors(['price_usd_cents']);
+    }
 }

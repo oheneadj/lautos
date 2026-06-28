@@ -9,6 +9,8 @@ namespace App\Filament\Resources\Cars\Schemas;
 use App\Enums\CarBodyType;
 use App\Enums\CarStatus;
 use App\Models\Car;
+use App\Models\CarModel;
+use App\Models\CarTrim;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Placeholder;
 use Filament\Forms\Components\Select;
@@ -61,7 +63,7 @@ class CarForm
                             ->placeholder(fn ($get) => $get('make_id') ? 'Select or add a model' : 'Select a make first')
                             ->disabled(fn ($get) => ! $get('make_id'))
                             ->options(fn ($get) => $get('make_id')
-                                ? \App\Models\CarModel::where('make_id', $get('make_id'))
+                                ? CarModel::where('make_id', $get('make_id'))
                                     ->orderBy('name')
                                     ->pluck('name', 'id')
                                 : []
@@ -73,9 +75,9 @@ class CarForm
                                     ->maxLength(100),
                             ])
                             ->createOptionUsing(function (array $data, $get) {
-                                return \App\Models\CarModel::firstOrCreate([
+                                return CarModel::firstOrCreate([
                                     'make_id' => $get('make_id'),
-                                    'name'    => $data['name'],
+                                    'name' => $data['name'],
                                 ])->id;
                             })
                             ->createOptionAction(fn ($action) => $action->modalWidth('sm')),
@@ -87,11 +89,20 @@ class CarForm
                             ->placeholder(fn ($get) => $get('car_model_id') ? 'Select or add a trim' : 'Select a model first')
                             ->disabled(fn ($get) => ! $get('car_model_id'))
                             ->options(fn ($get) => $get('car_model_id')
-                                ? \App\Models\CarTrim::where('car_model_id', $get('car_model_id'))
+                                ? CarTrim::where('car_model_id', $get('car_model_id'))
                                     ->orderBy('name')
                                     ->pluck('name', 'id')
                                 : []
                             )
+                            // The options list above already only shows trims for the
+                            // selected model, but that's a client-side filter — I check
+                            // it again here so a tampered submission can't pair a trim
+                            // from one model with a different model on the same car.
+                            ->rule(fn ($get) => function (string $attribute, $value, \Closure $fail) use ($get) {
+                                if (! empty($value) && ! CarTrim::where('id', $value)->where('car_model_id', $get('car_model_id'))->exists()) {
+                                    $fail('The selected trim does not belong to the selected model.');
+                                }
+                            })
                             ->createOptionForm([
                                 TextInput::make('name')
                                     ->required()
@@ -99,9 +110,9 @@ class CarForm
                                     ->maxLength(100),
                             ])
                             ->createOptionUsing(function (array $data, $get) {
-                                return \App\Models\CarTrim::firstOrCreate([
+                                return CarTrim::firstOrCreate([
                                     'car_model_id' => $get('car_model_id'),
-                                    'name'         => $data['name'],
+                                    'name' => $data['name'],
                                 ])->id;
                             })
                             ->createOptionAction(fn ($action) => $action->modalWidth('sm')),
@@ -129,6 +140,7 @@ class CarForm
                         TextInput::make('mileage')
                             ->required()
                             ->numeric()
+                            ->minValue(0)
                             ->placeholder('e.g. 45000')
                             ->suffix('km'),
                         TextInput::make('colour')
@@ -193,6 +205,7 @@ class CarForm
                             ->label('Price (USD)')
                             ->required()
                             ->numeric()
+                            ->minValue(0.01)
                             ->prefix('$')
                             ->placeholder('0.00')
                             ->step(0.01)
@@ -203,6 +216,7 @@ class CarForm
                             ->label('Shipping Cost (USD)')
                             ->required()
                             ->numeric()
+                            ->minValue(0)
                             ->prefix('$')
                             ->placeholder('0.00')
                             ->step(0.01)
@@ -212,7 +226,7 @@ class CarForm
                         // will actually pay, without storing it — the canonical price is USD cents.
                         Placeholder::make('price_ghs_preview')
                             ->label('Price (GHS equivalent)')
-                            ->content(fn ($get) => 'GH₵' . number_format(
+                            ->content(fn ($get) => 'GH₵'.number_format(
                                 ((float) ($get('price_usd_cents') ?? 0)) * Car::currentExchangeRate(),
                                 2
                             ))

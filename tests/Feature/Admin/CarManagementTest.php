@@ -9,6 +9,7 @@ use App\Filament\Resources\Cars\Pages\ListCars;
 use App\Filament\Resources\Cars\Pages\ViewCar;
 use App\Models\Car;
 use App\Models\CarModel;
+use App\Models\CarTrim;
 use App\Models\Make;
 use App\Models\User;
 use Database\Seeders\ShieldPermissionsSeeder;
@@ -149,6 +150,73 @@ class CarManagementTest extends TestCase
             'make_id' => $make->id,
             'body_type' => CarBodyType::Sedan->value,
         ]);
+    }
+
+    #[Test]
+    public function a_car_cannot_be_created_with_a_zero_or_negative_price(): void
+    {
+        $this->actingAsAdmin();
+
+        $make = Make::firstOrCreate(['name' => 'Toyota']);
+        $carModel = CarModel::firstOrCreate(['make_id' => $make->id, 'name' => 'Corolla']);
+
+        Livewire::test(CreateCar::class)
+            ->fillForm([
+                'make_id' => $make->id,
+                'car_model_id' => $carModel->id,
+                'year' => 2022,
+                'engine_capacity' => '1800cc',
+                'transmission' => 'Automatic',
+                'fuel_type' => 'Petrol',
+                'mileage' => 30000,
+                'colour' => 'White',
+                'country_of_origin' => 'Japan',
+                'body_type' => CarBodyType::Sedan->value,
+                'image_paths' => [
+                    UploadedFile::fake()->image('a.jpg'),
+                    UploadedFile::fake()->image('b.jpg'),
+                    UploadedFile::fake()->image('c.jpg'),
+                ],
+                'price_usd_cents' => 0,
+                'shipping_cost_usd_cents' => 20,
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['price_usd_cents']);
+    }
+
+    #[Test]
+    public function a_car_cannot_be_created_with_a_trim_that_belongs_to_a_different_model(): void
+    {
+        $this->actingAsAdmin();
+
+        $make = Make::firstOrCreate(['name' => 'Toyota']);
+        $corolla = CarModel::firstOrCreate(['make_id' => $make->id, 'name' => 'Corolla']);
+        $camry = CarModel::firstOrCreate(['make_id' => $make->id, 'name' => 'Camry']);
+        $camryTrim = CarTrim::firstOrCreate(['car_model_id' => $camry->id, 'name' => 'SE']);
+
+        Livewire::test(CreateCar::class)
+            ->fillForm([
+                'make_id' => $make->id,
+                'car_model_id' => $corolla->id,
+                'car_trim_id' => $camryTrim->id,
+                'year' => 2022,
+                'engine_capacity' => '1800cc',
+                'transmission' => 'Automatic',
+                'fuel_type' => 'Petrol',
+                'mileage' => 30000,
+                'colour' => 'White',
+                'country_of_origin' => 'Japan',
+                'body_type' => CarBodyType::Sedan->value,
+                'image_paths' => [
+                    UploadedFile::fake()->image('a.jpg'),
+                    UploadedFile::fake()->image('b.jpg'),
+                    UploadedFile::fake()->image('c.jpg'),
+                ],
+                'price_usd_cents' => 150,
+                'shipping_cost_usd_cents' => 20,
+            ])
+            ->call('create')
+            ->assertHasFormErrors(['car_trim_id']);
     }
 
     #[Test]

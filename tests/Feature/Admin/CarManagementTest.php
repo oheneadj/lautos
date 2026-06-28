@@ -5,6 +5,7 @@ namespace Tests\Feature\Admin;
 use App\Enums\CarBodyType;
 use App\Enums\CarStatus;
 use App\Filament\Resources\Cars\Pages\CreateCar;
+use App\Filament\Resources\Cars\Pages\EditCar;
 use App\Filament\Resources\Cars\Pages\ListCars;
 use App\Filament\Resources\Cars\Pages\ViewCar;
 use App\Models\Car;
@@ -282,5 +283,18 @@ class CarManagementTest extends TestCase
             ->set('activeTab', CarStatus::Sold->value)
             ->assertCanSeeTableRecords([$sold])
             ->assertCanNotSeeTableRecords([$available]);
+    }
+
+    #[Test]
+    public function admin_can_see_view_car_action_on_edit_page(): void
+    {
+        $this->actingAsAdmin();
+
+        $car = $this->makeCar();
+
+        Livewire::test(EditCar::class, [
+            'record' => $car->uuid,
+        ])
+            ->assertActionVisible('viewPublic');
     }
 }

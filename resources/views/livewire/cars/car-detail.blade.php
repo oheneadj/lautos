@@ -1,5 +1,5 @@
 <div class=" min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 lg:px-8 py-6">
+    <div class="max-w-7xl mx-auto px-4 lg:px-8 py-6 mb-10">
 
         {{-- Breadcrumb --}}
         <nav class="flex items-center gap-2 text-xs font-medium text-gray-500 mb-4">
@@ -15,9 +15,9 @@
 
         {{-- Image Gallery: Hero + 2x2 Grid --}}
         <div x-data="{ lightbox: false }" @keydown.escape.window="lightbox = false">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-8 h-[300px] md:h-[400px]">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-8 h-[300px] md:h-[500px]">
                 {{-- Main Hero Image --}}
-                <div class="md:col-span-2 w-full h-full relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() ? 'cursor-zoom-in' : '' }}"
+                <div class="md:col-span-2 w-full h-[300px] md:h-[500px] relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() ? 'cursor-zoom-in' : '' }}"
                     @if ($car->images->count()) @click="lightbox = true" @endif>
                     @if ($car->images->count() > 0)
                         <img src="{{ Storage::url($car->images[$activeImageIndex]->path) }}"
@@ -41,7 +41,7 @@
                     @for ($i = 1; $i <= 4; $i++)
                         <button @if ($car->images->count() > $i) wire:click="setActiveImage({{ $i }})"
                         @click="lightbox = true" @endif
-                            class="w-full h-full relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() > $i ? 'cursor-zoom-in group' : 'cursor-default' }} {{ $i == 4 ? 'col-start-2 row-start-2' : '' }}">
+                            class="w-full h-[246px] relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() > $i ? 'cursor-zoom-in group' : 'cursor-default' }} {{ $i == 4 ? 'col-start-2 row-start-2' : '' }}">
                             @if ($car->images->count() > $i)
                                 <img src="{{ Storage::url($car->images[$i]->path) }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
@@ -65,10 +65,11 @@
                     @keydown.arrow-left.window="lightbox && $wire.setActiveImage(({{ $activeImageIndex }} - 1 + {{ $car->images->count() }}) % {{ $car->images->count() }})"
                     @keydown.arrow-right.window="lightbox && $wire.setActiveImage(({{ $activeImageIndex }} + 1) % {{ $car->images->count() }})"
                     @touchstart="touchX = $event.changedTouches[0].clientX" @touchend="
-                                    let dx = $event.changedTouches[0].clientX - touchX;
-                                    if (dx > 50) $wire.setActiveImage(({{ $activeImageIndex }} - 1 + {{ $car->images->count() }}) % {{ $car->images->count() }});
-                                    if (dx < -50) $wire.setActiveImage(({{ $activeImageIndex }} + 1) % {{ $car->images->count() }});
-                                " class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
+                                                                                    let dx = $event.changedTouches[0].clientX - touchX;
+                                                                                    if (dx > 50) $wire.setActiveImage(({{ $activeImageIndex }} - 1 + {{ $car->images->count() }}) % {{ $car->images->count() }});
+                                                                                    if (dx < -50) $wire.setActiveImage(({{ $activeImageIndex }} + 1) % {{ $car->images->count() }});
+                                                                                "
+                    class="fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4">
                     <button @click="lightbox = false" class="absolute top-4 right-4 text-white/80 hover:text-white"
                         aria-label="Close gallery">
                         <svg class="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">

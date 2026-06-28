@@ -8,6 +8,7 @@ namespace App\Filament\Resources\Cars\Pages;
 
 use App\Filament\Resources\Cars\CarResource;
 use App\Services\CarService;
+use Filament\Actions\Action;
 use Filament\Actions\DeleteAction;
 use Filament\Actions\ForceDeleteAction;
 use Filament\Actions\RestoreAction;
@@ -23,6 +24,14 @@ class EditCar extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
+            // I add a view car action to quickly preview the car details page in a new tab.
+            Action::make('viewPublic')
+                ->label('View Car')
+                ->icon('heroicon-m-arrow-top-right-on-square')
+                ->color('info')
+                ->url(fn (): string => route('cars.show', $this->record->slug))
+                ->openUrlInNewTab(),
+
             DeleteAction::make(),
             ForceDeleteAction::make(),
             RestoreAction::make(),

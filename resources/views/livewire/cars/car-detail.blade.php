@@ -17,7 +17,7 @@
         <div x-data="{ lightbox: false }" @keydown.escape.window="lightbox = false">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-8 h-[300px] md:h-[400px]">
                 {{-- Main Hero Image --}}
-                <div class="md:col-span-2 relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() ? 'cursor-zoom-in' : '' }}"
+                <div class="md:col-span-2 w-full h-full relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() ? 'cursor-zoom-in' : '' }}"
                     @if ($car->images->count()) @click="lightbox = true" @endif>
                     @if ($car->images->count() > 0)
                         <img src="{{ Storage::url($car->images[$activeImageIndex]->path) }}"
@@ -41,7 +41,7 @@
                     @for ($i = 1; $i <= 4; $i++)
                         <button @if ($car->images->count() > $i) wire:click="setActiveImage({{ $i }})"
                         @click="lightbox = true" @endif
-                            class="relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() > $i ? 'cursor-zoom-in group' : 'cursor-default' }} {{ $i == 4 ? 'col-start-2 row-start-2' : '' }}">
+                            class="w-full h-full relative rounded-xl overflow-hidden bg-gray-100 {{ $car->images->count() > $i ? 'cursor-zoom-in group' : 'cursor-default' }} {{ $i == 4 ? 'col-start-2 row-start-2' : '' }}">
                             @if ($car->images->count() > $i)
                                 <img src="{{ Storage::url($car->images[$i]->path) }}"
                                     class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"

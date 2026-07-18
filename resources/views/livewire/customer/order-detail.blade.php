@@ -7,7 +7,7 @@
             </a>
             <div class="flex flex-col md:flex-row md:items-end justify-between gap-6">
                 <div>
-                    <h1 class="text-[28px] font-semibold text-base-content leading-tight">
+                    <h1 class="text-[22px] sm:text-[28px] font-semibold text-base-content leading-tight break-words">
                         {{ $order->car_year }} {{ $order->car_make_name }} {{ $order->car_model_name }}
                     </h1>
                     <p class="text-[14px] text-base-content/50 mt-1">{{ __('Order placed') }}: {{ $order->created_at->format('d F, Y') }}</p>
@@ -119,7 +119,7 @@
                                         rows="2"
                                     />
 
-                                    <x-ui.button type="submit" variant="primary" wire:loading.attr="disabled" wire:target="uploadPaymentProof">
+                                    <x-ui.button type="submit" variant="primary" :disabled="empty($paymentProofFile)" wire:loading.attr="disabled" wire:target="uploadPaymentProof">
                                         <span wire:loading.remove wire:target="uploadPaymentProof">{{ __('Upload Proof') }}</span>
                                         <span wire:loading wire:target="uploadPaymentProof" class="inline-flex items-center gap-1.5">
                                             <svg class="w-3.5 h-3.5 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -150,18 +150,20 @@
                         @endif
                         <div class="divide-y divide-base-content/5">
                             @foreach ($order->paymentProofs as $proof)
-                                <div class="flex items-center justify-between px-6 py-3.5">
-                                    <div>
-                                        <p class="text-[13px] font-medium text-base-content">{{ basename($proof->file_path) }}</p>
+                                <div class="flex flex-col sm:flex-row sm:items-center justify-between px-6 py-3.5 gap-3">
+                                    <div class="min-w-0">
+                                        <p class="text-[13px] font-medium text-base-content break-all">{{ basename($proof->file_path) }}</p>
                                         <p class="text-[12px] text-base-content/40 font-medium mt-0.5">{{ $proof->created_at->format('d M, Y h:i A') }}</p>
                                         @if ($proof->note)
-                                            <p class="text-[11px] text-base-content/60 mt-1 italic">"{{ $proof->note }}"</p>
+                                            <p class="text-[11px] text-base-content/60 mt-1 italic break-words">"{{ $proof->note }}"</p>
                                         @endif
                                     </div>
-                                    @php $status = $proof->status ?? \App\Enums\PaymentProofStatus::Pending; @endphp
-                                    <x-ui.badge :type="$status->colour()">
-                                        {{ $status === \App\Enums\PaymentProofStatus::Pending ? __('Under Review') : $status->label() }}
-                                    </x-ui.badge>
+                                    <div class="shrink-0">
+                                        @php $status = $proof->status ?? \App\Enums\PaymentProofStatus::Pending; @endphp
+                                        <x-ui.badge :type="$status->colour()">
+                                            {{ $status === \App\Enums\PaymentProofStatus::Pending ? __('Under Review') : $status->label() }}
+                                        </x-ui.badge>
+                                    </div>
                                 </div>
                             @endforeach
                         </div>
@@ -208,13 +210,13 @@
                                 @if ($order->vessel_name)
                                     <div>
                                         <p class="text-[10px] font-bold uppercase tracking-widest text-info">{{ __('Vessel') }}</p>
-                                        <p class="text-[13px] font-bold text-base-content mt-0.5">{{ $order->vessel_name }}</p>
+                                        <p class="text-[13px] font-bold text-base-content mt-0.5 break-words">{{ $order->vessel_name }}</p>
                                     </div>
                                 @endif
                                 @if ($order->tracking_number)
                                     <div>
                                         <p class="text-[10px] font-bold uppercase tracking-widest text-info">{{ __('Tracking Number') }}</p>
-                                        <p class="text-[13px] font-bold text-base-content mt-0.5">{{ $order->tracking_number }}</p>
+                                        <p class="text-[13px] font-bold text-base-content mt-0.5 break-all">{{ $order->tracking_number }}</p>
                                     </div>
                                 @endif
                             </div>

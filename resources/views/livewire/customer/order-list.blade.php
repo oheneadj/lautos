@@ -38,9 +38,9 @@
                 <p class="mt-1 text-[13px] text-base-content/40">{{ $statusFilter ? __('Try a different filter or browse our catalogue.') : __('Start by browsing our available cars!') }}</p>
             </x-ui.card>
         @else
-            <x-ui.card class="flex flex-col overflow-hidden">
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left">
+            <x-ui.card class="flex flex-col overflow-hidden min-w-0 w-full">
+                <div class="overflow-x-auto w-full max-w-full">
+                    <table class="w-full text-left whitespace-nowrap">
                         <thead class="bg-base-200 border-b border-base-content/5">
                             <tr>
                                 <th class="px-6 py-3 text-[11px] font-bold uppercase tracking-widest text-base-content/60">{{ __('VEHICLE') }}</th>

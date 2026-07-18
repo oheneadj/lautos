@@ -77,6 +77,8 @@ class OrderSeeder extends Seeder
 
         $service->confirmPayment($order);
 
+        $order->refresh();
+
         return $order;
     }
 }

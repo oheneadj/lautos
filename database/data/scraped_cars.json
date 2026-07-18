@@ -1,0 +1,602 @@
+[
+    {
+        "year": "2014",
+        "make": "Toyota",
+        "model": "Rav4",
+        "price_usd_cents": 9946,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/0b77315650d5457e88bc9a4cef645228.jpg",
+            "cars/scraped/e9a76e392b15438cbdaa59abb4193cab.jpg",
+            "cars/scraped/47e14219fb024e9fa4fdfd63f49df93c.jpg",
+            "cars/scraped/5ad29dd8e02843d09d63ff1d2f8b8952.jpg",
+            "cars/scraped/f90a031ad01d4f90bcfd77cd47633f42.jpg",
+            "cars/scraped/c732d7de9be44872a460a33c450114c4.jpg"
+        ]
+    },
+    {
+        "year": "2014",
+        "make": "Toyota",
+        "model": "Prius",
+        "price_usd_cents": 10266,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/e608c82ed79f4347bba3456bc77e2b6b.jpg",
+            "cars/scraped/27f79adc0206436da4c3f32645f1cb9a.jpg",
+            "cars/scraped/56cd3bf5a4bc44b9ad96faee0cf61a5a.jpg",
+            "cars/scraped/3c4c46453c5241108c2db351817248d0.jpg",
+            "cars/scraped/0ea22ff06c504f8e97beba29cd9f92d1.jpg",
+            "cars/scraped/0088eb2f6813497092994e44819fb232.jpg"
+        ]
+    },
+    {
+        "year": "2018",
+        "make": "Toyota",
+        "model": "Sienna",
+        "price_usd_cents": 11057,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/20eba5c2c0bb45cba8eb0a09575fbb7e.jpg",
+            "cars/scraped/e0f61e70291a4d1099b60b7d0fbd5444.jpg",
+            "cars/scraped/98ffc4a990e64ce1b32f073b09cd221c.jpg",
+            "cars/scraped/4b0ea3fa3e7048e798080940e243c259.jpg",
+            "cars/scraped/562f59d6450541bb8d1a6d7344e4375f.jpg",
+            "cars/scraped/46ca6d5f1db04ca48f6851b2addb3723.jpg"
+        ]
+    },
+    {
+        "year": "2021",
+        "make": "Toyota",
+        "model": "Camry",
+        "price_usd_cents": 10200,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/c04223c145b248178fea6fbd12ad56c0.jpg",
+            "cars/scraped/55f1d77d81df4e3e91019865dcb040cb.jpg",
+            "cars/scraped/b901f5d16411454099ccc5fdd93e6d56.jpg",
+            "cars/scraped/542378f45e93439e90dc31bf42cead0a.jpg",
+            "cars/scraped/cd2d3fdbe8994bfd9dc1831e5c66a3d8.jpg",
+            "cars/scraped/97deb273c1ea491c9b5c3658255988e0.jpg"
+        ]
+    },
+    {
+        "year": "2010",
+        "make": "Toyota",
+        "model": "Camry",
+        "price_usd_cents": 10936,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/647aa36b9c644d7fb1f8c51f7082ef90.jpg",
+            "cars/scraped/8f29308451d04a25b4c91ef429801d4f.jpg",
+            "cars/scraped/c48ad68658604b7099c9362408405918.jpg",
+            "cars/scraped/114f71129e7c44e5bec6a993b654ab5a.jpg",
+            "cars/scraped/9a608744cb2246949f828a84b6944295.jpg",
+            "cars/scraped/790d37b12d404310ad18da1fcbc305c3.jpg"
+        ]
+    },
+    {
+        "year": "2009",
+        "make": "Toyota",
+        "model": "Matrix",
+        "price_usd_cents": 9164,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/4e3c263b2c1c453da530b98e6b816118.jpg",
+            "cars/scraped/1ef3e5a4a63a4c069095f73d869c9271.jpg",
+            "cars/scraped/2dd80cee835f4f48979b9bb2b2d4c5cd.jpg",
+            "cars/scraped/fca99f005ce74f05a5cc5212ac514996.jpg",
+            "cars/scraped/2a4578008ecf45ce94a1ac9c403ef7e5.jpg",
+            "cars/scraped/943d2a1662b946feab7cd1080525e73b.jpg"
+        ]
+    },
+    {
+        "year": "2014",
+        "make": "Toyota",
+        "model": "Rav4",
+        "price_usd_cents": 9287,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/cab469c74a924bd2975b883fa3e5c844.jpg",
+            "cars/scraped/9c051b12035e4ae28c4f64f323da0ae5.jpg",
+            "cars/scraped/8d52403e482b48869c5b68b3f6c954d1.jpg",
+            "cars/scraped/1144245590f840f7a02b946972e45e2e.jpg",
+            "cars/scraped/9994c02757344334a25f18c95d97870e.jpg",
+            "cars/scraped/535d559ead854160a3bb49013b6e3ff5.jpg"
+        ]
+    },
+    {
+        "year": "2015",
+        "make": "Honda",
+        "model": "Accord",
+        "price_usd_cents": 9422,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/afe92a6f40de44fc955c4f40ec5a3b5c.jpg",
+            "cars/scraped/bcee15b6a5564ecc9cac2a2b1f4d699e.jpg",
+            "cars/scraped/e01364849b4342d0956ced92161939af.jpg",
+            "cars/scraped/72b47098b84c4ba681cf1460d2b09cb0.jpg",
+            "cars/scraped/be6bbd34c42449e095ee424ff2dca62a.jpg",
+            "cars/scraped/736fc1dcc9a94891a2daf1c004ff40fa.jpg"
+        ]
+    },
+    {
+        "year": "2005",
+        "make": "Honda",
+        "model": "Civic",
+        "price_usd_cents": 10854,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/05a0fbc823ac47fea08e7c2bdf0a4647.jpg",
+            "cars/scraped/9e36cbb7e38b467c82d2b0b74920c6b8.jpg",
+            "cars/scraped/bf6e7ebff31c4deb9b46893458d878f5.jpg",
+            "cars/scraped/4826ac6a19ec4231855f6bc56c9505be.jpg",
+            "cars/scraped/63e4005e88674ccc8aa21ac6194ee18e.jpg",
+            "cars/scraped/d3c91ab5cb4349ecbca701dfb2eb8baa.jpg"
+        ]
+    },
+    {
+        "year": "2015",
+        "make": "Honda",
+        "model": "Civic",
+        "price_usd_cents": 10015,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/ac372cb07e134bf6ad5b2a33ea709431.jpg",
+            "cars/scraped/bfe918c4f06a40e981beed1cfb8b1d5c.jpg",
+            "cars/scraped/2cc2d9686fbe45bbb20e2df629b92cc8.jpg",
+            "cars/scraped/085935bb17614c90bc943e6f0db9e235.jpg",
+            "cars/scraped/ec9f81942e9645408e3d01699b2be1e7.jpg",
+            "cars/scraped/aff6b853e83b4c3d99a23001cc02c48f.jpg"
+        ]
+    },
+    {
+        "year": "2021",
+        "make": "Honda",
+        "model": "Civic",
+        "price_usd_cents": 9328,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/03243c3f31f2451997a3cc5615167eb1.jpg",
+            "cars/scraped/4a4441e7a4414eb3b4926db778872681.jpg",
+            "cars/scraped/0da658b916094ecab89b25c275e18058.jpg",
+            "cars/scraped/bf691d400d164f8092f93a165e7acf04.jpg",
+            "cars/scraped/d6f3d7127a7040d0b61d752a3196b207.jpg",
+            "cars/scraped/06f509fd42ba4ea9a6fb408aa9909db6.jpg"
+        ]
+    },
+    {
+        "year": "2015",
+        "make": "Honda",
+        "model": "Cr",
+        "price_usd_cents": 9213,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/3e1f7c26b69c418387f05afcaac3e498.jpg",
+            "cars/scraped/dd509586d7ad406fabab4156be880cc4.jpg",
+            "cars/scraped/79c015704dbc46c3b527e23fcc44b34a.jpg",
+            "cars/scraped/b1e9be1a855b49769e955f1cec48909c.jpg",
+            "cars/scraped/f6da569d8631480bb585ee786d6da22b.jpg",
+            "cars/scraped/e6e3af330c994385ad1fd8ca1e3f994f.jpg"
+        ]
+    },
+    {
+        "year": "2025",
+        "make": "Honda",
+        "model": "Cr",
+        "price_usd_cents": 8743,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/6d220368187e48f3ac04dfdceedf6772.jpg",
+            "cars/scraped/2f41971cd26e4618babb5d79e3ed7c8f.jpg",
+            "cars/scraped/99d510c547fd420a872a6b8ae25783e1.jpg",
+            "cars/scraped/dc2c611168234737b877df0eeba8ea1a.jpg",
+            "cars/scraped/7575b8cc72ec4c6689daf7aed3ae6dce.jpg",
+            "cars/scraped/629172c99e914b04a4061f31d44ecea4.jpg"
+        ]
+    },
+    {
+        "year": "2019",
+        "make": "Honda",
+        "model": "Cr",
+        "price_usd_cents": 9919,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/3fab8d0e545d4af39d1310f5d5094ed7.jpg",
+            "cars/scraped/786a86d70b824614a8ff4177de0d7724.jpg",
+            "cars/scraped/9a4eb7759d514e53bb2a22d0c32adf37.jpg",
+            "cars/scraped/e0b8b89281214d23a0d45d932df0ee37.jpg",
+            "cars/scraped/ca7e313d091e4d1f9fa95c289d7f0855.jpg",
+            "cars/scraped/acaae7e479e64be2963cbf720690ca8d.jpg"
+        ]
+    },
+    {
+        "year": "2016",
+        "make": "Ford",
+        "model": "F",
+        "price_usd_cents": 9010,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/af96928955d8430c840d0b65580f3f70.jpg",
+            "cars/scraped/d127f306de5f4076a9555c7500376b78.jpg",
+            "cars/scraped/25721e319cd0495aa94b1aa1e16055d1.jpg",
+            "cars/scraped/f82c5322000a48f48338e49cdc4df32f.jpg",
+            "cars/scraped/707acb819bf546559ed588533b986dec.jpg",
+            "cars/scraped/d09b556187b64467a89436bb53819db7.jpg"
+        ]
+    },
+    {
+        "year": "2010",
+        "make": "Ford",
+        "model": "Edge",
+        "price_usd_cents": 11395,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/73bfcec0f53c4294b61b1d3b72cd420c.jpg",
+            "cars/scraped/b5cf616384de4918b406c04ed312028e.jpg",
+            "cars/scraped/8062f4c8ca9944c7a3e20432f5d48acd.jpg",
+            "cars/scraped/91b5d0bfdd12464fb6d12e2a1307916b.jpg",
+            "cars/scraped/3b029f0f03ff45c18a27906c9649716f.jpg",
+            "cars/scraped/127562b8f43e4d5fb6cb5f22ca27be1a.jpg"
+        ]
+    },
+    {
+        "year": "2015",
+        "make": "Ford",
+        "model": "Fiesta",
+        "price_usd_cents": 8687,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/b9d24844a2824c3994221c93a1c5395a.jpg",
+            "cars/scraped/e5fff29be6fe4fb285ab3fba4023848d.jpg",
+            "cars/scraped/aa5dcd2c089a403bbaba739c0e33c87c.jpg",
+            "cars/scraped/b974b78290ab48859b9a1aef6ce0c867.jpg",
+            "cars/scraped/ea04be8f5cdd412699ea4b6a76549a83.jpg",
+            "cars/scraped/56f696cfb5ad459c828ceb969ee1e468.jpg"
+        ]
+    },
+    {
+        "year": "2019",
+        "make": "Ford",
+        "model": "Taurus",
+        "price_usd_cents": 10167,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/54dd25fc6eed4ced94d7035a345c6b8c.jpg",
+            "cars/scraped/040b7bdaf2184189a89566c78f4c6361.jpg",
+            "cars/scraped/a33d2db37dbe4a2ab996206a6d2204d1.jpg",
+            "cars/scraped/95010a4e71a94805b1d150f54b1e4ed4.jpg",
+            "cars/scraped/cfc965171033448b8417678b51d41269.jpg",
+            "cars/scraped/0a9438db76734ab192c82a19221f6517.jpg"
+        ]
+    },
+    {
+        "year": "2008",
+        "make": "Ford",
+        "model": "Explorer",
+        "price_usd_cents": 8927,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/ee128a605b5542e2a40c715525d8d6a9.jpg",
+            "cars/scraped/16eff16bace34cf686ecb5173a62e75d.jpg",
+            "cars/scraped/b72f92e912454d638accb924f0cf969b.jpg",
+            "cars/scraped/572f319d550d43aaa6719d9d28439d5d.jpg",
+            "cars/scraped/833f4819140448adbbac5ac6157e6767.jpg",
+            "cars/scraped/e213dde16c664fdf814022ed73d04e77.jpg"
+        ]
+    },
+    {
+        "year": "2025",
+        "make": "Ford",
+        "model": "Bronco",
+        "price_usd_cents": 10212,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/b973507fb1294956ab7818000536e86b.jpg",
+            "cars/scraped/db737f94746c412bb866c7e044c606b1.jpg",
+            "cars/scraped/71948800043946cf80348c3ca6bca564.jpg",
+            "cars/scraped/8088f24dda7042c0b6227743a80e8d43.jpg",
+            "cars/scraped/7a8e7b7515d54892bfd334ed128fd87d.jpg",
+            "cars/scraped/2af2055f2e5c4bdba907c953599734aa.jpg"
+        ]
+    },
+    {
+        "year": "2022",
+        "make": "Ford",
+        "model": "Mustang",
+        "price_usd_cents": 10877,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/718d79a066504338b8e92db7226f79fe.jpg",
+            "cars/scraped/5366cd36e2f947c89ae444f1b022ec99.jpg",
+            "cars/scraped/23d965e0908b417cbf67d8204531ad4e.jpg",
+            "cars/scraped/eca33d910ab74b819748a0e0e31abf42.jpg",
+            "cars/scraped/86dc4daad8bd4ba5a34d989b0bca3e07.jpg",
+            "cars/scraped/a53d9182ab9a48e8b6d885bdf5ebc8d2.jpg"
+        ]
+    },
+    {
+        "year": "2018",
+        "make": "Mercedes",
+        "model": "Benz",
+        "price_usd_cents": 10176,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/2baa20d4d7ec401e81f746cf9683991b.jpg",
+            "cars/scraped/03191c3ae433471182d959f3bc19a1a9.jpg",
+            "cars/scraped/1f5c36db8f6f47ee9b5d9fd86b7f2f8c.jpg",
+            "cars/scraped/ad85cb59bed44506be7cfa9844868d38.jpg",
+            "cars/scraped/698c50422bc7400fabc9e7e38cb44807.jpg",
+            "cars/scraped/6cbf5d4a96854e83a9b27f26074e95c1.jpg"
+        ]
+    },
+    {
+        "year": "2013",
+        "make": "Mercedes",
+        "model": "Benz",
+        "price_usd_cents": 10393,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/8f726924f04f42e9bc9317e0cb22409c.jpg",
+            "cars/scraped/ca6c4028f2654f409396da87176adf30.jpg",
+            "cars/scraped/bb958a594dcb47c291680a8c8d76ad6b.jpg",
+            "cars/scraped/a169d18dcbae41968d618831630546bc.jpg",
+            "cars/scraped/08b12c2e453d4410a7ddbc3190ec9aaa.jpg",
+            "cars/scraped/24203781d5c9484999a3fbcf76ce259a.jpg"
+        ]
+    },
+    {
+        "year": "2007",
+        "make": "Mercedes",
+        "model": "Benz",
+        "price_usd_cents": 8982,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/85ca1b04d8e04b679ed04194b269a62c.jpg",
+            "cars/scraped/ca7b5fa3a0c14dcebe541b599928b114.jpg",
+            "cars/scraped/3e755804dadd4947bb120c3b73ce7316.jpg",
+            "cars/scraped/bdc2cb772db143ffa0a030a15485dafc.jpg",
+            "cars/scraped/bfa3cfdd0ebe459ea110ebfdb7861e41.jpg",
+            "cars/scraped/e1642559eadc414fbc5543d81b367d04.jpg"
+        ]
+    },
+    {
+        "year": "2009",
+        "make": "Mercedes",
+        "model": "Benz",
+        "price_usd_cents": 11460,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/eea6c2c749c4468fb182b8f0829cd846.jpg",
+            "cars/scraped/831cb411a4d14f0daec75d3afb4837d5.jpg",
+            "cars/scraped/5cdd88fe8d874aff8746af8aef6527e4.jpg",
+            "cars/scraped/bbf0bfb2325e4a1ca310b39500a29c9b.jpg",
+            "cars/scraped/31efb4656d924ff4aea7515561e28eb5.jpg",
+            "cars/scraped/b60d91d7587c4614a81c9236e0b66a43.jpg"
+        ]
+    },
+    {
+        "year": "2018",
+        "make": "Mercedes",
+        "model": "Benz",
+        "price_usd_cents": 9951,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/d7a873a8a4254d9ca836bb324935a21b.jpg",
+            "cars/scraped/0fd2f8fb543145359809e46011c88730.jpg",
+            "cars/scraped/9f6fe81864964201a9d007bcacb0beea.jpg",
+            "cars/scraped/bafa77022e504ea9a288dd2c3451c09a.jpg",
+            "cars/scraped/49c2bb6bf9584b5aa615f38cb538cd63.jpg",
+            "cars/scraped/4885aec983d847c7bd8a3e42311bea9c.jpg"
+        ]
+    },
+    {
+        "year": "2008",
+        "make": "Mercedes",
+        "model": "Benz",
+        "price_usd_cents": 10354,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/45bbb6a25c7b410f8660c05b5aa7c779.jpg",
+            "cars/scraped/ac27afbdf3204c409ae83ddc036f2e51.jpg",
+            "cars/scraped/1b8ac795d4cb48f09ea7d869bc147cc7.jpg",
+            "cars/scraped/70cc3f47d9f9483da1afca5008ee360e.jpg",
+            "cars/scraped/27ba927f92d045d683b27018d727bd6c.jpg",
+            "cars/scraped/491c1d08ad674ddb9c883b23a84929c3.jpg"
+        ]
+    },
+    {
+        "year": "2014",
+        "make": "Mercedes",
+        "model": "Benz",
+        "price_usd_cents": 10651,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/89ef35c343ae47b99beb0df666ea6dfa.jpg",
+            "cars/scraped/1bba39d2bd0f438bb1807d6d1678241d.jpg",
+            "cars/scraped/b1c8f099e437421688743f9cc9f49d7d.jpg",
+            "cars/scraped/81791abeec5448c3be5a5e9c90e2696d.jpg",
+            "cars/scraped/6686d74512e34a7a9fdd03d4f0599f6b.jpg",
+            "cars/scraped/398b7cd55130400982402d7928480b3f.jpg"
+        ]
+    },
+    {
+        "year": "2023",
+        "make": "Hyundai",
+        "model": "Elantra",
+        "price_usd_cents": 10040,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/78e9038d79784f5e80762b3907a3861c.jpg",
+            "cars/scraped/96669b8d696449c68f157c2ff90a2819.jpg",
+            "cars/scraped/e5202305fe1c49f68100a6c69f8ab4c1.jpg",
+            "cars/scraped/2c49c979d3944255a2e8e48fa23a72be.jpg",
+            "cars/scraped/117e17e6af014e798398028b08427353.jpg",
+            "cars/scraped/b97fbbf110ce466b8e82b5702b8e2414.jpg"
+        ]
+    },
+    {
+        "year": "2017",
+        "make": "Hyundai",
+        "model": "Tucson",
+        "price_usd_cents": 10211,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/916d97969bb64f78af55bbd5df6a4483.jpg",
+            "cars/scraped/804efaa4d3244c1981c45de3107d549a.jpg",
+            "cars/scraped/0f12bb58f066433494c032049ba331d5.jpg",
+            "cars/scraped/29dde1b0caf7487ebed8cb2a5c1a36a9.jpg",
+            "cars/scraped/1b8d5027f421449b87852f86bfda6034.jpg",
+            "cars/scraped/02a37d3883a0473491f16902cc75bb12.jpg"
+        ]
+    },
+    {
+        "year": "2017",
+        "make": "Hyundai",
+        "model": "Accent",
+        "price_usd_cents": 9194,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/fc6ccdea3f674522968a56a4062870ce.jpg",
+            "cars/scraped/2a7bc3f77ac449debe4f743549e99b36.jpg",
+            "cars/scraped/7984a3d08abf483e8bd2c7d2c735ba57.jpg",
+            "cars/scraped/13e89792891c41a68411e498fefd726f.jpg",
+            "cars/scraped/52ad314566934d22a5921bec13082655.jpg",
+            "cars/scraped/f8d997a8d9844b21bb9288c677ab5057.jpg"
+        ]
+    },
+    {
+        "year": "2016",
+        "make": "Hyundai",
+        "model": "Genesis",
+        "price_usd_cents": 10533,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/413883ffc1224061974bc754161e9abb.jpg",
+            "cars/scraped/6a12d48f001c40be89985123b0c504ab.jpg",
+            "cars/scraped/d84e865e4e7849148d23ab59c40c3243.jpg",
+            "cars/scraped/8f123968234445388c3fcc4ff888ea1e.jpg",
+            "cars/scraped/bffcb749ff134612858970e9ce02bc1b.jpg",
+            "cars/scraped/2be540e5bcac488387421428a938d7e0.jpg"
+        ]
+    },
+    {
+        "year": "2022",
+        "make": "Hyundai",
+        "model": "Elantra",
+        "price_usd_cents": 8679,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/869acb9b5d094cfb95b932f1a6d1d1be.jpg",
+            "cars/scraped/6299fc2b14f948539f024d6b963b2c80.jpg",
+            "cars/scraped/7969f4c728464e8a801a04c6d0ea2ec7.jpg",
+            "cars/scraped/dbc6181ace634af2bb3be340f81921e5.jpg",
+            "cars/scraped/debe3858946d4f1f915202cde4ae8954.jpg",
+            "cars/scraped/8cb35cb81c794620ba200ccf52cb334b.jpg"
+        ]
+    },
+    {
+        "year": "2018",
+        "make": "Hyundai",
+        "model": "Elantra",
+        "price_usd_cents": 9591,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/7b2cca4fce86433084fc1e3ef81d2a5f.jpg",
+            "cars/scraped/d65f4b014a324bbf82babf88b53d78ad.jpg",
+            "cars/scraped/4eb7e23bbbc94bacbfdde56927f26f91.jpg",
+            "cars/scraped/cbcd787e30f445d98e2e418007f0eacf.jpg",
+            "cars/scraped/57b250717e8d4c42a1d725469a80da10.jpg",
+            "cars/scraped/93d50e602b574bea9d3326082116da44.jpg"
+        ]
+    },
+    {
+        "year": "2016",
+        "make": "Hyundai",
+        "model": "Sonata",
+        "price_usd_cents": 10384,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/3e01f07b51ba423e912bcad4cae5bf26.jpg",
+            "cars/scraped/de7585bad91d43c3a532518f0eaacc72.jpg",
+            "cars/scraped/0da5ac1deee04c888b4f71f464d87ae7.jpg",
+            "cars/scraped/f5f6de9b55174d4f9e2cf4aae2dae3b4.jpg",
+            "cars/scraped/bd20f810d08d4b49a3a556f78e1d351d.jpg",
+            "cars/scraped/813e0340f1b24eeda542461eeb9dc365.jpg"
+        ]
+    },
+    {
+        "year": "2016",
+        "make": "Nissan",
+        "model": "Rogue",
+        "price_usd_cents": 9728,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/e723ae5629de4aa69dc927cad5a92002.jpg",
+            "cars/scraped/74210f1391a44ddebe98870fcd216d0a.jpg",
+            "cars/scraped/8148f91dfea04acf949c387849f7cc04.jpg",
+            "cars/scraped/b6e464b9d47147259efb5c1226e00070.jpg",
+            "cars/scraped/a2a6b1e769634679ab38ccf7b6b0d36e.jpg",
+            "cars/scraped/6822da5f1aef4cb3b0aaae7ae1cfdda6.jpg"
+        ]
+    },
+    {
+        "year": "2008",
+        "make": "Nissan",
+        "model": "Xterra",
+        "price_usd_cents": 9508,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/994d32ffe09c487d88606a56ac9d8cc4.jpg",
+            "cars/scraped/c01112c8aa8d42678de3bf27cf1694d2.jpg",
+            "cars/scraped/fd0669925d5040d78484c6e036765c53.jpg",
+            "cars/scraped/4b6ed32d5de64c04b30fdab83c586116.jpg",
+            "cars/scraped/292bc6574a0344018f28c1be504b7f85.jpg",
+            "cars/scraped/21617a25dbad4e8b81b788b7b2f740a6.jpg"
+        ]
+    },
+    {
+        "year": "2018",
+        "make": "Nissan",
+        "model": "Rogue",
+        "price_usd_cents": 10944,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/6bf634b3390f4dfe98b2f6d5a5b2dc00.jpg",
+            "cars/scraped/797647ab8af14809875e93aa9b8119ac.jpg",
+            "cars/scraped/cdf0013b54f5488084890d3e7130f9bf.jpg",
+            "cars/scraped/6368a44aa0cc441c9165fd393a18ea03.jpg",
+            "cars/scraped/1cc1b550b2fa442ea5e9ccc266d88233.jpg",
+            "cars/scraped/245646fd5d8340f898994905b64908c9.jpg"
+        ]
+    },
+    {
+        "year": "2016",
+        "make": "Nissan",
+        "model": "Altima",
+        "price_usd_cents": 10927,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/711194fba93c4bb8b9ad584d9167a923.jpg",
+            "cars/scraped/7f659af906e34170a0c16391b8ee71d0.jpg",
+            "cars/scraped/0041cc201f3c4df295bdc7f77478d8ee.jpg",
+            "cars/scraped/58b030ecef2b42d89b7211cd439f9288.jpg",
+            "cars/scraped/4ccc2fee82c94e6dbbf5aa660b52c8db.jpg",
+            "cars/scraped/fa17efd0fa224dea838d93c20f3d4594.jpg"
+        ]
+    },
+    {
+        "year": "2019",
+        "make": "Nissan",
+        "model": "Armada",
+        "price_usd_cents": 10937,
+        "mileage": 0,
+        "image_paths": [
+            "cars/scraped/1a391c8687a343c9b2f3540f08e0ab69.jpg",
+            "cars/scraped/55ce1061940e4062959df4f40efbea3c.jpg",
+            "cars/scraped/935def6d86de457aafd5d0a48ad9f277.jpg",
+            "cars/scraped/dda9e4aa624b4d4b8d90e0b7f39102b2.jpg",
+            "cars/scraped/d653fde479bd47e3849468ba8b7bb4ec.jpg",
+            "cars/scraped/ec673a33956f4abab40ba71b9db61011.jpg"
+        ]
+    }
+]

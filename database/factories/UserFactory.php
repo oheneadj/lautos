@@ -24,9 +24,23 @@ class UserFactory extends Factory
      */
     public function definition(): array
     {
+        if (! $this->faker) {
+            return [
+                'name' => 'Demo User',
+                'email' => 'demo_' . Str::random(5) . '@example.com',
+                'email_verified_at' => now(),
+                'password' => static::$password ??= Hash::make('password'),
+                'has_password' => true,
+                'remember_token' => Str::random(10),
+                'two_factor_secret' => null,
+                'two_factor_recovery_codes' => null,
+                'two_factor_confirmed_at' => null,
+            ];
+        }
+
         return [
-            'name' => fake()->name(),
-            'email' => fake()->unique()->safeEmail(),
+            'name' => $this->faker->name(),
+            'email' => $this->faker->unique()->safeEmail(),
             'email_verified_at' => now(),
             'password' => static::$password ??= Hash::make('password'),
             'has_password' => true,

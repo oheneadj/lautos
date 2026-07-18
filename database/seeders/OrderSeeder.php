@@ -28,6 +28,12 @@ class OrderSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->environment('production')) {
+            $this->command?->warn('OrderSeeder contains mock/scraped data and cannot be run in production.');
+
+            return;
+        }
+
         $service = app(OrderService::class);
 
         $availableCars = Car::where('status', CarStatus::Available)

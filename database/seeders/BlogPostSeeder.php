@@ -19,6 +19,12 @@ class BlogPostSeeder extends Seeder
 {
     public function run(): void
     {
+        if (app()->environment('production')) {
+            $this->command?->warn('BlogPostSeeder contains mock/scraped data and cannot be run in production.');
+
+            return;
+        }
+
         $category = BlogCategory::firstOrCreate(
             ['slug' => 'import-guides'],
             ['name' => 'Import Guides']

@@ -16,6 +16,12 @@ class CarSeeder extends Seeder
      */
     public function run(): void
     {
+        if (app()->environment('production')) {
+            $this->command?->warn('CarSeeder contains mock/scraped data and cannot be run in production.');
+
+            return;
+        }
+
         $jsonPath = database_path('data/scraped_cars.json');
 
         if (File::exists($jsonPath)) {

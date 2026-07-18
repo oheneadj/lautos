@@ -1,2 +1,8 @@
 *
 !.gitignore
+!make-icons/
+!blog-covers/
+!branding/
+!cars/
+cars/*
+!cars/scraped/

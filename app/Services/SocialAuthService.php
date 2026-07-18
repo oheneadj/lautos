@@ -34,12 +34,16 @@ class SocialAuthService
      * account has to be linked explicitly from the profile instead
      * (see linkGoogleAccount()).
      */
-    public function findOrCreateFromGoogle(SocialiteUser $googleUser): User
+    public function findOrCreateFromGoogle(SocialiteUser $googleUser, string $intent = 'login'): User
     {
         $user = User::where('google_id', $googleUser->getId())->first();
 
         if ($user) {
             return $user;
+        }
+
+        if ($intent === 'login') {
+            throw new RuntimeException('This account does not exist in our system. Please register an account first.');
         }
 
         $existing = User::where('email', $googleUser->getEmail())->first();

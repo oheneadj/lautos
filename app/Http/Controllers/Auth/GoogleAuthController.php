@@ -21,8 +21,10 @@ use Throwable;
 
 class GoogleAuthController extends Controller
 {
-    public function redirect(): RedirectResponse
+    public function redirect(\Illuminate\Http\Request $request): RedirectResponse
     {
+        session(['google_intent' => $request->query('intent', 'login')]);
+
         return Socialite::driver('google')->redirect();
     }
 
@@ -61,8 +63,10 @@ class GoogleAuthController extends Controller
             return redirect()->route('security.edit')->with('status', __('Google account connected.'));
         }
 
+        $intent = session()->pull('google_intent', 'login');
+
         try {
-            $user = $socialAuthService->findOrCreateFromGoogle($googleUser);
+            $user = $socialAuthService->findOrCreateFromGoogle($googleUser, $intent);
         } catch (RuntimeException $e) {
             return redirect()->route('login')->with('status', $e->getMessage());
         }
